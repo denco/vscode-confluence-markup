@@ -11,6 +11,7 @@
         "wiki",
         "markup"
     ],
+    "icon": "images/confluence-markup.png",
     "categories": [
         "Languages",
         "Snippets"
