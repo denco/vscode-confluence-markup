@@ -5,3 +5,8 @@ Adds syntax highlighting and snippets to Confluence® Wiki files in Visual Studi
 Originally syntax from the [Confluence® Textmate Bundle](https://github.com/alkemist/Confluence.tmbundle).
 
 Please log any issue as Github issue [here](https://github.com/denco/vscode-confluence-markup/issues) to get improvement/fixes.
+
+
+---------------------
+
+> Confluence® is registered trademark owned by [Atlassian](https://www.atlassian.com/)
