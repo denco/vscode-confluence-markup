@@ -109,7 +109,8 @@
         "prefix": "nl4",
         "body": [
             "# $1\n# $2\n# $3\n# $4"
-        ]
+        ],
+        "description":"Insert numbered list with four elemets."
     },
     //Table
     "Table": {
@@ -118,7 +119,8 @@
             "||${1:heading 1}||${2:heading 2}||${3:heading 3}||",
             "|${4:cell A1}|${5:cell A2}|${6:cell A3}|",
             "|${7:cell B1}|${8:cell B2}|${9:cell B3}|"
-        ]
+        ],
+        "description": "Insert table."
     },
     //Code
     "Code block": {
@@ -127,26 +129,30 @@
             "{code:${1:language}|title=${2:title}|borderStyle=${3:solid}}",
             "$0",
             "{code}"
-        ]
+        ],
+        "description":"Insert code block with border style, title and language."
     },
     //Picture
     "Picture": {
         "prefix": "pics",
         "body": [
             "!${1:filename.png}|align=${2:alignment},border=${3:1}!"
-        ]
+        ],
+        "description": "Insert picture."
     },
     //Macros
     "Macro with body": {
         "prefix": "mm",
         "body": [
             "{$1}$0{${1/\\:.*//}}"
-        ]
+        ],
+        "description": "Insert macro with body."
     },
     "Macro": {
         "prefix": "m",
         "body": [
             "{$1}$0"
-        ]
+        ],
+        "description": "Insert simple macro."
     }
 }
