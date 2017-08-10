@@ -6,6 +6,7 @@ Originally syntax from the [Confluence® Textmate Bundle](https://github.com/alk
 
 Please log any issue as Github issue [here](https://github.com/denco/vscode-confluence-markup/issues) to get improvement/fixes.
 
+Licence [MIT](https://github.com/denco/vscode-confluence-markup/LICENSE)
 
 ---------------------
 
