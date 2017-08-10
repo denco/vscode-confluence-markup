@@ -41,14 +41,14 @@
                     ".wiki",
                     ".markup"
                 ],
-                "configuration": "./snippets/confluence-markup.json"
+                "configuration": "./language-configuration.json"
             }
         ],
         "grammars": [
             {
                 "language": "confluence-markup",
                 "scopeName": "text.html.confluence",
-                "path": "./grammars/confluence-markup.tmLanguage"
+                "path": "./syntaxes/confluence-markup.tmLanguage"
             }
         ],
         "snippets": [
@@ -60,5 +60,5 @@
     },
     "__metadata": {
         "publisherDisplayName": "denco"
-    },
+    }
 }
