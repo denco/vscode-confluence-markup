@@ -1,63 +1,128 @@
 {
-    "name": "confluence-markup",
-    "version": "0.0.1",
-    "displayName": "Confluence markup",
-    "description": "Confluence markup language support for Visual Studio Code",
-    "keywords": [
-        "syntax",
-        "language",
-        "confluence",
-        "wiki",
-        "markup"
-    ],
-    "icon": "images/confluence-markup.png",
-    "categories": [
-        "Languages",
-        "Snippets"
-    ],
-    "preview": true,
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/denco/vscode-confluence-markup"
-    },
-    "license": "MIT",
-    "engines": {
-        "vscode": "*"
-    },
-    "publisher": "denco",
-    "contributes": {
-        "languages": [
-            {
-                "id": "confluence-markup",
-                "aliases": [
-                    "Confluence Markup",
-                    "markup",
-                    "wiki",
-                    "Confluence"
-                ],
-                "extensions": [
-                    ".confluence",
-                    ".wiki",
-                    ".markup"
-                ],
-                "configuration": "./language-configuration.json"
-            }
-        ],
-        "grammars": [
-            {
-                "language": "confluence-markup",
-                "scopeName": "text.html.confluence",
-                "path": "./syntaxes/confluence-markup.tmLanguage"
-            }
-        ],
-        "snippets": [
-            {
-                "language": "confluence-markup",
-                "path": "./snippets/confluence-markup.json"
-            }
-        ]
-    },
-    "__metadata": {
-        "publisherDisplayName": "denco"
-    }
+	"name": "confluence-markup",
+	"displayName": "Confluence markup",
+	"version": "0.1.0",
+	"publisher": "denco",
+	"description": "Confluence markup language support for Visual Studio Code",
+	"keywords": [
+		"syntax",
+		"language",
+		"confluence",
+		"wiki",
+		"markup"
+	],
+	"icon": "resources/logo/confluence-markup.png",
+	"author": {
+		"name": "denco"
+	},
+	"categories": [
+		"Languages",
+		"Snippets"
+	],
+	"preview": true,
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/denco/vscode-confluence-markup"
+	},
+	"bugs": {
+		"url": "https://github.com/denco/vscode-confluence-markup/issues"
+	},
+	"license": "MIT",
+	"homepage": "https://github.com/denco/vscode-confluence-markup/blob/master/README.md",
+	"engines": {
+		"vscode": "^1.10.0"
+	},
+	"activationEvents": [
+		"onCommand:confluence.showPreview",
+		"onCommand:confluence.showPreviewToSide",
+		"onLanguage:confluence"
+	],
+	"main": "./out/src/extension",
+	"contributes": {
+		"languages": [
+			{
+				"id": "confluence",
+				"aliases": [
+					"Confluence",
+					"markup",
+					"wiki",
+					"Confluence Markup"
+				],
+				"extensions": [
+					".confluence",
+					".wiki",
+					".markup"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "confluence",
+				"scopeName": "text.html.confluence",
+				"path": "./syntaxes/confluence-markup.tmLanguage"
+			}
+		],
+		"snippets": [
+			{
+				"language": "confluence",
+				"path": "./snippets/confluence-markup.json"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "confluence.showPreview",
+				"key": "ctrl+shift+v",
+				"mac": "cmd+shift+v"
+			},
+			{
+				"command": "confluence.showPreviewToSide",
+				"key": "ctrl+k v",
+				"mac": "cmd+k v"
+			}
+		],
+		"commands": [
+			{
+				"command": "confluence.showPreview",
+				"title": "Open Preview",
+				"category": "Confluence"
+			},
+			{
+				"command": "confluence.showPreviewToSide",
+				"title": "Open Preview to the Side",
+				"category": "Confluence"
+			}
+		],
+		"menus": {
+			"editor/title": [
+				{
+					"command": "confluence.showPreview",
+					"when": "resourceLangId == confluence"
+				},
+				{
+					"command": "confluence.showPreviewToSide",
+					"when": "resourceLangId == confluence"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "npm run compile && node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"eslint": "^4.15.0",
+		"tslint": "^5.9.1",
+		"typescript": "^2.6.1",
+		"vsce": "^1.35.0",
+		"vscode": "^1.1.6",
+		"@types/node": "^7.0.43",
+		"@types/mocha": "^2.2.42"
+	},
+	"__metadata": {
+		"publisherDisplayName": "denco"
+	}
 }

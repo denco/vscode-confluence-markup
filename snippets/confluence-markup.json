@@ -1,158 +1,150 @@
 {
-    //Title markups
-    "Header 1": {
-        "prefix": "h1",
-        "body": [
-            "h1. $1"
-        ]
-    },
-    "Header 2": {
-        "prefix": "h2",
-        "body": [
-            "h2. $1"
-        ]
-    },
-    "Header 3": {
-        "prefix": "h3",
-        "body": [
-            "h3. $1"
-        ]
-    },
-    "Header 4": {
-        "prefix": "h4",
-        "body": [
-            "h4. $1"
-        ]
-    },
-    "Header 5": {
-        "prefix": "h5",
-        "body": [
-            "h5. $1"
-        ]
-    },
-    "Header 6": {
-        "prefix": "h6",
-        "body": [
-            "h6. $1"
-        ]
-    },
-    //dash point lists
-    "Dash point list 1": {
-        "prefix": "dl1",
-        "body": [
-            "- $1"
-        ]
-    },
-    "Dash point list 2": {
-        "prefix": "dl2",
-        "body": [
-            "- $1\n- $2"
-        ]
-    },
-    "Dash point list 3": {
-        "prefix": "dl3",
-        "body": [
-            "- $1\n- $2\n- $3"
-        ]
-    },
-    "Dash point list 4": {
-        "prefix": "dl4",
-        "body": [
-            "- $1\n- $2\n- $3\n- $4"
-        ]
-    },
-    //Bullet point lists
-    "Bullet point list 1": {
-        "prefix": "bl1",
-        "body": [
-            "* $1"
-        ]
-    },
-    "Bullet point list 2": {
-        "prefix": "bl2",
-        "body": [
-            "* $1\n* $2"
-        ]
-    },
-    "Bullet point list 3": {
-        "prefix": "bl3",
-        "body": [
-            "* $1\n* $2\n* $3"
-        ]
-    },
-    "Bullet point list 4": {
-        "prefix": "bl4",
-        "body": [
-            "* $1\n* $2\n* $3\n* $4"
-        ]
-    },
-    //Numbered lists
-    "Numbered list 1": {
-        "prefix": "nl1",
-        "body": [
-            "# $1"
-        ]
-    },
-    "Numbered list 2": {
-        "prefix": "nl2",
-        "body": [
-            "# $1\n# $2"
-        ]
-    },
-    "Numbered list 3": {
-        "prefix": "nl3",
-        "body": [
-            "# $1\n# $2\n# $3"
-        ]
-    },
-    "Numbered list 4": {
-        "prefix": "nl4",
-        "body": [
-            "# $1\n# $2\n# $3\n# $4"
-        ],
-        "description":"Insert numbered list with four elemets."
-    },
-    //Table
-    "Table": {
-        "prefix": "table",
-        "body": [
-            "||${1:heading 1}||${2:heading 2}||${3:heading 3}||",
-            "|${4:cell A1}|${5:cell A2}|${6:cell A3}|",
-            "|${7:cell B1}|${8:cell B2}|${9:cell B3}|"
-        ],
-        "description": "Insert table."
-    },
-    //Code
-    "Code block": {
-        "prefix": "code",
-        "body": [
-            "{code:${1:language}|title=${2:title}|borderStyle=${3:solid}}",
-            "$0",
-            "{code}"
-        ],
-        "description":"Insert code block with border style, title and language."
-    },
-    //Picture
-    "Picture": {
-        "prefix": "pics",
-        "body": [
-            "!${1:filename.png}|align=${2:alignment},border=${3:1}!"
-        ],
-        "description": "Insert picture."
-    },
-    //Macros
-    "Macro with body": {
-        "prefix": "mm",
-        "body": [
-            "{$1}$0{${1/\\:.*//}}"
-        ],
-        "description": "Insert macro with body."
-    },
-    "Macro": {
-        "prefix": "m",
-        "body": [
-            "{$1}$0"
-        ],
-        "description": "Insert simple macro."
-    }
+	"Header 1": {
+		"prefix": "h1",
+		"body": [
+			"h1. $1"
+		]
+	},
+	"Header 2": {
+		"prefix": "h2",
+		"body": [
+			"h2. $1"
+		]
+	},
+	"Header 3": {
+		"prefix": "h3",
+		"body": [
+			"h3. $1"
+		]
+	},
+	"Header 4": {
+		"prefix": "h4",
+		"body": [
+			"h4. $1"
+		]
+	},
+	"Header 5": {
+		"prefix": "h5",
+		"body": [
+			"h5. $1"
+		]
+	},
+	"Header 6": {
+		"prefix": "h6",
+		"body": [
+			"h6. $1"
+		]
+	},
+	"Dash point list 1": {
+		"prefix": "dl1",
+		"body": [
+			"- $1"
+		]
+	},
+	"Dash point list 2": {
+		"prefix": "dl2",
+		"body": [
+			"- $1\n- $2"
+		]
+	},
+	"Dash point list 3": {
+		"prefix": "dl3",
+		"body": [
+			"- $1\n- $2\n- $3"
+		]
+	},
+	"Dash point list 4": {
+		"prefix": "dl4",
+		"body": [
+			"- $1\n- $2\n- $3\n- $4"
+		]
+	},
+	"Bullet point list 1": {
+		"prefix": "bl1",
+		"body": [
+			"* $1"
+		]
+	},
+	"Bullet point list 2": {
+		"prefix": "bl2",
+		"body": [
+			"* $1\n* $2"
+		]
+	},
+	"Bullet point list 3": {
+		"prefix": "bl3",
+		"body": [
+			"* $1\n* $2\n* $3"
+		]
+	},
+	"Bullet point list 4": {
+		"prefix": "bl4",
+		"body": [
+			"* $1\n* $2\n* $3\n* $4"
+		]
+	},
+	"Numbered list 1": {
+		"prefix": "nl1",
+		"body": [
+			"# $1"
+		]
+	},
+	"Numbered list 2": {
+		"prefix": "nl2",
+		"body": [
+			"# $1\n# $2"
+		]
+	},
+	"Numbered list 3": {
+		"prefix": "nl3",
+		"body": [
+			"# $1\n# $2\n# $3"
+		]
+	},
+	"Numbered list 4": {
+		"prefix": "nl4",
+		"body": [
+			"# $1\n# $2\n# $3\n# $4"
+		],
+		"description":"Insert numbered list with four elemets."
+	},
+	"Table": {
+		"prefix": "table",
+		"body": [
+			"||${1:heading 1}||${2:heading 2}||${3:heading 3}||",
+			"|${4:cell A1}|${5:cell A2}|${6:cell A3}|",
+			"|${7:cell B1}|${8:cell B2}|${9:cell B3}|"
+		],
+		"description": "Insert table."
+	},
+	"Code block": {
+		"prefix": "code",
+		"body": [
+			"{code:${1:language}|title=${2:title}|borderStyle=${3:solid}}",
+			"$0",
+			"{code}"
+		],
+		"description":"Insert code block with border style, title and language."
+	},
+	"Picture": {
+		"prefix": "pics",
+		"body": [
+			"!${1:filename.png}|align=${2:alignment},border=${3:1}!"
+		],
+		"description": "Insert picture."
+	},
+	"Macro with body": {
+		"prefix": "mm",
+		"body": [
+			"{$1}$0{${1/\\:.*//}}"
+		],
+		"description": "Insert macro with body."
+	},
+	"Macro": {
+		"prefix": "m",
+		"body": [
+			"{$1}$0"
+		],
+		"description": "Insert simple macro."
+	}
 }
