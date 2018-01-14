@@ -1,3 +1,11 @@
+# Confluence Wiki Markup
+
+## 0.1.0
+
+* add preview action
+* add support for confluence emoticons
+* change language id from: confluence-markup to confluence
+
 ## 0.0.1 - First Release
 
 * convert Textmate bundle to Visual Studio Code format.
