@@ -8,6 +8,17 @@ import { open } from 'fs';
 const EXTENTION_ID = 'denco.confluence-markup';
 const EMOTICON_PATH = '/resources/emoticons/';
 
+function imageUri(searchUri: vscode.Uri, imageLink: string) {
+	let imageUri
+	if (imageLink.match(/^(ht)|(f)tps?:\/\//)) {
+		imageUri = vscode.Uri.parse(imageLink);
+	} else {
+		let extPath = path.dirname(searchUri.fsPath);
+		imageUri = vscode.Uri.file(path.join(extPath, imageLink));
+	}
+	return imageUri;
+}
+
 function emoticonUri(emoticonFile: string) {
 	let extPath = vscode.extensions.getExtension(EXTENTION_ID).extensionPath;
 	let emoticonUri = vscode.Uri.file(path.join(extPath, EMOTICON_PATH, emoticonFile));
@@ -30,7 +41,7 @@ export async function parseMarkup(sourceText: string, sourceUri: vscode.Uri) {
 			tag = tag.replace(/-{3}/gi, '&mdash;');
 			tag = tag.replace(/-{2}/gi, '&ndash;');
 
-			tag = tag.replace(/_([^_]*)_/g, "<em>$1</em>");
+			// tag = tag.replace(/_([^_]*)_/g, "<em>$1</em>");
 			tag = tag.replace(/\+([^\+]*)\+/g, "<u>$1</u>");
 			tag = tag.replace(/\^([^\^]*)\^/g, "<sup>$1</sup>");
 			tag = tag.replace(/~([^~]*)~/g, "<sub>$1</sub>");
@@ -55,6 +66,14 @@ export async function parseMarkup(sourceText: string, sourceUri: vscode.Uri) {
 			tag = tag.replace(/\(!\)/g, '<img alt="(warning)" src="' + emoticonUri('warning.png') + '"/>');
 
 			tag = tag.replace(/\[([^|]*)?\|?([^|]*)\]/g, "<a href='$2'>$1</a>");
+
+			//img
+			let img = /!(.*)!/;
+			let match = tag.match(img);
+			if (match) {
+				tag = '<img src="' + imageUri(sourceUri, match[1]) + '"/>';
+			}
+
 		}
 
 		// code
