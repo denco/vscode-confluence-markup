@@ -1,5 +1,11 @@
 # Confluence Wiki Markup
 
+## 0.1.1
+
+* fix simple link
+* fix keyboard shorcuts, activate only for confluence language id
+* add simple css
+
 ## 0.1.0
 
 * add preview action
