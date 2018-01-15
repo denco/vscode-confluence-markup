@@ -3,10 +3,10 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { open } from 'fs';
 
 const EXTENTION_ID = 'denco.confluence-markup';
 const EMOTICON_PATH = '/resources/emoticons/';
+const CSS_PATH = '/resources/css/';
 
 function imageUri(searchUri: vscode.Uri, imageLink: string) {
 	let imageUri
@@ -25,7 +25,13 @@ function emoticonUri(emoticonFile: string) {
 	return emoticonUri;
 }
 
-export async function parseMarkup(sourceText: string, sourceUri: vscode.Uri) {
+export function cssUri(cssFile: string) {
+	let extPath = vscode.extensions.getExtension(EXTENTION_ID).extensionPath;
+	let cssUri = vscode.Uri.file(path.join(extPath, CSS_PATH, cssFile));
+	return cssUri;
+}
+
+export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	//TODO: use Tokenazer instead of line loop
 
 	var result = '';
@@ -65,7 +71,13 @@ export async function parseMarkup(sourceText: string, sourceUri: vscode.Uri) {
 			tag = tag.replace(/\(x\)/g, '<img alt="(cross)" src="' + emoticonUri('error.png') + '"/>');
 			tag = tag.replace(/\(!\)/g, '<img alt="(warning)" src="' + emoticonUri('warning.png') + '"/>');
 
-			tag = tag.replace(/\[([^|]*)?\|?([^|]*)\]/g, "<a href='$2'>$1</a>");
+			tag = tag.replace(/\[([^|]*)?\|?([^|]*)\]/g, function (m0, m1, m2) {
+				if ((m1.length !== 0) && (m2.length !== 0)) {
+					return "<a href='" + m2 + "'>" + m1 + "</a>";
+				} else {
+					return "<a href='" + m1 + "'>" + m1 + "</a>";
+				}
+			});
 
 			//img
 			let img = /!(.*)!/;
@@ -82,26 +94,26 @@ export async function parseMarkup(sourceText: string, sourceUri: vscode.Uri) {
 		let re = /\{code.*\}/;
 		let match = tag.match(re);
 		if (match) {
-			if (codeTagFlag == 0) {
-			tag = '<pre><code>';
-			codeTagFlag = 1;
+			if (codeTagFlag === 0) {
+				tag = '<pre><code>';
+				codeTagFlag = 1;
 			} else {
 				tag = '</pre></code>';
 				codeTagFlag = 0;
 			}
 		}
 
-		if (codeTagFlag == 0) {
+		if (codeTagFlag === 0) {
 			// lists
 			re = /^([-|\*|#]+)\s(.*)/;
 			match = tag.match(re);
 			if (match) {
-				if (listTag.length == 0) {
+				if (listTag.length === 0) {
 					if (match[1] == '#') {
 						listTag = 'ol';
 					} else {
 						listTag = 'ul';
-						if (match[1] == '-'){
+						if (match[1] == '-') {
 							listTag += ' style="list-style-type: square;"'
 						}
 					}
@@ -112,16 +124,20 @@ export async function parseMarkup(sourceText: string, sourceUri: vscode.Uri) {
 				tag += "<li>" + match[2] + "</li>";
 			}
 
-			if ((tag.length == 0) && (listTag.length != 0)) {
+			if ((tag.length === 0) && (listTag.length !== 0)) {
 				tag += '</' + listTag + '>';
 				listTag = '';
 			}
 
 			tag = tag.replace(/\*([^\*]*)\*/g, "<strong>$1</strong>");
-			// tag = tag.replace(/-(.*)-/g, "<span style='text-decoration: line-through;'>striket-hrough</span>");
-	}
-		console.log("PARSED:" + tag);
-		result += tag + '<br />';
+			tag = tag.replace(/\B-(\w*)-\B/g, "<span style='text-decoration: line-through;'>striket-hrough</span>");
+		}
+		if (tag === '<pre><code>') {
+			result += tag;
+		} else {
+			result += tag + '<br />';
+		}
+		// console.log("PARSED:" + tag);
 	}
 
 	return result;

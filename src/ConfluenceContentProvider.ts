@@ -3,7 +3,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-import { parseMarkup } from './markupParser';
+import { parseMarkup, cssUri } from './markupParser';
 
 export function packConfluenceUri(uri: vscode.Uri) {
 	// Temporarily change the URI scheme
@@ -36,14 +36,16 @@ export class ConfluenceContentProvider implements vscode.TextDocumentContentProv
 
 	public async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
 		let document = await vscode.workspace.openTextDocument(unpackConfluenceUri(uri));
-		let body = await parseMarkup(document.getText(), unpackConfluenceUri(uri));
+		let body = await parseMarkup(unpackConfluenceUri(uri), document.getText());
+		let cssLink = cssUri("confluence.css");
 
 		return `<!DOCTYPE html>
 			<html>
 			<head>
 				<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+				<link rel="stylesheet" href="${cssLink}">
 			</head>
-			<body class="vscode-body">
+			<body>
 				${body}
 			</body>
 			</html>`;
