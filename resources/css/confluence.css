@@ -47,6 +47,11 @@ blockquote {
 	border-left: 5px solid;
 }
 
+table, th, td {
+   border: 1px solid;
+   border-collapse: collapse;
+}
+
 pre > code {
 	display: inline-block;
 	width: 90%;
