@@ -1,5 +1,12 @@
 # Confluence Wiki Markup
 
+## 0.1.2
+
+* fix rendering of tag inside of code macro
+* fix [noformat issue](https://github.com/denco/vscode-confluence-markup/issues/3)
+* fix strikethrough and italic text
+* add table rendering
+
 ## 0.1.1
 
 * fix simple link
