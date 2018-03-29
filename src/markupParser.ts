@@ -35,11 +35,12 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	//TODO: use Tokenazer instead of line loop
 
 	var result = '';
-
 	let listTag = '';
 	let codeTagFlag = 0;
+	let tableFlag = true;
 	for (let entry of sourceText.split(/\n/gi)) {
 		let tag = entry;
+		let html_tag = false;
 
 		if (codeTagFlag == 0) {
 			tag = tag.replace(/h(\d+)\.\s([^\n]+)/g, "<h$1>$2</h$1>");
@@ -71,14 +72,19 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			tag = tag.replace(/\(x\)/g, '<img alt="(cross)" src="' + emoticonUri('error.png') + '"/>');
 			tag = tag.replace(/\(!\)/g, '<img alt="(warning)" src="' + emoticonUri('warning.png') + '"/>');
 
-			tag = tag.replace(/\[([^|]*)?\|?([^|]*)\]/g, function (m0, m1, m2) {
-				if ((m1.length !== 0) && (m2.length !== 0)) {
-					return "<a href='" + m2 + "'>" + m1 + "</a>";
-				} else {
-					return "<a href='" + m1 + "'>" + m1 + "</a>";
-				}
-			});
+			tag = tag.replace(/\\\\/gi, '<br/>');
 
+			let re = /\[([^|]*)?\|?([^|]*)\]/g
+			if (tag.match(re)) {
+				tag = tag.replace(re, function (m0, m1, m2) {
+					if ((m1.length !== 0) && (m2.length !== 0)) {
+						return "<a href='" + m2 + "'>" + m1 + "</a>";
+					} else {
+						return "<a href='" + m1 + "'>" + m1 + "</a>";
+					}
+				});
+				html_tag = true;
+			}
 			//img
 			let img = /!(.*)!/;
 			let match = tag.match(img);
@@ -86,12 +92,31 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				tag = '<img src="' + imageUri(sourceUri, match[1]) + '"/>';
 			}
 
+			//table
+			let tab_th_re = /\s*\|\|.*\|\|$/gi;
+			let tab_td_re = /\s*\|.*\|$/gi;
+			if (tag.match(tab_th_re)) {
+				tag = tag.replace(/^\|\|/, '<th>');
+				tag = tag.replace(/\|\|$/, '</th>');
+				tag = tag.replace(/\|\|/gi, '</th><th>');
+				tag = '<table><tr>' + tag + '</tr>';
+				tableFlag = true;
+			} else if (tag.match(tab_td_re)) {
+				tag = tag.replace(/^\|/, '<td>');
+				tag = tag.replace(/\|$/, '</td>');
+				tag = tag.replace(/\|/gi, '</td><td>');
+				tag = '<tr>' + tag + '</tr>';
+				tableFlag = true;
+			}
 		}
 
 		// code
 		// online code tag
-		tag = tag.replace(/\{code[^\}]*\}(.*)\{code\}/, "<pre><code>$1</code></pre>");
-		let re = /\{code.*\}/;
+		tag = tag.replace(/\{(noformat|code)[^\}]*\}(.*)\{(noformat|code)\}/, function (m0, m1, m2) {
+			return "<pre><code>" + m2.replace(/</gi, '&lt;') + "</code></pre>";
+		});
+
+		let re = /\{[(code)|(noformat)].*\}/;
 		let match = tag.match(re);
 		if (match) {
 			if (codeTagFlag === 0) {
@@ -130,13 +155,26 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			}
 
 			tag = tag.replace(/\*([^\*]*)\*/g, "<strong>$1</strong>");
-			tag = tag.replace(/\B-(\w*)-\B/g, "<span style='text-decoration: line-through;'>striket-hrough</span>");
-		}
-		if (tag === '<pre><code>') {
-			result += tag;
+			if ((! html_tag) && (! tag.match('<img'))) {
+				tag = tag.replace(/-([\w ]*)-/g, "<span style='text-decoration: line-through;'>$1</span>");
+				tag = tag.replace(/_([\w ]*)_/g, "<i>$1</i>");
+			}
 		} else {
-			result += tag + '<br />';
+			if (tag !== '<pre><code>'){
+				tag = tag.replace(/</gi, '&lt;') + '<br />';
+			}
 		}
+
+		if (tag.match(/^s*$/)){
+			tag = '<br />';
+		}
+		//close table
+		if (!tag.match(/<\/tr>$/)){
+			tag = '</table>' + tag;
+			tableFlag = false;
+		}
+		result += tag;
+
 		// console.log("PARSED:" + tag);
 	}
 
