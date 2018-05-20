@@ -1,0 +1,24 @@
+h1. Tables
+
+* multiline table
+||Heading 1||Heading 2||
+|* Item 1\\* Item 2\\* Item 3|# Item 1 \\# Item 2\\# Item 3|
+
+* column heading
+||header c1||header c2||
+|data 1.1|data 1.2|
+|data 2.1|data 2.2|
+
+* row heading
+||header r1|data 1.1|data 1.2
+||header r2|data 2.1|data 2.2
+||header r3|data 3.1|data 3.2
+
+* with column and row heading
+|| ||header c1||header c2
+||header r1|data 1.1|data 1.2|
+||header r2|data 2.1|data 2.2|
+
+* headless
+|data 1.1|data 1.2|
+|data 2.1|data 2.2|
