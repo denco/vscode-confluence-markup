@@ -36,17 +36,18 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
 	var result = '';
 	let listTag = '';
+	let listStyle = '';
 	let codeTagFlag = 0;
-	let tableFlag = true;
+	let tableFlag = false;
+	let listFlag = false;
+	let listArr = [];
+
 	for (let entry of sourceText.split(/\n/gi)) {
 		let tag = entry;
 		let html_tag = false;
 
 		if (codeTagFlag == 0) {
 			tag = tag.replace(/h(\d+)\.\s([^\n]+)/g, "<h$1>$2</h$1>");
-			tag = tag.replace(/-{4,}/gi, '<hr />');
-			tag = tag.replace(/-{3}/gi, '&mdash;');
-			tag = tag.replace(/-{2}/gi, '&ndash;');
 
 			// tag = tag.replace(/_([^_]*)_/g, "<em>$1</em>");
 			tag = tag.replace(/\+([^\+]*)\+/g, "<u>$1</u>");
@@ -92,19 +93,20 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				tag = '<img src="' + imageUri(sourceUri, match[1]) + '"/>';
 			}
 
-			//table
-			let tab_th_re = /\s*\|\|.*\|\|$/gi;
-			let tab_td_re = /\s*\|.*\|$/gi;
-			if (tag.match(tab_th_re)) {
-				tag = tag.replace(/^\|\|/, '<th>');
-				tag = tag.replace(/\|\|$/, '</th>');
-				tag = tag.replace(/\|\|/gi, '</th><th>');
-				tag = '<table><tr>' + tag + '</tr>';
-				tableFlag = true;
-			} else if (tag.match(tab_td_re)) {
+			//Table
+			let tab_th_re = /\s*\|{2}.*$/gi;
+			let tab_td_re = /\s*\|.*$/gi;
+			if (tag.match(tab_th_re) || tag.match(tab_td_re)) {
+				tag = tag.replace(/^\|{2,}/, '\|\|');
+				tag = tag.replace(/^\|{2}/, '<th>');
+				tag = tag.replace(/\|{2}$/, '</th>');
+				tag = tag.replace(/\|{2}/gi, '</th><th>');
 				tag = tag.replace(/^\|/, '<td>');
 				tag = tag.replace(/\|$/, '</td>');
 				tag = tag.replace(/\|/gi, '</td><td>');
+				if (tableFlag == false){
+					tag = '<table>' + tag;
+				}
 				tag = '<tr>' + tag + '</tr>';
 				tableFlag = true;
 			}
@@ -133,29 +135,57 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			re = /^([-|\*|#]+)\s(.*)/;
 			match = tag.match(re);
 			if (match) {
-				if (listTag.length === 0) {
-					if (match[1] == '#') {
-						listTag = 'ol';
-					} else {
-						listTag = 'ul';
-						if (match[1] == '-') {
-							listTag += ' style="list-style-type: square;"'
-						}
+				listFlag = true;
+				listStyle = '';
+				tag = '';
+				if (match[1].match(/#$/)) {
+					listTag = 'ol';
+					// reset ol after 3rd level
+					// add count of non-ol elements for mixed lists
+					if ( (match[1].length + (match[1].match(/[-|\*]/g) || []).length) % 3 === 1) {
+						listStyle = ' class="initial"';
 					}
-					tag = '<' + listTag + '>';
-				} else {
-					tag = '';
+				}
+				if (match[1].match(/[-|\*]$/)) {
+					listTag = 'ul';
+				}
+				if (match[1].match(/-$/)) {
+					listStyle = ' class="alternate"';
+				}
+				if (match[1].length > listArr.length) {
+					tag = '<'+ listTag + listStyle + '>';
+					listArr.push(listTag);
+				}
+				if (match[1].length < listArr.length) {
+					// while (listArr.length > match[1].length) {
+					//     tag += '</' + listArr.pop() + '>'
+					// }
+					tag = '</' + listArr.slice(match[1].length, listArr.length).reverse().join('></') +'>';
+					listArr = listArr.slice(0, match[1].length);
 				}
 				tag += "<li>" + match[2] + "</li>";
 			}
 
-			if ((tag.length === 0) && (listTag.length !== 0)) {
-				tag += '</' + listTag + '>';
-				listTag = '';
+
+			if ((tag.length === 0) && (listArr.length > 0)) {
+			// if ((!listFlag) && (listArr.length > 0)) {
+				tag = '';
+				// do {
+				//     tag += '</' + listArr.pop() + '>'
+				// } while (listArr.length > 0);
+				tag = '</' + listArr.reverse().join('></') + '>'
+				listArr = [];
+				listFlag = false;
 			}
 
+			// hr and dash lines
+			tag = tag.replace(/-{4,}/gi, '<hr />');
+			tag = tag.replace(/-{3}/gi, '&mdash;');
+			tag = tag.replace(/-{2}/gi, '&ndash;');
+			// strong
 			tag = tag.replace(/\*([^\*]*)\*/g, "<strong>$1</strong>");
-			if ((! html_tag) && (! tag.match('<img'))) {
+			// line-through
+			if ((!html_tag) && (!tag.match('<img')) && (!listFlag)) {
 				tag = tag.replace(/-([\w ]*)-/g, "<span style='text-decoration: line-through;'>$1</span>");
 				tag = tag.replace(/_([\w ]*)_/g, "<i>$1</i>");
 			}
@@ -168,11 +198,13 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		if (tag.match(/^s*$/)){
 			tag = '<br />';
 		}
+
 		//close table
-		if (!tag.match(/<\/tr>$/)){
+		if (!tag.match(/<\/tr>$/) && tableFlag) {
 			tag = '</table>' + tag;
 			tableFlag = false;
 		}
+
 		result += tag;
 
 		// console.log("PARSED:" + tag);
