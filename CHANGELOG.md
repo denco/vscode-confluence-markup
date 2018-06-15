@@ -1,5 +1,11 @@
 # Confluence Wiki Markup
 
+## 0.1.3
+
+* fix [nested lists](https://github.com/denco/vscode-confluence-markup/issues/7)
+* fix [headless table](https://github.com/denco/vscode-confluence-markup/issues/5)
+* rendering tables with row headers
+
 ## 0.1.2
 
 * fix rendering of tag inside of code macro
