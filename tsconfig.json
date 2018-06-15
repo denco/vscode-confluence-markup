@@ -8,12 +8,12 @@
 			"es6"
 		],
 		"sourceMap": true,
-		"rootDir": "./src",
+		"rootDir": "./",
 		// "strict": true,
 	},
 	"exclude": [
 		"node_modules",
 		".vscode-test",
-		"test"
+		// "test"
 	]
 }
