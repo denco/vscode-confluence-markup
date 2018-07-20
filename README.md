@@ -26,14 +26,15 @@ Confluence Documentation
 Language Identifier (for use in VSCode settings)
 
 * `confluence`
-* Example usage:
+* **Example** usage:
 ```json
 "files.associations": {
   "*.md": "confluence"
 }
 ```
 * Above usage will ensure VSCode does not reformat your Confluence Markup file to the standard Markdown syntax.
- * Optionally, files being written in Confluence Markup could be saved with their own file extension.
+
+* **Optionally**, files being written in Confluence Markup could be saved with their own file extension.
  * Example usage:
  ```json
 "files.associations": {
