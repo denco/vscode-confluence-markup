@@ -26,22 +26,28 @@ Confluence Documentation
 Language Identifier (for use in VSCode settings)
 
 * `confluence`
-* **Example** usage:
+* **Example** usages:
 ```json
 "files.associations": {
-  "*.md": "confluence"
+  "*.confluence": "confluence"
 }
 ```
-* Above usage will ensure VSCode does not reformat your Confluence Markup file to the standard Markdown syntax.
-
-* **Optionally**, files being written in Confluence Markup could be saved with their own file extension.
- * Example usage:
- ```json
+```json
+"files.associations": {
+  "*.wiki": "confluence"
+}
+```
+```json
+"files.associations": {
+  "*.markup": "confluence"
+}
+```
+```json
 "files.associations": {
   "*.mu": "confluence"
 }
 ```
- * This uage will ensure any files saved with the `.mu` file extension are saved with Confluence Markup formatting, while not interfering with the `.md` extension formatting.
+ * This uage will ensure any files saved with any of the above file extensions are saved with Confluence Markup formatting.
 
 Originally syntax from the [Confluence® Textmate Bundle](https://github.com/alkemist/Confluence.tmbundle).
 
