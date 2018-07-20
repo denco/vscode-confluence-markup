@@ -23,6 +23,32 @@ Confluence Documentation
 * [Wiki MarkUp](https://confluence.atlassian.com/doc/confluence-wiki-markup-251003035.html)
 * [Storage Format](https://confluence.atlassian.com/doc/confluence-storage-format-790796544.html)
 
+Language Identifier (for use in VSCode settings)
+
+* `confluence`
+* **Example** usages:
+```json
+"files.associations": {
+  "*.confluence": "confluence"
+}
+```
+```json
+"files.associations": {
+  "*.wiki": "confluence"
+}
+```
+```json
+"files.associations": {
+  "*.markup": "confluence"
+}
+```
+```json
+"files.associations": {
+  "*.mu": "confluence"
+}
+```
+ * This uage will ensure any files saved with any of the above file extensions are saved with Confluence Markup formatting.
+
 Originally syntax from the [Confluence® Textmate Bundle](https://github.com/alkemist/Confluence.tmbundle).
 
 ----
