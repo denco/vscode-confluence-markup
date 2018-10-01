@@ -1,0 +1,3 @@
+* text=auto
+/src/test/testfiles/nix/**/*.confluence	text eol=lf
+/src/test/testfiles/win/**/*.confluence	text eol=crlf
