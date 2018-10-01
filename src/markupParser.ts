@@ -5,8 +5,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 const EXTENTION_ID = 'denco.confluence-markup';
-const EMOTICON_PATH = '/resources/emoticons/';
-const CSS_PATH = '/resources/css/';
+const EMOTICON_PATH = '/media/emoticons/';
+const CSS_PATH = '/media/css/';
 
 function imageUri(searchUri: vscode.Uri, imageLink: string) {
 	let imageUri
@@ -19,16 +19,21 @@ function imageUri(searchUri: vscode.Uri, imageLink: string) {
 	return imageUri;
 }
 
+function getUri(filepath: string, filename: string){
+	let extension = vscode.extensions.getExtension(EXTENTION_ID);
+	if (extension) {
+		let extPath = extension.extensionPath;
+		let uri = vscode.Uri.file(path.join(extPath, filepath, filename));
+		return uri;
+	}
+}
+
 function emoticonUri(emoticonFile: string) {
-	let extPath = vscode.extensions.getExtension(EXTENTION_ID).extensionPath;
-	let emoticonUri = vscode.Uri.file(path.join(extPath, EMOTICON_PATH, emoticonFile));
-	return emoticonUri;
+	return getUri(EMOTICON_PATH, emoticonFile);
 }
 
 export function cssUri(cssFile: string) {
-	let extPath = vscode.extensions.getExtension(EXTENTION_ID).extensionPath;
-	let cssUri = vscode.Uri.file(path.join(extPath, CSS_PATH, cssFile));
-	return cssUri;
+	return getUri(CSS_PATH, cssFile);
 }
 
 export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
@@ -40,9 +45,9 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	let codeTagFlag = 0;
 	let tableFlag = false;
 	let listFlag = false;
-	let listArr = [];
+	let listArr: string[] = [];
 
-	for (let entry of sourceText.split(/\n/gi)) {
+	for (let entry of sourceText.split(/\r?\n/gi)) {
 		let tag = entry;
 		let html_tag = false;
 
@@ -157,9 +162,6 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 					listArr.push(listTag);
 				}
 				if (match[1].length < listArr.length) {
-					// while (listArr.length > match[1].length) {
-					//     tag += '</' + listArr.pop() + '>'
-					// }
 					tag = '</' + listArr.slice(match[1].length, listArr.length).reverse().join('></') +'>';
 					listArr = listArr.slice(0, match[1].length);
 				}
@@ -168,11 +170,7 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
 
 			if ((tag.length === 0) && (listArr.length > 0)) {
-			// if ((!listFlag) && (listArr.length > 0)) {
 				tag = '';
-				// do {
-				//     tag += '</' + listArr.pop() + '>'
-				// } while (listArr.length > 0);
 				tag = '</' + listArr.reverse().join('></') + '>'
 				listArr = [];
 				listFlag = false;
@@ -206,8 +204,6 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		}
 
 		result += tag;
-
-		// console.log("PARSED:" + tag);
 	}
 
 	return result;
