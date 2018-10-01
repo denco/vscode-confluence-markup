@@ -49,8 +49,11 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	vscode.workspace.onDidChangeTextDocument(e => {
-		if (e.document === vscode.window.activeTextEditor.document) {
-			contentProvider.update(packConfluenceUri(e.document.uri));
+		let editor = vscode.window.activeTextEditor;
+		if (editor) {
+			if (e.document === editor.document) {
+				contentProvider.update(packConfluenceUri(e.document.uri));
+			}
 		}
 	});
 
