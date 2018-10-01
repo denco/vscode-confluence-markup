@@ -1,0 +1,95 @@
+h1. Lists
+
+h2. Ordered
+
+h3. Simple
+
+# one
+# two
+# three
+# four
+
+h3. Nested
+
+# one
+# two
+## nested one
+## nested two
+## nested three
+### sub sub
+### sub sub
+#### sub s4
+##### sub s5
+###### sub s6
+####### sub s7
+# three
+
+h2. Unordered
+
+h3. Simple
+
+h4. "squared"
+
+- one
+- two
+- three
+- four
+
+h4. "dotted"
+
+* one
+* two
+* three
+* four
+
+h3. Nested
+
+h4. "squared"
+
+- one
+- two
+-- nested one
+-- nested two
+-- nested three
+--- sub sub
+--- sub sub
+---- sub s4
+----- sub s5
+------ sub s6
+------- sub s7
+- three
+
+
+h4. "dotted"
+
+* one
+* two
+** nested one
+** nested two
+** nested three
+*** sub sub
+*** sub sub
+**** sub s4
+***** sub s5
+****** sub s6
+******* sub s7
+* three
+
+h2. Mixed
+
+h3. Nested
+
+# one
+# two
+#- nested one
+#- nested two
+#- nested three
+#-# sub sub
+#-# sub sub
+#--- sub s4
+#---# sub s5.1
+#---# sub s5.2
+#---#- sub s6
+#---#-# sub s7.1
+#---#-# sub s7.2
+# three

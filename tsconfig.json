@@ -8,8 +8,8 @@
 			"es6"
 		],
 		"sourceMap": true,
-		"rootDir": "./",
-		// "strict": true,
+		"rootDir": "src",
+		"strict": true,
 	},
 	"exclude": [
 		"node_modules",
