@@ -1,5 +1,10 @@
 # Confluence Wiki Markup
 
+## 0.1.4
+* fix [List indenting @win](https://github.com/denco/vscode-confluence-markup/issues/6)
+* restructure
+* win/nix test files
+
 ## 0.1.3
 
 * fix [nested lists](https://github.com/denco/vscode-confluence-markup/issues/7)
