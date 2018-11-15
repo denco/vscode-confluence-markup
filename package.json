@@ -1,7 +1,7 @@
 {
 	"name": "confluence-markup",
 	"displayName": "Confluence markup",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"publisher": "denco",
 	"description": "Confluence markup language support for Visual Studio Code",
 	"keywords": [
@@ -74,13 +74,13 @@
 				"command": "confluence.showPreview",
 				"key": "ctrl+shift+v",
 				"mac": "cmd+shift+v",
-				"when": "resourceLangId == confluence"
+				"when": "editorLangId == confluence"
 			},
 			{
 				"command": "confluence.showPreviewToSide",
 				"key": "ctrl+k v",
 				"mac": "cmd+k v",
-				"when": "resourceLangId == confluence"
+				"when": "editorLangId == confluence"
 			}
 		],
 		"commands": [
@@ -99,11 +99,11 @@
 			"editor/title": [
 				{
 					"command": "confluence.showPreview",
-					"when": "resourceLangId == confluence"
+					"when": "editorLangId == confluence"
 				},
 				{
 					"command": "confluence.showPreviewToSide",
-					"when": "resourceLangId == confluence"
+					"when": "editorLangId == confluence"
 				}
 			]
 		}
