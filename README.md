@@ -7,7 +7,15 @@
 
 Adds syntax highlighting, snippets and preview for Confluence® Wiki files in Visual Studio Code.
 
-Adds Preview for Confluence Markup while editing them in VSCode
+Preview for Confluence Markup while editing them in VSCode
+
+LanguageID: `confluence`
+
+Defaulft supported file extentions:
+- `.confluence`
+- `.wiki`
+- `.jira`
+- `.markup`
 
 The extension can be activated in two ways
 
