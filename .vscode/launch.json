@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"configurations": [
 		{
-			"name": "Extension",
+			"name": "Debug extension Extension",
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
@@ -15,6 +15,22 @@
 			"outFiles": [
 				"out"
 			],
+			"preLaunchTask": "npm: watch"
+		},
+		{
+			"name": "Debug extension OSS",
+			"type": "extensionHost",
+			"request": "launch",
+			// path to VSCode executable
+			"runtimeExecutable": "${execPath}",
+			"args": [
+				"/usr/lib/code/",
+				"--extensionDevelopmentPath=${workspaceRoot}",
+				"${workspaceRoot}/src/test/testfiles/",
+				],
+			"stopOnEntry": false,
+			"sourceMaps": true,
+			"outFiles": ["${workspaceRoot}/out"],
 			"preLaunchTask": "npm: watch"
 		},
 		{
