@@ -30,7 +30,7 @@
 	"license": "MIT",
 	"homepage": "https://github.com/denco/vscode-confluence-markup/blob/master/README.md",
 	"engines": {
-		"vscode": "^1.20.0"
+		"vscode": "^1.25.0"
 	},
 	"activationEvents": [
 		"onCommand:confluence.showPreview",
@@ -46,11 +46,13 @@
 					"Confluence",
 					"markup",
 					"wiki",
+					"jira",
 					"Confluence Markup"
 				],
 				"extensions": [
 					".confluence",
 					".wiki",
+					".jira",
 					".markup"
 				],
 				"configuration": "./language-configuration.json"
@@ -113,16 +115,19 @@
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "npm run compile && node ./node_modules/vscode/bin/test"
+		"test": "npm run compile && node ./node_modules/vscode/bin/test",
+		"package": "./node_modules/.bin/vsce package",
+		"clean": "rm -rfv ./out",
+		"clean-all": "rm ./confluence-markup*.vsix; rm -rf ./.vscode-test; rm -rfv ./out; rm -rfv ./node_modules"
 	},
 	"devDependencies": {
-		"@types/mocha": "^5.2.5",
-		"@types/node": "^10.10.1",
-		"eslint": "^5.6.0",
-		"tslint": "^5.11.0",
-		"typescript": "^3.0.3",
-		"vsce": "^1.51.0",
-		"vscode": "^1.1.21"
+		"@types/mocha": "^5.2.6",
+		"@types/node": "^11.13.9",
+		"eslint": "^5.16.0",
+		"tslint": "^5.16.0",
+		"typescript": "^3.3.0",
+		"vsce": "^1.60.0",
+		"vscode": "^1.1.23"
 	},
 	"__metadata": {
 		"publisherDisplayName": "denco"
