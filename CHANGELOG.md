@@ -1,5 +1,11 @@
 # Confluence Wiki Markup
 
+## 0.1.5
+* use webview api for rendering in vscode 1.33.x
+* refactor confluence snippets
+* new logo
+* preview unsaved files
+
 ## 0.1.4
 * fix [List indenting @win](https://github.com/denco/vscode-confluence-markup/issues/6)
 * restructure

@@ -13,17 +13,19 @@ function imageUri(searchUri: vscode.Uri, imageLink: string) {
 	if (imageLink.match(/^(ht)|(f)tps?:\/\//)) {
 		imageUri = vscode.Uri.parse(imageLink);
 	} else {
-		let extPath = path.dirname(searchUri.fsPath);
-		imageUri = vscode.Uri.file(path.join(extPath, imageLink));
+		imageUri = vscode.Uri.file(path.join(searchUri.fsPath, imageLink)).with({ scheme: 'vscode-resource' });
 	}
 	return imageUri;
 }
 
-function getUri(filepath: string, filename: string){
+function getUri(filepath: string, filename: string) {
 	let extension = vscode.extensions.getExtension(EXTENTION_ID);
 	if (extension) {
 		let extPath = extension.extensionPath;
-		let uri = vscode.Uri.file(path.join(extPath, filepath, filename));
+
+		// set special chema for resource:
+		// https://code.visualstudio.com/api/extension-guides/webview#loading-local-content
+		let uri = vscode.Uri.file(path.join(extPath, filepath, filename)).with({ scheme: 'vscode-resource' });
 		return uri;
 	}
 }
@@ -36,7 +38,7 @@ export function cssUri(cssFile: string) {
 	return getUri(CSS_PATH, cssFile);
 }
 
-export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
+export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	//TODO: use Tokenazer instead of line loop
 
 	var result = '';
@@ -92,7 +94,7 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				html_tag = true;
 			}
 			//img
-			let img = /!(.*)!/;
+			let img = /!([^|]*)\|?.*!/;
 			let match = tag.match(img);
 			if (match) {
 				tag = '<img src="' + imageUri(sourceUri, match[1]) + '"/>';
@@ -109,7 +111,7 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				tag = tag.replace(/^\|/, '<td>');
 				tag = tag.replace(/\|$/, '</td>');
 				tag = tag.replace(/\|/gi, '</td><td>');
-				if (tableFlag == false){
+				if (tableFlag == false) {
 					tag = '<table>' + tag;
 				}
 				tag = '<tr>' + tag + '</tr>';
@@ -147,7 +149,7 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 					listTag = 'ol';
 					// reset ol after 3rd level
 					// add count of non-ol elements for mixed lists
-					if ( (match[1].length + (match[1].match(/[-|\*]/g) || []).length) % 3 === 1) {
+					if ((match[1].length + (match[1].match(/[-|\*]/g) || []).length) % 3 === 1) {
 						listStyle = ' class="initial"';
 					}
 				}
@@ -158,11 +160,11 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 					listStyle = ' class="alternate"';
 				}
 				if (match[1].length > listArr.length) {
-					tag = '<'+ listTag + listStyle + '>';
+					tag = '<' + listTag + listStyle + '>';
 					listArr.push(listTag);
 				}
 				if (match[1].length < listArr.length) {
-					tag = '</' + listArr.slice(match[1].length, listArr.length).reverse().join('></') +'>';
+					tag = '</' + listArr.slice(match[1].length, listArr.length).reverse().join('></') + '>';
 					listArr = listArr.slice(0, match[1].length);
 				}
 				tag += "<li>" + match[2] + "</li>";
@@ -188,12 +190,12 @@ export async function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				tag = tag.replace(/_([\w ]*)_/g, "<i>$1</i>");
 			}
 		} else {
-			if (tag !== '<pre><code>'){
+			if (tag !== '<pre><code>') {
 				tag = tag.replace(/</gi, '&lt;') + '<br />';
 			}
 		}
 
-		if (tag.match(/^s*$/)){
+		if (tag.match(/^s*$/)) {
 			tag = '<br />';
 		}
 
