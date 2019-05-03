@@ -11,7 +11,7 @@ Preview for Confluence Markup while editing them in VSCode
 
 LanguageID: `confluence`
 
-Supported file extentions:
+Defaulft supported file extentions:
 - `.confluence`
 - `.wiki`
 - `.jira`
