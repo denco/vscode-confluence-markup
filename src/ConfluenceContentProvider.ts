@@ -32,7 +32,12 @@ export class ConfluenceContentProvider implements vscode.TextDocumentContentProv
 	private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
 	private _waiting: boolean = false;
 
-	constructor(private context: vscode.ExtensionContext) { }
+	constructor(private context: vscode.ExtensionContext) {
+	}
+
+	dispose() {
+		this._onDidChange.dispose();
+	}
 
 	public async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
 		let document = await vscode.workspace.openTextDocument(unpackConfluenceUri(uri));
