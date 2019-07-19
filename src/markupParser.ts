@@ -205,7 +205,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			tableFlag = false;
 		}
 
-		result += tag;
+		result += "<p>" + tag + "</p>";
 	}
 
 	return result;
