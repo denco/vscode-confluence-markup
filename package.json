@@ -39,6 +39,16 @@
 	],
 	"main": "./out/extension",
 	"contributes": {
+		"configuration": {
+			"title": "Confluence Markup",
+			"properties": {
+				"confluenceMarkup.monospaceFont": {
+					"type": "string",
+					"default": "Menlo, Monaco, Consolas, monospace",
+					"description": "This is the value passed to the font-family CSS attribute for code in the preview. Provide it with a monospace font of your choice!"
+				}
+			}
+		},
 		"languages": [
 			{
 				"id": "confluence",
