@@ -196,10 +196,6 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			}
 		}
 
-		// if (tag.match(/^s*$/)) {
-		// 	tag = '<br />';
-		// }
-
 		//close table
 		if (!tag.match(/<\/tr>$/) && tableFlag) {
 			tag = '</table>' + tag;
