@@ -6,6 +6,21 @@ import * as path from 'path';
 import { parseMarkup, cssUri } from '../markupParser';
 import * as fs from 'fs';
 
+const TEST_FILES_ROOT = path.join(__dirname, "../../src/test/testfiles");
+const FIXTURES_ROOT = path.join(__dirname, "../../src/test/resources/fixtures");
+
+function walkdirSync(dir: string): string[] {
+    return fs.readdirSync(dir).reduce(function (result: string[], file) {
+        let name = path.join(dir, file);
+        let isDir = fs.statSync(name).isDirectory();
+        return result.concat(isDir ? walkdirSync(name) : [name]);
+    }, []);
+}
+
+function isConfluence(element: string, index: number, array: string[]): boolean {
+    return (element.endsWith(".confluence"));
+}
+
 // Defines a Mocha test suite to group tests of similar kind together
 suite("markupParser Tests", function () {
 
@@ -20,10 +35,26 @@ suite("markupParser Tests", function () {
         }
     });
 
-    test("Test render headers", function () {
-        const testFile = vscode.Uri.file(path.join(__dirname, "../../src/test/testfiles/nix/scoped/headings.confluence"));
-        const expected = '<p><h1>Heading 1</h1></p><p><h2>Heading 2</h2></p><p><h3>Heading 3</h3></p><p><h4>Heading 4</h4></p><p><h5>Heading 5</h5></p><p><h6>Heading 6</h6></p>'
-        const content = fs.readFileSync(testFile.fsPath, 'utf8');
-        assert.equal(parseMarkup(testFile, content), expected);
+    walkdirSync(TEST_FILES_ROOT).filter(isConfluence).forEach(fullFilePath => {
+        const fileName = path.basename(fullFilePath);
+        const dirName = path.dirname(fullFilePath);
+
+        let typeDir = path.basename(dirName);
+        let scopedDir = ''
+        if (dirName.endsWith('scoped')) {
+            scopedDir = path.basename(dirName);
+            typeDir = path.basename(path.dirname(dirName));
+        }
+
+        const testName = "Render testfile: " + path.join(typeDir, scopedDir, fileName)
+        test(testName, function () {
+            const fixtureFile = path.join(FIXTURES_ROOT, scopedDir, fileName.replace('confluence', 'html'));
+            const fixtureContent = fs.readFileSync(fixtureFile, 'utf8');
+
+            const testFileUri = vscode.Uri.file(fullFilePath);
+            const confluenceContent = fs.readFileSync(testFileUri.fsPath, 'utf8');
+
+            assert.equal(parseMarkup(testFileUri, confluenceContent), fixtureContent);
+        });
     });
 });
