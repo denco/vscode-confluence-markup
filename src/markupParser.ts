@@ -45,7 +45,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	var result = '';
 	let listTag = '';
 	let listStyle = '';
-	let codeTagFlag = 0;
+	let codeTagFlag = false;
 	let tableFlag = false;
 	let listFlag = false;
 	let listArr: string[] = [];
@@ -58,7 +58,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			continue;
 		}
 
-		if (codeTagFlag == 0) {
+		if (! codeTagFlag) {
 			tag = tag.replace(/h(\d+)\.\s([^\n]+)/g, "<h$1>$2</h$1>");
 
 			// tag = tag.replace(/_([^_]*)_/g, "<em>$1</em>");
@@ -133,16 +133,16 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		let re = /\{[(code)|(noformat)].*\}/;
 		let match = tag.match(re);
 		if (match) {
-			if (codeTagFlag === 0) {
+			if (! codeTagFlag) {
 				tag = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`;
-				codeTagFlag = 1;
+				codeTagFlag = true;
 			} else {
 				tag = '</pre></code>';
-				codeTagFlag = 0;
+				codeTagFlag = false;
 			}
 		}
 
-		if (codeTagFlag === 0) {
+		if (! codeTagFlag) {
 			// lists
 			re = /^([-|\*|#]+)\s(.*)/;
 			match = tag.match(re);
