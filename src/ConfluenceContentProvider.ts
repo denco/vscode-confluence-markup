@@ -44,10 +44,14 @@ export class ConfluenceContentProvider implements vscode.TextDocumentContentProv
 		let body = await parseMarkup(unpackConfluenceUri(uri), document.getText());
 		let cssLink = cssUri("confluence.css");
 
+
+		// Security
+		// https://code.visualstudio.com/api/extension-guides/webview#security
 		return `<!DOCTYPE html>
 			<html>
 			<head>
 				<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https:; script-src vscode-resource:; style-src vscode-resource:;"/>
 				<link rel="stylesheet" href="${cssLink}">
 			</head>
 			<body>
