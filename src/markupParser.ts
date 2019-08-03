@@ -7,6 +7,7 @@ import * as path from 'path';
 const EXTENTION_ID = 'denco.confluence-markup';
 const EMOTICON_PATH = '/media/emoticons/';
 const CSS_PATH = '/media/css/';
+const MONOSPACE_FONT_FAMILY = vscode.workspace.getConfiguration("confluenceMarkup").monospaceFont;
 
 function imageUri(searchUri: vscode.Uri, imageLink: string) {
 	let imageUri
@@ -39,7 +40,7 @@ export function cssUri(cssFile: string) {
 }
 
 export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
-	//TODO: use Tokenazer instead of line loop
+	//TODO: use Tokenizer instead of line loop
 
 	var result = '';
 	let listTag = '';
@@ -53,6 +54,10 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		let tag = entry;
 		let html_tag = false;
 
+		if (tag.length === 0 ) {
+			continue;
+		}
+
 		if (codeTagFlag == 0) {
 			tag = tag.replace(/h(\d+)\.\s([^\n]+)/g, "<h$1>$2</h$1>");
 
@@ -60,7 +65,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			tag = tag.replace(/\+([^\+]*)\+/g, "<u>$1</u>");
 			tag = tag.replace(/\^([^\^]*)\^/g, "<sup>$1</sup>");
 			tag = tag.replace(/~([^~]*)~/g, "<sub>$1</sub>");
-			tag = tag.replace(/\{{2}(.*)\}{2}/g, "<code>$1</code>");
+			tag = tag.replace(/\{{2}(.*)\}{2}/g, `<code style='font-family: ${MONOSPACE_FONT_FAMILY}'>$1</code>`);
 			tag = tag.replace(/\?{2}(.*)\?{2}/g, "<cite>$1</cite>");
 			tag = tag.replace(/\{color:(\w+)\}(.*)\{color\}/g, "<span style='color:$1;'>$2</span>");
 
@@ -122,14 +127,14 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		// code
 		// online code tag
 		tag = tag.replace(/\{(noformat|code)[^\}]*\}(.*)\{(noformat|code)\}/, function (m0, m1, m2) {
-			return "<pre><code>" + m2.replace(/</gi, '&lt;') + "</code></pre>";
+			return `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>${m2.replace(/</gi, '&lt;')}</code></pre>`;
 		});
 
 		let re = /\{[(code)|(noformat)].*\}/;
 		let match = tag.match(re);
 		if (match) {
 			if (codeTagFlag === 0) {
-				tag = '<pre><code>';
+				tag = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`;
 				codeTagFlag = 1;
 			} else {
 				tag = '</pre></code>';
@@ -190,13 +195,9 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				tag = tag.replace(/_([\w ]*)_/g, "<i>$1</i>");
 			}
 		} else {
-			if (tag !== '<pre><code>') {
+			if (tag !== `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`) {
 				tag = tag.replace(/</gi, '&lt;') + '<br />';
 			}
-		}
-
-		if (tag.match(/^s*$/)) {
-			tag = '<br />';
 		}
 
 		//close table
@@ -205,7 +206,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			tableFlag = false;
 		}
 
-		result += tag;
+		result += "<p>" + tag + "</p>";
 	}
 
 	return result;
