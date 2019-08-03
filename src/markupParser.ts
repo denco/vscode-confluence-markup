@@ -40,7 +40,7 @@ export function cssUri(cssFile: string) {
 }
 
 export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
-	//TODO: use Tokenazer instead of line loop
+	//TODO: use Tokenizer instead of line loop
 
 	var result = '';
 	let listTag = '';
@@ -53,6 +53,10 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	for (let entry of sourceText.split(/\r?\n/gi)) {
 		let tag = entry;
 		let html_tag = false;
+
+		if (tag.length === 0 ) {
+			continue;
+		}
 
 		if (codeTagFlag == 0) {
 			tag = tag.replace(/h(\d+)\.\s([^\n]+)/g, "<h$1>$2</h$1>");
