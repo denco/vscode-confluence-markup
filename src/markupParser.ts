@@ -54,7 +54,11 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		let tag = entry;
 		let html_tag = false;
 
-		if (tag.length === 0 ) {
+		if ((tag.length === 0 )
+			&& (! listFlag)
+			&& (! tableFlag)
+			&& (! codeTagFlag)
+			) {
 			continue;
 		}
 
