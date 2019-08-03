@@ -1,5 +1,13 @@
 # Confluence Wiki Markup
 
+## 0.1.6
+* fix using css and render of emoticons rendering `Content-Security-Policy`
+* skip render empty lines
+* extend documentation
+* merge [Improvement to CSS + Ability to Change Monospace Font for Preview](https://github.com/denco/vscode-confluence-markup/pull/14), thanks to [macintacos](https://github.com/macintacos) for contributing:
+  * Add configuration property: `confluenceMarkup.monospaceFont` for monospace font, default: `Menlo, Monaco, Consolas, monospace`
+  * wrap all tags with paragraf
+
 ## 0.1.5
 * use webview api for rendering in vscode 1.33.x
 * refactor confluence snippets
