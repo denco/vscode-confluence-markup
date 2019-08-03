@@ -1,7 +1,7 @@
 {
 	"name": "confluence-markup",
 	"displayName": "Confluence markup",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"publisher": "denco",
 	"description": "Confluence markup language support for Visual Studio Code",
 	"keywords": [
@@ -39,6 +39,16 @@
 	],
 	"main": "./out/extension",
 	"contributes": {
+		"configuration": {
+			"title": "Confluence Markup",
+			"properties": {
+				"confluenceMarkup.monospaceFont": {
+					"type": "string",
+					"default": "Menlo, Monaco, Consolas, monospace",
+					"description": "This is the value passed to the font-family CSS attribute for code in the preview. Provide it with a monospace font of your choice!"
+				}
+			}
+		},
 		"languages": [
 			{
 				"id": "confluence",
@@ -126,7 +136,7 @@
 		"eslint": "^5.16.0",
 		"tslint": "^5.16.0",
 		"typescript": "^3.3.0",
-		"vsce": "^1.60.0",
+		"vsce": "^1.66.0",
 		"vscode": "^1.1.23"
 	},
 	"__metadata": {
