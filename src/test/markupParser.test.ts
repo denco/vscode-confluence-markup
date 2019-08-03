@@ -22,7 +22,7 @@ suite("markupParser Tests", function () {
 
     test("Test render headers", function () {
         const testFile = vscode.Uri.file(path.join(__dirname, "../../src/test/testfiles/nix/scoped/headings.confluence"));
-        const expected = '<h1>Heading 1</h1><br /><h2>Heading 2</h2><br /><h3>Heading 3</h3><br /><h4>Heading 4</h4><br /><h5>Heading 5</h5><br /><h6>Heading 6</h6><br />'
+        const expected = '<p><h1>Heading 1</h1></p><p><h2>Heading 2</h2></p><p><h3>Heading 3</h3></p><p><h4>Heading 4</h4></p><p><h5>Heading 5</h5></p><p><h6>Heading 6</h6></p>'
         const content = fs.readFileSync(testFile.fsPath, 'utf8');
         assert.equal(parseMarkup(testFile, content), expected);
     });
