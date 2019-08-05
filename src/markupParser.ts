@@ -45,7 +45,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	var result = '';
 	let listTag = '';
 	let listStyle = '';
-	let codeTagFlag = 0;
+	let codeTagFlag = false;
 	let tableFlag = false;
 	let listFlag = false;
 	let listArr: string[] = [];
@@ -54,11 +54,15 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		let tag = entry;
 		let html_tag = false;
 
-		if (tag.length === 0 ) {
+		if ((tag.length === 0 )
+			&& (! listFlag)
+			&& (! tableFlag)
+			&& (! codeTagFlag)
+			) {
 			continue;
 		}
 
-		if (codeTagFlag == 0) {
+		if (! codeTagFlag) {
 			tag = tag.replace(/h(\d+)\.\s([^\n]+)/g, "<h$1>$2</h$1>");
 
 			// tag = tag.replace(/_([^_]*)_/g, "<em>$1</em>");
@@ -75,14 +79,14 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
 			tag = tag.replace(/:\)/g, '<img alt="(smile)" src="' + emoticonUri('smile.png') + '"/>');
 			tag = tag.replace(/:\(/g, '<img alt="(sad)" src="' + emoticonUri('sad.png') + '"/>');
-			tag = tag.replace(/:P/g, '<img alt="(cheeky)" src="' + emoticonUri('tongue.png') + '"/>');
+			tag = tag.replace(/:P/g, '<img alt="(cheeky)" src="' + emoticonUri('cheeky.png') + '"/>');
 			tag = tag.replace(/:D/g, '<img alt="(laugh)" src="' + emoticonUri('biggrin.png') + '"/>');
 			tag = tag.replace(/;\)/g, '<img alt="(wink)" src="' + emoticonUri('wink.png') + '"/>');
-			tag = tag.replace(/\(y\)/g, '<img alt="(thumbs-up)" src="' + emoticonUri('thumbs_up.png') + '"/>');
-			tag = tag.replace(/\(n\)/g, '<img alt="(thumbs-down)" src="' + emoticonUri('thumbs_down.png') + '"/>');
+			tag = tag.replace(/\(y\)/g, '<img alt="(thumbs-up)" src="' + emoticonUri('thumbs-up.png') + '"/>');
+			tag = tag.replace(/\(n\)/g, '<img alt="(thumbs-down)" src="' + emoticonUri('thumbs-down.png') + '"/>');
 			tag = tag.replace(/\(i\)/g, '<img alt="(information)" src="' + emoticonUri('information.png') + '"/>');
-			tag = tag.replace(/\(\/\)/g, '<img alt="(tick)" src="' + emoticonUri('check.png') + '"/>');
-			tag = tag.replace(/\(x\)/g, '<img alt="(cross)" src="' + emoticonUri('error.png') + '"/>');
+			tag = tag.replace(/\(\/\)/g, '<img alt="(tick)" src="' + emoticonUri('tick.png') + '"/>');
+			tag = tag.replace(/\(x\)/g, '<img alt="(cross)" src="' + emoticonUri('cross.png') + '"/>');
 			tag = tag.replace(/\(!\)/g, '<img alt="(warning)" src="' + emoticonUri('warning.png') + '"/>');
 
 			tag = tag.replace(/\\\\/gi, '<br/>');
@@ -133,16 +137,16 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		let re = /\{[(code)|(noformat)].*\}/;
 		let match = tag.match(re);
 		if (match) {
-			if (codeTagFlag === 0) {
+			if (! codeTagFlag) {
 				tag = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`;
-				codeTagFlag = 1;
+				codeTagFlag = true;
 			} else {
 				tag = '</pre></code>';
-				codeTagFlag = 0;
+				codeTagFlag = false;
 			}
 		}
 
-		if (codeTagFlag === 0) {
+		if (! codeTagFlag) {
 			// lists
 			re = /^([-|\*|#]+)\s(.*)/;
 			match = tag.match(re);

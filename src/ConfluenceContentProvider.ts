@@ -51,7 +51,7 @@ export class ConfluenceContentProvider implements vscode.TextDocumentContentProv
 			<html>
 			<head>
 				<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https:; script-src vscode-resource:; style-src vscode-resource:;"/>
+				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; img-src vscode-resource: https:; script-src vscode-resource:; style-src vscode-resource:;"/>
 				<link rel="stylesheet" href="${cssLink}">
 			</head>
 			<body>
