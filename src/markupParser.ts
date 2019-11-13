@@ -195,8 +195,8 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			tag = tag.replace(/\*([^\*]*)\*/g, "<strong>$1</strong>");
 			// line-through
 			if ((!html_tag) && (!tag.match('<img')) && (!listFlag)) {
-				tag = tag.replace(/-([\w ]*)-/g, "<span style='text-decoration: line-through;'>$1</span>");
-				tag = tag.replace(/_([\w ]*)_/g, "<i>$1</i>");
+				tag = tag.replace(/\B-([^-]*)-\B/g, " <span style='text-decoration: line-through;'>$1</span> ");
+				tag = tag.replace(/_([^_]*)_/g, "<i>$1</i>");
 			}
 		} else {
 			if (tag !== `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`) {
