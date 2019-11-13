@@ -132,12 +132,12 @@
 	},
 	"devDependencies": {
 		"@types/mocha": "^5.2.7",
-		"@types/node": "^11.13.9",
-		"eslint": "^5.16.0",
+		"@types/node": "^12.12.7",
 		"tslint": "^5.18.0",
 		"typescript": "^3.5.3",
 		"vsce": "^1.66.0",
-		"vscode": "^1.1.36"
+		"vscode": "^1.1.36",
+		"html-formatter": "^0.1.9"
 	},
 	"__metadata": {
 		"publisherDisplayName": "denco"
