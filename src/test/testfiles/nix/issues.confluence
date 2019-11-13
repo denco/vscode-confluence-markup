@@ -51,3 +51,11 @@ h3. third header
 
 [#8|https://github.com/denco/vscode-confluence-markup/issues/8]:
 Dublicate of [#5|https://github.com/denco/vscode-confluence-markup/issues/5]
+
+[#17|https://github.com/denco/vscode-confluence-markup/issues/17]: Two or more monospace-formatted words
+
+This is a {{test}} of how things work with {{confluence}} markup.
+
+[#18|https://github.com/denco/vscode-confluence-markup/issues/18]: Italic text with dot in the end
+
+_Blah blah blah._
