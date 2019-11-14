@@ -6,6 +6,8 @@ import * as path from 'path';
 import { parseMarkup, cssUri } from '../markupParser';
 import * as fs from 'fs';
 
+const HTML_FORMATTER = require('html-formatter');
+
 const TEST_FILES_ROOT = path.join(__dirname, "../../src/test/testfiles");
 const FIXTURES_ROOT = path.join(__dirname, "../../src/test/resources/fixtures");
 
@@ -26,7 +28,7 @@ suite("markupParser Tests", function () {
 
     // Defines a Mocha unit test
     test("Test CSS Uri", function () {
-        const expected = vscode.Uri.file(path.join(__dirname, "../../media/css/dummy.css")).with({ "scheme": 'vscode-resource' });
+        const expected = vscode.Uri.file(path.join(__dirname, "../../media/css/dummy.css"));
         const css = cssUri("dummy.css");
         assert.notEqual(css, undefined);
         if (css) {
@@ -54,7 +56,8 @@ suite("markupParser Tests", function () {
             const testFileUri = vscode.Uri.file(fullFilePath);
             const confluenceContent = fs.readFileSync(testFileUri.fsPath, 'utf8');
 
-            assert.equal(parseMarkup(testFileUri, confluenceContent), fixtureContent);
+            const parsedMarkup = HTML_FORMATTER.render(parseMarkup(testFileUri, confluenceContent))
+            assert.equal(parsedMarkup, fixtureContent);
         });
     });
 });

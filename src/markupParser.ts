@@ -20,19 +20,22 @@ function imageUri(searchUri: vscode.Uri, imageLink: string) {
 }
 
 function getUri(filepath: string, filename: string) {
-	let extension = vscode.extensions.getExtension(EXTENTION_ID);
+	const extension = vscode.extensions.getExtension(EXTENTION_ID);
 	if (extension) {
-		let extPath = extension.extensionPath;
+		const extPath = extension.extensionPath;
 
 		// set special chema for resource:
 		// https://code.visualstudio.com/api/extension-guides/webview#loading-local-content
-		let uri = vscode.Uri.file(path.join(extPath, filepath, filename)).with({ scheme: 'vscode-resource' });
-		return uri;
+		const uri = vscode.Uri.file(path.join(extPath, filepath, filename))
+		return uri
 	}
 }
 
 function emoticonUri(emoticonFile: string) {
-	return getUri(EMOTICON_PATH, emoticonFile);
+	const emoticonUrl = getUri(EMOTICON_PATH, emoticonFile)
+	if (emoticonUrl) {
+		return emoticonUrl.with({scheme: 'vscode-resource'});
+	}
 }
 
 export function cssUri(cssFile: string) {
@@ -69,7 +72,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			tag = tag.replace(/\+([^\+]*)\+/g, "<u>$1</u>");
 			tag = tag.replace(/\^([^\^]*)\^/g, "<sup>$1</sup>");
 			tag = tag.replace(/~([^~]*)~/g, "<sub>$1</sub>");
-			tag = tag.replace(/\{{2}(.*)\}{2}/g, `<code style='font-family: ${MONOSPACE_FONT_FAMILY}'>$1</code>`);
+			tag = tag.replace(/\{{2}([^\{{2}]*)\}{2}/g, `<code style='font-family: ${MONOSPACE_FONT_FAMILY}'>$1</code>`);
 			tag = tag.replace(/\?{2}(.*)\?{2}/g, "<cite>$1</cite>");
 			tag = tag.replace(/\{color:(\w+)\}(.*)\{color\}/g, "<span style='color:$1;'>$2</span>");
 
@@ -195,8 +198,8 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			tag = tag.replace(/\*([^\*]*)\*/g, "<strong>$1</strong>");
 			// line-through
 			if ((!html_tag) && (!tag.match('<img')) && (!listFlag)) {
-				tag = tag.replace(/-([\w ]*)-/g, "<span style='text-decoration: line-through;'>$1</span>");
-				tag = tag.replace(/_([\w ]*)_/g, "<i>$1</i>");
+				tag = tag.replace(/\B-([^-]*)-\B/g, " <span style='text-decoration: line-through;'>$1</span> ");
+				tag = tag.replace(/_([^_]*)_/g, "<i>$1</i>");
 			}
 		} else {
 			if (tag !== `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`) {

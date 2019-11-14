@@ -3,6 +3,7 @@
 [![The MIT License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/denco/vscode-confluence-markup/blob/master/LICENSE)
 [![Version](https://vsmarketplacebadge.apphb.com/version-short/denco.confluence-markup.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=denco.confluence-markup)
 [![Installs](https://vsmarketplacebadge.apphb.com/installs-short/denco.confluence-markup.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=denco.confluence-markup)
+[![Downloads](https://vsmarketplacebadge.apphb.com/downloads-short/denco.confluence-markup.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=denco.confluence-markup)
 [![Rating](https://vsmarketplacebadge.apphb.com/rating-short/denco.confluence-markup.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=denco.confluence-markup)
 
 ## Description
