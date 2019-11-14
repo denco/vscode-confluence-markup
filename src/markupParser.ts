@@ -20,19 +20,22 @@ function imageUri(searchUri: vscode.Uri, imageLink: string) {
 }
 
 function getUri(filepath: string, filename: string) {
-	let extension = vscode.extensions.getExtension(EXTENTION_ID);
+	const extension = vscode.extensions.getExtension(EXTENTION_ID);
 	if (extension) {
-		let extPath = extension.extensionPath;
+		const extPath = extension.extensionPath;
 
 		// set special chema for resource:
 		// https://code.visualstudio.com/api/extension-guides/webview#loading-local-content
-		let uri = vscode.Uri.file(path.join(extPath, filepath, filename)).with({ scheme: 'vscode-resource' });
-		return uri;
+		const uri = vscode.Uri.file(path.join(extPath, filepath, filename))
+		return uri
 	}
 }
 
 function emoticonUri(emoticonFile: string) {
-	return getUri(EMOTICON_PATH, emoticonFile);
+	const emoticonUrl = getUri(EMOTICON_PATH, emoticonFile)
+	if (emoticonUrl) {
+		return emoticonUrl.with({scheme: 'vscode-resource'});
+	}
 }
 
 export function cssUri(cssFile: string) {
