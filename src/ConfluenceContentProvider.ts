@@ -3,7 +3,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-import { parseMarkup, cssUri } from './markupParser';
+import {parseMarkup} from './markupParser';
 
 export function packConfluenceUri(uri: vscode.Uri) {
 	// Temporarily change the URI scheme
@@ -40,24 +40,10 @@ export class ConfluenceContentProvider implements vscode.TextDocumentContentProv
 	}
 
 	public async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
-		let document = await vscode.workspace.openTextDocument(unpackConfluenceUri(uri));
-		let body = await parseMarkup(unpackConfluenceUri(uri), document.getText());
-		let cssLink = cssUri("confluence.css");
+		const document = await vscode.workspace.openTextDocument(unpackConfluenceUri(uri));
+		const body = await parseMarkup(unpackConfluenceUri(uri), document.getText());
 
-
-		// Security
-		// https://code.visualstudio.com/api/extension-guides/webview#security
-		return `<!DOCTYPE html>
-			<html>
-			<head>
-				<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; img-src vscode-resource: https:; script-src vscode-resource:; style-src vscode-resource:;"/>
-				<link rel="stylesheet" href="${cssLink}">
-			</head>
-			<body>
-				${body}
-			</body>
-			</html>`;
+		return body
 	}
 
 	get onDidChange(): vscode.Event<vscode.Uri> {
