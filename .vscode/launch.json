@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"configurations": [
 		{
-			"name": "Debug extension Extension",
+			"name": "Debug extension",
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",

@@ -1,5 +1,13 @@
 # Confluence Wiki Markup
 
+## [0.1.8](https://github.com/denco/vscode-confluence-markup/releases/tag/0.1.8)
+
+- fix [Multiply inline monospace macro](https://github.com/denco/vscode-confluence-markup/issues/17)
+- fix [Italic with dot at the end](https://github.com/denco/vscode-confluence-markup/issues/18)
+- fix rendering striked-throu markup
+- adjust content security policy
+- add downloads badge in [README.MD](https://github.com/denco/vscode-confluence-markup/blob/master/README.md)
+
 ## [0.1.7](https://github.com/denco/vscode-confluence-markup/releases/tag/0.1.7)
 
 - fix skip empty lines

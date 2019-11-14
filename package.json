@@ -1,7 +1,7 @@
 {
 	"name": "confluence-markup",
 	"displayName": "Confluence markup",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"publisher": "denco",
 	"description": "Confluence markup language support for Visual Studio Code",
 	"keywords": [
@@ -30,7 +30,7 @@
 	"license": "MIT",
 	"homepage": "https://github.com/denco/vscode-confluence-markup/blob/master/README.md",
 	"engines": {
-		"vscode": "^1.25.0"
+		"vscode": "^1.40.0"
 	},
 	"activationEvents": [
 		"onCommand:confluence.showPreview",
@@ -132,12 +132,12 @@
 	},
 	"devDependencies": {
 		"@types/mocha": "^5.2.7",
-		"@types/node": "^11.13.9",
-		"eslint": "^5.16.0",
+		"@types/node": "^12.12.7",
 		"tslint": "^5.18.0",
 		"typescript": "^3.5.3",
 		"vsce": "^1.66.0",
-		"vscode": "^1.1.36"
+		"vscode": "^1.1.36",
+		"html-formatter": "^0.1.9"
 	},
 	"__metadata": {
 		"publisherDisplayName": "denco"
