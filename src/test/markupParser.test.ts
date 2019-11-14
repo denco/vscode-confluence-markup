@@ -28,7 +28,7 @@ suite("markupParser Tests", function () {
 
     // Defines a Mocha unit test
     test("Test CSS Uri", function () {
-        const expected = vscode.Uri.file(path.join(__dirname, "../../media/css/dummy.css")).with({ "scheme": 'vscode-resource' });
+        const expected = vscode.Uri.file(path.join(__dirname, "../../media/css/dummy.css"));
         const css = cssUri("dummy.css");
         assert.notEqual(css, undefined);
         if (css) {
