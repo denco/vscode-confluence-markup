@@ -3,13 +3,13 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { parseMarkup, cssUri } from '../markupParser';
+import { parseMarkup, cssUri } from '../../markupParser';
 import * as fs from 'fs';
 
 const HTML_FORMATTER = require('html-formatter');
 
-const TEST_FILES_ROOT = path.join(__dirname, "../../src/test/testfiles");
-const FIXTURES_ROOT = path.join(__dirname, "../../src/test/resources/fixtures");
+const TEST_FILES_ROOT = path.join(__dirname, "../../../src/test/suite/fixtures/testfiles");
+const FIXTURES_ROOT = path.join(__dirname, "../../../src/test/suite/fixtures/expected");
 
 function walkdirSync(dir: string): string[] {
     return fs.readdirSync(dir).reduce(function (result: string[], file) {
@@ -24,11 +24,12 @@ function isConfluence(element: string, index: number, array: string[]): boolean 
 }
 
 // Defines a Mocha test suite to group tests of similar kind together
-suite("markupParser Tests", function () {
+suite("MarkupParser Tests", function () {
 
     // Defines a Mocha unit test
     test("Test CSS Uri", function () {
-        const expected = vscode.Uri.file(path.join(__dirname, "../../media/css/dummy.css"));
+        const expected = vscode.Uri.file(path.join(__dirname, "../../../media/css/dummy.css"));
+        console.log(expected.fsPath)
         const css = cssUri("dummy.css");
         assert.notEqual(css, undefined);
         if (css) {
