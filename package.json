@@ -1,7 +1,7 @@
 {
 	"name": "confluence-markup",
 	"displayName": "Confluence markup",
-	"version": "0.1.8",
+	"version": "0.1.9",
 	"publisher": "denco",
 	"description": "Confluence markup language support for Visual Studio Code",
 	"keywords": [
@@ -124,19 +124,24 @@
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "npm run clean && npm run compile && node ./node_modules/vscode/bin/test",
+		"pretest": "npm run clean && npm run compile",
+		"test": "node ./out/test/runTest.js",
 		"package": "./node_modules/.bin/vsce package",
 		"clean": "rm -rf ./out",
 		"clean-all": "rm -f ./confluence-markup*.vsix; rm -rf ./.vscode-test; rm -rf ./out; rm -rf ./node_modules"
 	},
 	"devDependencies": {
+		"@types/glob": "^7.1.1",
 		"@types/mocha": "^5.2.7",
 		"@types/node": "^12.12.7",
+		"@types/vscode": "^1.40.0",
 		"tslint": "^5.18.0",
 		"typescript": "^3.5.3",
 		"vsce": "^1.66.0",
-		"vscode": "^1.1.36",
+		"vscode-test": "^1.2.3",
+		"glob": "^7.1.4",
+		"mocha": "^6.1.4",
+		"source-map-support": "^0.5.12",
 		"html-formatter": "^0.1.9"
 	},
 	"__metadata": {
