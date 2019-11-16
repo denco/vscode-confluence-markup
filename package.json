@@ -126,6 +126,7 @@
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run clean && npm run compile",
 		"test": "node ./out/test/runTest.js",
+		"prepackage": "npm run clean && npm run compile",
 		"package": "./node_modules/.bin/vsce package",
 		"clean": "rm -rf ./out",
 		"clean-all": "rm -f ./confluence-markup*.vsix; rm -rf ./.vscode-test; rm -rf ./out; rm -rf ./node_modules"
