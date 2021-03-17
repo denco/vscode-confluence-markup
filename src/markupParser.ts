@@ -94,9 +94,11 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
 			tag = tag.replace(/\\\\/gi, '<br/>');
 
-			let re = /\[([^|]*)?\|?([^|]*)\]/g
-			if (tag.match(re)) {
-				tag = tag.replace(re, function (m0, m1, m2) {
+			let re_href = /\[(\S[^|]*)?\|?([^|].*[^\\|\s+])\]/g
+			let esc_href = /\[\s*([^|]*)?\|?([^|].*)[\s+|\\]\]/g
+			if (tag.match(re_href)) {
+				tag = tag.replace(re_href, function (m0, m1, m2) {
+					console.log(`aaa: >${m1}<, >${m2}<`);
 					if ((m1.length !== 0) && (m2.length !== 0)) {
 						return "<a href='" + m2 + "'>" + m1 + "</a>";
 					} else {
@@ -104,6 +106,8 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 					}
 				});
 				html_tag = true;
+			} else if (tag.match(esc_href)){
+				tag = tag.replace('\\','').replace('|', '&vert;')
 			}
 			//img
 			let img = /!([^|]*)\|?.*!/;
@@ -115,7 +119,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			//Table
 			let tab_th_re = /\s*\|{2}.*$/gi;
 			let tab_td_re = /\s*\|.*$/gi;
-			if (tag.match(tab_th_re) || tag.match(tab_td_re)) {
+			if (!html_tag && (tag.match(tab_th_re) || tag.match(tab_td_re))) {
 				tag = tag.replace(/^\|{2,}/, '\|\|');
 				tag = tag.replace(/^\|{2}/, '<th>');
 				tag = tag.replace(/\|{2}$/, '</th>');
@@ -212,7 +216,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			tag = '</table>' + tag;
 			tableFlag = false;
 		}
-
+		console.log(tag);
 		result += "<p>" + tag + "</p>";
 	}
 
