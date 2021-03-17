@@ -60,6 +60,21 @@ This is a {{test}} of how things work with {{confluence}} markup.
 
 _Blah blah blah._
 
+[#22|https://github.com/denco/vscode-confluence-markup/issues/22] panel support
+
+{panel}
+Some text
+{panel}
+
+{panel:title=My Title}
+Some text with a title
+{panel}
+
+{panel:title=My Title|borderStyle=dashed|borderColor=#ccc|titleBGColor=#F7D6C1|bgColor=#FFFFCE}
+a block of text surrounded with a *panel*
+yet _another_ line
+{panel}
+
 [#24|https://github.com/denco/vscode-confluence-markup/issues/24]: Can't use [ and ] in string
 
 [lalala]
