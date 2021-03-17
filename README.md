@@ -1,10 +1,16 @@
 # Confluence® markup language support for Visual Studio Code
 
-[![The MIT License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/denco/vscode-confluence-markup/blob/master/LICENSE)
-[![Version](https://vsmarketplacebadge.apphb.com/version-short/denco.confluence-markup.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=denco.confluence-markup)
-[![Installs](https://vsmarketplacebadge.apphb.com/installs-short/denco.confluence-markup.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=denco.confluence-markup)
-[![Downloads](https://vsmarketplacebadge.apphb.com/downloads-short/denco.confluence-markup.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=denco.confluence-markup)
-[![Rating](https://vsmarketplacebadge.apphb.com/rating-short/denco.confluence-markup.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=denco.confluence-markup)
+[![The MIT License](https://img.shields.io/badge/license-MIT-brightgreen.svg?label=License&style=flat-square)](https://github.com/denco/vscode-confluence-markup/blob/master/LICENSE)
+
+[![Version](https://img.shields.io/visual-studio-marketplace/v/denco.confluence-markup?color=%230066B8&label=VS%20Marketplace&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=denco.confluence-markup)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/denco.confluence-markup?color=%230066B8&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=denco.confluence-markup)
+[![Downloads](https://img.shields.io/visual-studio-marketplace/d/denco.confluence-markup?color=%230066B8&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=denco.confluence-markup)
+[![Rating](https://img.shields.io/visual-studio-marketplace/r/denco.confluence-markup?color=0066B8&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=denco.confluence-markup)
+
+[![Version](https://img.shields.io/open-vsx/v/denco/confluence-markup?color=%23a60ee5&label=Open%20VSX&style=flat-square)](https://open-vsx.org/extension/denco/confluence-markup)
+[![Downloads](https://img.shields.io/open-vsx/dt/denco/confluence-markup?color=%23a60ee5&style=flat-square)](https://open-vsx.org/extension/denco/confluence-markup)
+[![Rating](https://img.shields.io/open-vsx/rating/denco/confluence-markup?color=%23a60ee5&style=flat-square)](https://open-vsx.org/extension/denco/confluence-markup)
+
 
 ## Description
 
