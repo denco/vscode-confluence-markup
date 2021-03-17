@@ -118,8 +118,8 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			}
 
 			//Table
-			let tab_th_re = /\s*\|{2}.*$/gi;
-			let tab_td_re = /\s*\|.*$/gi;
+			let tab_th_re = /\s*[^{]*\|{2}[^}]*$/gi;
+			let tab_td_re = /\s*[^{]*\|[^}]*$/gi;
 			if (!html_tag && (tag.match(tab_th_re) || tag.match(tab_td_re))) {
 				tag = tag.replace(/^\|{2,}/, '\|\|');
 				tag = tag.replace(/^\|{2}/, '<th>');
