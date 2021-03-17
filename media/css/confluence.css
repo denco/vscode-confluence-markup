@@ -79,6 +79,29 @@ pre>code {
 	line-height: 1.5em;
 }
 
+
+.panel {
+	display: inline-block;
+	width: 90%;
+	color: black;
+	margin: 0px;
+	background-color: lightslategrey;
+	border-width: 1px;
+
+}
+
+.panel-title {
+	font-weight: bold;
+	padding: 5px;
+	border-bottom: none;
+}
+
+.panel-body {
+	background-color: lightgrey;
+	padding: 3px;
+}
+
+
 pre > code > p {
 	margin: 0px
 }
