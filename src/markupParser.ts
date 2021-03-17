@@ -49,6 +49,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	let listTag = '';
 	let listStyle = '';
 	let codeTagFlag = false;
+	let panelTagFlag = false;
 	let tableFlag = false;
 	let listFlag = false;
 	let listArr: string[] = [];
@@ -94,9 +95,10 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
 			tag = tag.replace(/\\\\/gi, '<br/>');
 
-			let re = /\[([^|]*)?\|?([^|]*)\]/g
-			if (tag.match(re)) {
-				tag = tag.replace(re, function (m0, m1, m2) {
+			let re_href = /\[(\S[^|]*)?\|?([^|].*[^\\|\s+])\]/g
+			let esc_href = /\[\s*([^|]*)?\|?([^|].*)[\s+|\\]\]/g
+			if (tag.match(re_href)) {
+				tag = tag.replace(re_href, function (m0, m1, m2) {
 					if ((m1.length !== 0) && (m2.length !== 0)) {
 						return "<a href='" + m2 + "'>" + m1 + "</a>";
 					} else {
@@ -104,6 +106,8 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 					}
 				});
 				html_tag = true;
+			} else if (tag.match(esc_href)){
+				tag = tag.replace('\\','').replace('|', '&vert;')
 			}
 			//img
 			let img = /!([^|]*)\|?.*!/;
@@ -113,9 +117,9 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			}
 
 			//Table
-			let tab_th_re = /\s*\|{2}.*$/gi;
-			let tab_td_re = /\s*\|.*$/gi;
-			if (tag.match(tab_th_re) || tag.match(tab_td_re)) {
+			let tab_th_re = /\s*[^{]*\|{2}[^}]*$/gi;
+			let tab_td_re = /\s*[^{]*\|[^}]*$/gi;
+			if (!html_tag && (tag.match(tab_th_re) || tag.match(tab_td_re))) {
 				tag = tag.replace(/^\|{2,}/, '\|\|');
 				tag = tag.replace(/^\|{2}/, '<th>');
 				tag = tag.replace(/\|{2}$/, '</th>');
@@ -146,6 +150,87 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			} else {
 				tag = '</pre></code>';
 				codeTagFlag = false;
+			}
+		}
+
+		let panel_re = /\{panel(.*)}/;
+		if (tag.match(panel_re)) {
+			if (! panelTagFlag) {
+				let panelStyle = "";
+				let titleStyle = "";
+				tag = tag.replace(panel_re, function (m0, m1, m2) {
+					let res = '<div class="panel panel-body" $panelStyle>'
+					let splits=m1.split(/[\|:]/);
+					splits.forEach( (el:String) => {
+						let elems = el.split('=');
+						if (elems[0] === "title"){
+							res = `<div class="panel panel-title" $titleStyle>${elems[1]}</div>${res}`;
+						}
+						if (elems[0] === "titleBGColor"){
+							if (titleStyle.length === 0) {
+								titleStyle = `style='background-color: ${elems[1]};`;
+							} else {
+								titleStyle += ` background-color: ${elems[1]};`;
+							}
+						}
+						if (elems[0] === "bgColor"){
+							if (panelStyle.length === 0) {
+								panelStyle = `style='background-color: ${elems[1]};`;
+							} else {
+								panelStyle += ` background-color: ${elems[1]};`;
+							}
+						}
+						if (elems[0] === "borderStyle"){
+							if (panelStyle.length === 0) {
+								panelStyle = `style='border-style: ${elems[1]}; `;
+							} else {
+								panelStyle += ` border-style: ${elems[1]}; `;
+							}
+							if (titleStyle.length === 0) {
+								titleStyle = `style='border-style: ${elems[1]}; border-bottom:none; `;
+							} else {
+								titleStyle += ` border-style: ${elems[1]}; border-bottom:none; `;
+							}
+						}
+						if (elems[0] === "borderColor"){
+							if (panelStyle.length === 0) {
+								panelStyle = `style='border-color: ${elems[1]}; `;
+							} else {
+								panelStyle += ` border-color: ${elems[1]}; `;
+							}
+							if (titleStyle.length === 0) {
+								titleStyle = `style='border-color: ${elems[1]}; `;
+							} else {
+								titleStyle += ` border-color: ${elems[1]}; `;
+							}
+						}
+						if (elems[0] === "borderWidth"){
+							if (panelStyle.length === 0) {
+								panelStyle = `style='border-width: ${elems[1]}; `;
+							} else {
+								panelStyle += ` border-width: ${elems[1]}; `;
+							}
+							if (titleStyle.length === 0) {
+								titleStyle = `style='border-width: ${elems[1]}; `;
+							} else {
+								titleStyle += ` border-width: ${elems[1]}; `;
+							}
+						}
+					});
+					if (titleStyle.length > 0) {
+						titleStyle += `'`;
+					}
+					if (panelStyle.length > 0) {
+						panelStyle += `'`;
+					}
+					res = res.replace('$panelStyle', panelStyle);
+					res = res.replace('$titleStyle', titleStyle);
+					return res;
+				});
+				panelTagFlag = true;
+			} else {
+				tag = '</div>';
+				panelTagFlag = false;
 			}
 		}
 
@@ -212,7 +297,6 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			tag = '</table>' + tag;
 			tableFlag = false;
 		}
-
 		result += "<p>" + tag + "</p>";
 	}
 

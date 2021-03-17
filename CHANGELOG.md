@@ -1,5 +1,13 @@
 # Confluence Wiki Markup
 
+## [0.1.9](https://github.com/denco/vscode-confluence-markup/releases/tag/0.1.9)
+
+- fix [Can't use [ and ] in string](https://github.com/denco/vscode-confluence-markup/issues/24)
+- add panel macro support [panel support](https://github.com/denco/vscode-confluence-markup/issues/22)
+- add bages for [Open VSX Registry](https://open-vsx.org/)
+- use bages from [shilds.io](https://shields.io/)
+- migrate from `vscode` dependency to `@types/vscode` and `vscode-test`, s. [Migrating from `vscode`](https://code.visualstudio.com/api/working-with-extensions/testing-extension#migrating-from-vscode)
+
 ## [0.1.8](https://github.com/denco/vscode-confluence-markup/releases/tag/0.1.8)
 
 - fix [Multiply inline monospace macro](https://github.com/denco/vscode-confluence-markup/issues/17)
