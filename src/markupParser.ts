@@ -217,10 +217,10 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 							}
 						}
 					});
-					if (titleStyle.length >= 0) {
+					if (titleStyle.length > 0) {
 						titleStyle += `'`;
 					}
-					if (panelStyle.length >= 0) {
+					if (panelStyle.length > 0) {
 						panelStyle += `'`;
 					}
 					res = res.replace('$panelStyle', panelStyle);
