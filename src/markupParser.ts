@@ -99,7 +99,6 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			let esc_href = /\[\s*([^|]*)?\|?([^|].*)[\s+|\\]\]/g
 			if (tag.match(re_href)) {
 				tag = tag.replace(re_href, function (m0, m1, m2) {
-					console.log(`aaa: >${m1}<, >${m2}<`);
 					if ((m1.length !== 0) && (m2.length !== 0)) {
 						return "<a href='" + m2 + "'>" + m1 + "</a>";
 					} else {
@@ -298,7 +297,6 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			tag = '</table>' + tag;
 			tableFlag = false;
 		}
-		console.log(tag);
 		result += "<p>" + tag + "</p>";
 	}
 
