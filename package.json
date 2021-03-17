@@ -1,7 +1,7 @@
 {
 	"name": "confluence-markup",
 	"displayName": "Confluence markup",
-	"version": "0.1.8",
+	"version": "0.1.9",
 	"publisher": "denco",
 	"description": "Confluence markup language support for Visual Studio Code",
 	"keywords": [
@@ -133,11 +133,11 @@
 	"devDependencies": {
 		"@types/mocha": "^5.2.7",
 		"@types/node": "^12.12.7",
+		"html-formatter": "^0.1.9",
 		"tslint": "^5.18.0",
 		"typescript": "^3.5.3",
 		"vsce": "^1.66.0",
-		"vscode": "^1.1.36",
-		"html-formatter": "^0.1.9"
+		"vscode": "^1.1.36"
 	},
 	"__metadata": {
 		"publisherDisplayName": "denco"
