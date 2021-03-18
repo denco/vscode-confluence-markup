@@ -95,19 +95,21 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
 			tag = tag.replace(/\\\\/gi, '<br/>');
 
-			let re_href = /\[(\S[^|]*)?\|?([^|].*[^\\|\s+])\]/g
-			let esc_href = /\[\s*([^|]*)?\|?([^|].*)[\s+|\\]\]/g
+			let re_href = /\[([^\||\]]*)\|?([^\[|\|]*)?\]/g
 			if (tag.match(re_href)) {
-				tag = tag.replace(re_href, function (m0, m1, m2) {
-					if ((m1.length !== 0) && (m2.length !== 0)) {
-						return "<a href='" + m2 + "'>" + m1 + "</a>";
-					} else {
-						return "<a href='" + m1 + "'>" + m1 + "</a>";
+				tag = tag.replace(re_href, function (m0:string, m1:string, m2:string) {
+					if (m1 !== undefined && (m1.startsWith(' ') || m1.endsWith('\\'))) {
+						return m0.replace(/\\/g,'').replace(/\|/g, '&vert;')
 					}
+					if (m2 !== undefined && m2.endsWith('\\')) {
+						return m0.replace(/\\/g,'').replace(/\|/g, '&vert;')
+					}
+					if (m2 != undefined){
+						return "<a href='" + m2 + "'>" + m1 + "</a>";
+					}
+					return "<a href='" + m1 + "'>" + m1 + "</a>";
 				});
 				html_tag = true;
-			} else if (tag.match(esc_href)){
-				tag = tag.replace('\\','').replace('|', '&vert;')
 			}
 			//img
 			let img = /!([^|]*)\|?.*!/;
