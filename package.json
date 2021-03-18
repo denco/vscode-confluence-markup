@@ -125,11 +125,12 @@
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run clean && npm run compile",
+		"lint": "eslint --cache=true --no-error-on-unmatched-pattern=true '{src,test}/**/*.{ts,tsx}'",
 		"test": "node ./out/test/runTest.js",
 		"prepackage": "npm run clean && npm run compile",
-		"package": "./node_modules/.bin/vsce package",
-		"clean": "rm -rf ./out",
-		"clean-all": "rm -f ./confluence-markup*.vsix; rm -rf ./.vscode-test; rm -rf ./out; rm -rf ./node_modules"
+		"package": "vsce package",
+		"clean": "rimraf -rf ./out",
+		"clean-all": "rimraf -f ./confluence-markup*.vsix; rimraf -rf ./.vscode-test; rimraf -rf ./out; rimraf -rf ./node_modules"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.1",
