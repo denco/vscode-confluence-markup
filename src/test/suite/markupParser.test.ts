@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { parseMarkup, cssUri } from '../../markupParser';
 import * as fs from 'fs';
+import { openStdin } from 'node:process';
 
 const HTML_FORMATTER = require('html-formatter');
 
@@ -60,12 +61,23 @@ suite("MarkupParser Tests", function () {
         const testName = "Render testfile: " + path.join(typeDir, scopedDir, fileName)
         test(testName, function () {
             const fixtureFile = path.join(FIXTURES_ROOT, scopedDir, fileName.replace(CONFLUENCE_FILENAME_EXTENSION, HTML_FILENAME_EXTENSION));
-            const fixtureContent = fs.readFileSync(fixtureFile, FILE_ENCODING).replace(new RegExp(TEST_EXTENSION_PATH_PLACEHOLDER, 'g'), PROJECT_ROOT_DIR);
+
+            let project_root_dir = PROJECT_ROOT_DIR;
+
+            if (process.platform === 'win32') {
+                project_root_dir = `/${project_root_dir.split(path.sep).join(path.posix.sep).replace(':', '%3A')}`;
+            }
+
+            const fixtureContent = HTML_FORMATTER.render(
+                fs.readFileSync(fixtureFile, FILE_ENCODING).replace(new RegExp(TEST_EXTENSION_PATH_PLACEHOLDER, 'g'), project_root_dir)
+            );
 
             const testFileUri = vscode.Uri.file(fullFilePath);
             const confluenceContent = fs.readFileSync(testFileUri.fsPath, FILE_ENCODING);
 
-            const parsedMarkup = HTML_FORMATTER.render(parseMarkup(testFileUri, confluenceContent))
+            const parsedMarkup = HTML_FORMATTER.render(
+                parseMarkup(testFileUri, confluenceContent)
+            );
             assert.strictEqual(parsedMarkup, fixtureContent);
         });
     });
