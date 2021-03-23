@@ -8,8 +8,15 @@ import * as fs from 'fs';
 
 const HTML_FORMATTER = require('html-formatter');
 
-const TEST_FILES_ROOT = path.join(__dirname, "../../../src/test/suite/fixtures/testfiles");
-const FIXTURES_ROOT = path.join(__dirname, "../../../src/test/suite/fixtures/expected");
+const FILE_ENCODING = 'utf8';
+
+const CONFLUENCE_FILENAME_EXTENSION = 'confluence';
+const HTML_FILENAME_EXTENSION = 'html';
+
+const PROJECT_ROOT_DIR = path.join(__dirname, '../../..');
+const TEST_EXTENSION_PATH_PLACEHOLDER = '_TEST_EXTENSION_PATH_PLACEHOLDER_';
+const TEST_FILES_ROOT = path.join(PROJECT_ROOT_DIR, "/src/test/suite/fixtures/testfiles");
+const FIXTURES_ROOT = path.join(PROJECT_ROOT_DIR, "/src/test/suite/fixtures/expected");
 
 function walkdirSync(dir: string): string[] {
     return fs.readdirSync(dir).reduce(function (result: string[], file) {
@@ -20,7 +27,7 @@ function walkdirSync(dir: string): string[] {
 }
 
 function isConfluence(element: string, index: number, array: string[]): boolean {
-    return (element.endsWith(".confluence"));
+    return (element.endsWith(`.${CONFLUENCE_FILENAME_EXTENSION}`));
 }
 
 // Defines a Mocha test suite to group tests of similar kind together
@@ -28,13 +35,14 @@ suite("MarkupParser Tests", function () {
 
     // Defines a Mocha unit test
     test("Test CSS Uri", function () {
-        const expected = vscode.Uri.file(path.join(__dirname, "../../../media/css/dummy.css"));
-        console.log(expected.fsPath)
+        // const expected = vscode.Uri.file(path.join(__dirname, "../../../media/css/dummy.css"));
+        const expected = vscode.Uri.file(path.join(PROJECT_ROOT_DIR, "/media/css/dummy.css"));
+        // console.log(expected.fsPath)
         const css = cssUri("dummy.css");
-        assert.notEqual(css, undefined);
+        assert.notStrictEqual(css, undefined);
         if (css) {
-            assert.equal(css.fsPath, expected.fsPath);
-            assert.equal(css.scheme, expected.scheme);
+            assert.strictEqual(css.fsPath, expected.fsPath);
+            assert.strictEqual(css.scheme, expected.scheme);
         }
     });
 
@@ -51,14 +59,14 @@ suite("MarkupParser Tests", function () {
 
         const testName = "Render testfile: " + path.join(typeDir, scopedDir, fileName)
         test(testName, function () {
-            const fixtureFile = path.join(FIXTURES_ROOT, scopedDir, fileName.replace('confluence', 'html'));
-            const fixtureContent = fs.readFileSync(fixtureFile, 'utf8');
+            const fixtureFile = path.join(FIXTURES_ROOT, scopedDir, fileName.replace(CONFLUENCE_FILENAME_EXTENSION, HTML_FILENAME_EXTENSION));
+            const fixtureContent = fs.readFileSync(fixtureFile, FILE_ENCODING).replace(new RegExp(TEST_EXTENSION_PATH_PLACEHOLDER, 'g'), PROJECT_ROOT_DIR);
 
             const testFileUri = vscode.Uri.file(fullFilePath);
-            const confluenceContent = fs.readFileSync(testFileUri.fsPath, 'utf8');
+            const confluenceContent = fs.readFileSync(testFileUri.fsPath, FILE_ENCODING);
 
             const parsedMarkup = HTML_FORMATTER.render(parseMarkup(testFileUri, confluenceContent))
-            assert.equal(parsedMarkup, fixtureContent);
+            assert.strictEqual(parsedMarkup, fixtureContent);
         });
     });
 });
