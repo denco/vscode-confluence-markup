@@ -3,20 +3,29 @@ name: Extension tests
 on:
   push:
     branches:
-      # - feature/*
+      - feature/*
       - main
   pull_request:
     branches:
       - main
 jobs:
-  test-confluence-markup-parser:
-    runs-on: ubuntu-latest
+  test:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 14.x
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install Node.js
       uses: actions/setup-node@v1
       with:
         node-version: 14.x
-    - run: npm ci
-    - run: sudo apt-get install -y xvfb
-    - run: xvfb-run --auto-servernum npm test
+    - name: Install Dependencies
+      run: npm ci
+    - name: Run Headless Tests
+      run: xvfb-run --auto-servernum npm test
+      if: runner.os == 'Linux'
+    - name: Run Tests
+      run: npm test
+      if: runner.os != 'Linux'
