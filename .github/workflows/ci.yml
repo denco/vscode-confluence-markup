@@ -1,4 +1,4 @@
-name: vscode confluence markup extension
+name: Extension tests
 
 on:
   push:
