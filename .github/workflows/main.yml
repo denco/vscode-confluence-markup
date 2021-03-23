@@ -18,4 +18,5 @@ jobs:
       with:
         node-version: 14.x
     - run: npm ci
-    - run: npm test
+    - run: sudo apt-get install -y xvfb
+    - run: xvfb-run --auto-servernum npm test
