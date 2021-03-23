@@ -22,9 +22,9 @@ jobs:
       with:
         node-version: 14.x
     - name: Install dependencies
-      run: npm install
+      run: npm ci
     - name: Run headless tests
-      run: xvfb-run -a npm test
+      run: xvfb-run --auto-servernum npm test
       if: runner.os == 'Linux'
     - name: Run tests
       run: npm test
