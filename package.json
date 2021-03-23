@@ -127,7 +127,7 @@
 		"pretest": "npm run clean && npm run compile",
 		"lint": "eslint --cache=true --ext ts,tsx .",
 		"test": "run-script-os",
-		"test:linux": "which xvfb >/dev/null 2>&1 && xvfb-run --auto-servernum node ./out/test/runTest.js || npm run test:default",
+		"test:linux": "which xvfb-run >/dev/null 2>&1 && xvfb-run --auto-servernum node ./out/test/runTest.js || npm run test:default",
 		"test:default": "node ./out/test/runTest.js",
 		"prepackage": "npm run clean && npm run compile",
 		"package": "vsce package",
