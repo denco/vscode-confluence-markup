@@ -9,7 +9,7 @@ on:
     branches:
       - main
 jobs:
-  test:
+  test-markup-parsing:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
