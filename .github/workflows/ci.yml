@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/*
+      - fix/*
       - main
   pull_request:
     branches:
@@ -23,9 +24,11 @@ jobs:
         node-version: 14.x
     - name: Install Dependencies
       run: npm ci
+    - name: Run Linting Checks
+      run: npm run lint
     - name: Run Headless Tests
-      run: xvfb-run --auto-servernum npm test
+      run: xvfb-run --auto-servernum npm run test
       if: runner.os == 'Linux'
     - name: Run Tests
-      run: npm test
+      run: npm run test
       if: runner.os != 'Linux'
