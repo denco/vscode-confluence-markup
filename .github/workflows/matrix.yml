@@ -1,4 +1,4 @@
-name: Matrix extension tests
+name: Extension tests
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
     branches:
       - main
 jobs:
-  build:
+  test:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
@@ -21,11 +21,11 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 14.x
-    - name: Install dependencies
+    - name: Install Dependencies
       run: npm ci
-    - name: Run headless tests
+    - name: Run Headless Tests
       run: xvfb-run --auto-servernum npm test
       if: runner.os == 'Linux'
-    - name: Run tests
+    - name: Run Tests
       run: npm test
       if: runner.os != 'Linux'
