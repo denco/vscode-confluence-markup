@@ -125,7 +125,7 @@
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run clean && npm run compile",
-		"lint": "eslint --cache=true --no-error-on-unmatched-pattern=true '{src,test}/**/*.{ts,tsx}'",
+		"lint": "eslint --cache=true '{src,test}/**/*.{ts,tsx}'",
 		"test": "node ./out/test/runTest.js",
 		"prepackage": "npm run clean && npm run compile",
 		"package": "vsce package",
