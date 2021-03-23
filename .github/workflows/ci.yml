@@ -1,4 +1,4 @@
-name: Extension tests
+name: Markup parsing tests
 
 on:
   push:
