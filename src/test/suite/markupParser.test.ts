@@ -5,7 +5,6 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { parseMarkup, cssUri } from '../../markupParser';
 import * as fs from 'fs';
-import { openStdin } from 'node:process';
 
 const HTML_FORMATTER = require('html-formatter');
 
@@ -21,13 +20,13 @@ const FIXTURES_ROOT = path.join(PROJECT_ROOT_DIR, "/src/test/suite/fixtures/expe
 
 function walkdirSync(dir: string): string[] {
     return fs.readdirSync(dir).reduce(function (result: string[], file) {
-        let name = path.join(dir, file);
-        let isDir = fs.statSync(name).isDirectory();
+        const name = path.join(dir, file);
+        const isDir = fs.statSync(name).isDirectory();
         return result.concat(isDir ? walkdirSync(name) : [name]);
     }, []);
 }
 
-function isConfluence(element: string, index: number, array: string[]): boolean {
+function isConfluence(element: string): boolean {
     return (element.endsWith(`.${CONFLUENCE_FILENAME_EXTENSION}`));
 }
 
