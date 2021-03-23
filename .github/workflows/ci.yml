@@ -3,7 +3,7 @@ name: Extension tests
 on:
   push:
     branches:
-      - feature/*
+      # - feature/*
       - main
   pull_request:
     branches:
