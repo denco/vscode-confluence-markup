@@ -45,7 +45,7 @@ export function cssUri(cssFile: string) {
 export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	//TODO: use Tokenizer instead of line loop
 
-	var result = '';
+	let result = '';
 	let listTag = '';
 	let listStyle = '';
 	let codeTagFlag = false;
@@ -54,7 +54,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	let listFlag = false;
 	let listArr: string[] = [];
 
-	for (let entry of sourceText.split(/\r?\n/gi)) {
+	for (const entry of sourceText.split(/\r?\n/gi)) {
 		let tag = entry;
 		let html_tag = false;
 
@@ -70,10 +70,10 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			tag = tag.replace(/h(\d+)\.\s([^\n]+)/g, "<h$1>$2</h$1>");
 
 			// tag = tag.replace(/_([^_]*)_/g, "<em>$1</em>");
-			tag = tag.replace(/\+([^\+]*)\+/g, "<u>$1</u>");
-			tag = tag.replace(/\^([^\^]*)\^/g, "<sup>$1</sup>");
+			tag = tag.replace(/\+([^+]*)\+/g, "<u>$1</u>");
+			tag = tag.replace(/\^([^^]*)\^/g, "<sup>$1</sup>");
 			tag = tag.replace(/~([^~]*)~/g, "<sub>$1</sub>");
-			tag = tag.replace(/\{{2}([^\{{2}]*)\}{2}/g, `<code style='font-family: ${MONOSPACE_FONT_FAMILY}'>$1</code>`);
+			tag = tag.replace(/\{{2}([^{{2}]*)\}{2}/g, `<code style='font-family: ${MONOSPACE_FONT_FAMILY}'>$1</code>`);
 			tag = tag.replace(/\?{2}(.*)\?{2}/g, "<cite>$1</cite>");
 			tag = tag.replace(/\{color:(\w+)\}(.*)\{color\}/g, "<span style='color:$1;'>$2</span>");
 
@@ -95,7 +95,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
 			tag = tag.replace(/\\\\/gi, '<br/>');
 
-			let re_href = /\[([^\||\]]*)\|?([^\[|\|]*)?\]/g
+			const re_href = /\[([^||\]]*)\|?([^[||]*)?\]/g
 			if (tag.match(re_href)) {
 				tag = tag.replace(re_href, function (m0:string, m1:string, m2:string) {
 					if (m1 !== undefined && (m1.startsWith(' ') || m1.endsWith('\\'))) {
@@ -112,17 +112,17 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				html_tag = true;
 			}
 			//img
-			let img = /!([^|]*)\|?.*!/;
-			let match = tag.match(img);
-			if (match) {
-				tag = '<img src="' + imageUri(sourceUri, match[1]) + '"/>';
+			const img_re = /!([^|]*)\|?.*!/;
+			const img_match = tag.match(img_re);
+			if (img_match) {
+				tag = '<img src="' + imageUri(sourceUri, img_match[1]) + '"/>';
 			}
 
 			//Table
-			let tab_th_re = /\s*[^{]*\|{2}[^}]*$/gi;
-			let tab_td_re = /\s*[^{]*\|[^}]*$/gi;
+			const tab_th_re = /\s*[^{]*\|{2}[^}]*$/gi;
+			const tab_td_re = /\s*[^{]*\|[^}]*$/gi;
 			if (!html_tag && (tag.match(tab_th_re) || tag.match(tab_td_re))) {
-				tag = tag.replace(/^\|{2,}/, '\|\|');
+				tag = tag.replace(/^\|{2,}/, '||');
 				tag = tag.replace(/^\|{2}/, '<th>');
 				tag = tag.replace(/\|{2}$/, '</th>');
 				tag = tag.replace(/\|{2}/gi, '</th><th>');
@@ -139,13 +139,13 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
 		// code
 		// online code tag
-		tag = tag.replace(/\{(noformat|code)[^\}]*\}(.*)\{(noformat|code)\}/, function (m0, m1, m2) {
+		tag = tag.replace(/\{(noformat|code)[^}]*\}(.*)\{(noformat|code)\}/, function (m0, m1, m2) {
 			return `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>${m2.replace(/</gi, '&lt;')}</code></pre>`;
 		});
 
-		let re = /\{[(code)|(noformat)].*\}/;
-		let match = tag.match(re);
-		if (match) {
+		const code_re = /\{[(code)|(noformat)].*\}/;
+		const code_match = tag.match(code_re);
+		if (code_match) {
 			if (! codeTagFlag) {
 				tag = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`;
 				codeTagFlag = true;
@@ -155,16 +155,16 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			}
 		}
 
-		let panel_re = /\{panel(.*)}/;
+		const panel_re = /\{panel(.*)}/;
 		if (tag.match(panel_re)) {
 			if (! panelTagFlag) {
 				let panelStyle = "";
 				let titleStyle = "";
-				tag = tag.replace(panel_re, function (m0, m1, m2) {
+				tag = tag.replace(panel_re, function (m0, m1) {
 					let res = '<div class="panel panel-body" $panelStyle>'
-					let splits=m1.split(/[\|:]/);
-					splits.forEach( (el:String) => {
-						let elems = el.split('=');
+					const splits = m1.split(/[|:]/);
+					splits.forEach( (el:string) => {
+						const elems = el.split('=');
 						if (elems[0] === "title"){
 							res = `<div class="panel panel-title" $titleStyle>${elems[1]}</div>${res}`;
 						}
@@ -238,35 +238,35 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
 		if (! codeTagFlag) {
 			// lists
-			re = /^([-|\*|#]+)\s(.*)/;
-			match = tag.match(re);
-			if (match) {
+			const li_re = /^([-|*|#]+)\s(.*)/;
+			const li_match = tag.match(li_re);
+			if (li_match) {
 				listFlag = true;
 				listStyle = '';
 				tag = '';
-				if (match[1].match(/#$/)) {
+				if (li_match[1].match(/#$/)) {
 					listTag = 'ol';
 					// reset ol after 3rd level
 					// add count of non-ol elements for mixed lists
-					if ((match[1].length + (match[1].match(/[-|\*]/g) || []).length) % 3 === 1) {
+					if ((li_match[1].length + (li_match[1].match(/[-|*]/g) || []).length) % 3 === 1) {
 						listStyle = ' class="initial"';
 					}
 				}
-				if (match[1].match(/[-|\*]$/)) {
+				if (li_match[1].match(/[-|*]$/)) {
 					listTag = 'ul';
 				}
-				if (match[1].match(/-$/)) {
+				if (li_match[1].match(/-$/)) {
 					listStyle = ' class="alternate"';
 				}
-				if (match[1].length > listArr.length) {
+				if (li_match[1].length > listArr.length) {
 					tag = '<' + listTag + listStyle + '>';
 					listArr.push(listTag);
 				}
-				if (match[1].length < listArr.length) {
-					tag = '</' + listArr.slice(match[1].length, listArr.length).reverse().join('></') + '>';
-					listArr = listArr.slice(0, match[1].length);
+				if (li_match[1].length < listArr.length) {
+					tag = '</' + listArr.slice(li_match[1].length, listArr.length).reverse().join('></') + '>';
+					listArr = listArr.slice(0, li_match[1].length);
 				}
-				tag += "<li>" + match[2] + "</li>";
+				tag += "<li>" + li_match[2] + "</li>";
 			}
 
 
@@ -282,7 +282,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			tag = tag.replace(/-{3}/gi, '&mdash;');
 			tag = tag.replace(/-{2}/gi, '&ndash;');
 			// strong
-			tag = tag.replace(/\*([^\*]*)\*/g, "<strong>$1</strong>");
+			tag = tag.replace(/\*([^*]*)\*/g, "<strong>$1</strong>");
 			// line-through
 			if ((!html_tag) && (!tag.match('<img')) && (!listFlag)) {
 				tag = tag.replace(/\B-([^-]*)-\B/g, " <span style='text-decoration: line-through;'>$1</span> ");
