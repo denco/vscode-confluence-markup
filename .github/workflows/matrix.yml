@@ -15,17 +15,14 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-    - name: checkout
+    - name: Checkout
       uses: actions/checkout@v2
-    - name: install node.js 14.x
+    - name: Install Node.js
       uses: actions/setup-node@v1
       with:
-        node-version: 14.x
-    - name: install dependencies
-      uses: npm install
-    - name: test markup parsing
-      uses: xvfb-run -a npm test
+        node-version: 10.x
+    - run: npm install
+    - run: xvfb-run -a npm test
       if: runner.os == 'Linux'
-    - name: test markup parsing
-      uses: npm test
+    - run: npm test
       if: runner.os != 'Linux'
