@@ -125,7 +125,7 @@
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run clean && npm run compile",
-		"lint": "eslint --cache=true --no-error-on-unmatched-pattern=true '{src,test}/**/*.{ts,tsx}'",
+		"lint": "eslint --cache=true --ext ts,tsx .",
 		"test": "node ./out/test/runTest.js",
 		"prepackage": "npm run clean && npm run compile",
 		"package": "vsce package",
@@ -149,6 +149,29 @@
 		"typescript": "^4.2.3",
 		"vsce": "^1.66.0",
 		"vscode-test": "^1.2.3"
+	},
+	"eslintConfig": {
+		"env": {
+			"browser": true,
+			"es6": true
+		},
+		"extends": [
+			"eslint:recommended",
+			"plugin:@typescript-eslint/eslint-recommended"
+		],
+		"globals": {
+			"Atomics": "readonly",
+			"SharedArrayBuffer": "readonly"
+		},
+		"parser": "@typescript-eslint/parser",
+		"parserOptions": {
+			"ecmaVersion": 2020,
+			"sourceType": "module"
+		},
+		"plugins": [
+			"@typescript-eslint"
+		],
+		"rules": {}
 	},
 	"__metadata": {
 		"publisherDisplayName": "denco"
