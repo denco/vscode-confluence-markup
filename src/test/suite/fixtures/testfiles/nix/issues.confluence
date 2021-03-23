@@ -86,3 +86,11 @@ yet _another_ line
 [text|https://link\]
 
 [ text|https://link ]
+
+[#28|https://github.com/denco/vscode-confluence-markup/issues/28]: Error by display of multiply links or escaped link markup in the same line.
+
+[first] [second]
+
+[first link|www.example.com] [second link|www.example.com]
+
+[first\] [second\]
