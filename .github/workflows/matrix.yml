@@ -1,4 +1,4 @@
-name: Extension tests
+name: Matrix extension tests
 
 on:
   push:
@@ -8,18 +8,6 @@ on:
   pull_request:
     branches:
       - main
-# jobs:
-#   test-confluence-markup-parser:
-#     runs-on: ubuntu-latest
-#     steps:
-#     - uses: actions/checkout@v2
-#     - name: Use Node.js 14.x
-#       uses: actions/setup-node@v1
-#       with:
-#         node-version: 14.x
-#     - run: npm ci
-#     - run: sudo apt-get install -y xvfb
-#     - run: xvfb-run --auto-servernum npm test
 jobs:
   build:
     strategy:
