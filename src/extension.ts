@@ -3,11 +3,11 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-import { packConfluenceUri, unpackConfluenceUri, ConfluenceContentProvider } from './ConfluenceContentProvider';
+import { packConfluenceUri, ConfluenceContentProvider } from './ConfluenceContentProvider';
 
 const path = require('path');
 
-import {cssUri} from './markupParser';
+import { cssUri } from './markupParser';
 
 
 function getRenderedContent(contentProvider: ConfluenceContentProvider, uri: vscode.Uri, panel: vscode.WebviewPanel) {
@@ -45,7 +45,7 @@ function getRenderedContent(contentProvider: ConfluenceContentProvider, uri: vsc
 
 function createPanel(contentProvider: ConfluenceContentProvider, editor: vscode.TextEditor, viewColumn: vscode.ViewColumn) {
 
-	let title = 'Preview ' + path.basename(editor.document.uri.fsPath);
+	const title = 'Preview ' + path.basename(editor.document.uri.fsPath);
 
 	// Create and show panel
 	const panel = vscode.window.createWebviewPanel(
@@ -61,27 +61,27 @@ function createPanel(contentProvider: ConfluenceContentProvider, editor: vscode.
 	return panel;
 }
 
-function setDispose(panel: vscode.WebviewPanel, subscriptions: any){
+function setDispose(panel: vscode.WebviewPanel, subscriptions: any) {
 	// Reset when the current panel is closed
-        // Reset when the current panel is closed
-        panel.onDidDispose(
-			() => {},
-			null,
-			subscriptions
-		  );
+	// Reset when the current panel is closed
+	panel.onDidDispose(
+		() => { },
+		null,
+		subscriptions
+	);
 }
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	const contentProvider = new ConfluenceContentProvider(context);
+	const contentProvider = new ConfluenceContentProvider();
 	const contentProviderRegistration = vscode.workspace.registerTextDocumentContentProvider(ConfluenceContentProvider.confluenceURI.scheme, contentProvider);
 	let currentPanel: vscode.WebviewPanel;
 
 	// Show confluence
-	let previewDisposable = vscode.commands.registerCommand('confluence.showPreview', () => {
-		let editor = vscode.window.activeTextEditor;
+	const previewDisposable = vscode.commands.registerCommand('confluence.showPreview', () => {
+		const editor = vscode.window.activeTextEditor;
 		if (typeof editor === 'undefined') {
 			vscode.window.showErrorMessage('Please open a confluence file');
 			return;
@@ -93,8 +93,8 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	// Show confluence to the side
-	let sidePreviewDisposable = vscode.commands.registerCommand('confluence.showPreviewToSide', () => {
-		let editor = vscode.window.activeTextEditor;
+	const sidePreviewDisposable = vscode.commands.registerCommand('confluence.showPreviewToSide', () => {
+		const editor = vscode.window.activeTextEditor;
 		if (typeof editor === 'undefined') {
 			vscode.window.showErrorMessage('Please open a confluence file');
 			return;
@@ -108,7 +108,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 	vscode.workspace.onDidChangeTextDocument(e => {
-		let editor = vscode.window.activeTextEditor;
+		const editor = vscode.window.activeTextEditor;
 		if (editor) {
 			if (e.document === editor.document) {
 				contentProvider.update(packConfluenceUri(e.document.uri));

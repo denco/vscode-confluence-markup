@@ -32,9 +32,6 @@ export class ConfluenceContentProvider implements vscode.TextDocumentContentProv
 	private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
 	private _waiting: boolean = false;
 
-	constructor(private context: vscode.ExtensionContext) {
-	}
-
 	dispose() {
 		this._onDidChange.dispose();
 	}
