@@ -1,5 +1,10 @@
 # Confluence Wiki Markup
 
+## [0.1.10](https://github.com/denco/vscode-confluence-markup/releases/tag/0.1.10)
+
+- fix [Error by display of multiply links or escaped link markup in the same line](https://github.com/denco/vscode-confluence-markup/issues/28)
+- add dev's enhansments: linting, tests, ci
+
 ## [0.1.9](https://github.com/denco/vscode-confluence-markup/releases/tag/0.1.9)
 
 - fix [Can't use [ and ] in string](https://github.com/denco/vscode-confluence-markup/issues/24)
