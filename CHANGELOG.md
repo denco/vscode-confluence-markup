@@ -3,6 +3,7 @@
 ## [0.1.10](https://github.com/denco/vscode-confluence-markup/releases/tag/0.1.10)
 
 - fix [Error by display of multiply links or escaped link markup in the same line](https://github.com/denco/vscode-confluence-markup/issues/28)
+- fix regex for code/noformat macro
 - add dev's enhansments: linting, tests, ci
 
 ## [0.1.9](https://github.com/denco/vscode-confluence-markup/releases/tag/0.1.9)
