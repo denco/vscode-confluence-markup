@@ -143,7 +143,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			return `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>${m2.replace(/</gi, '&lt;')}</code></pre>`;
 		});
 
-		const code_re = /\{[(code)|(noformat)].*\}/;
+		const code_re = /\{(noformat)|(code)[^}]*\}/;
 		const code_match = tag.match(code_re);
 		if (code_match) {
 			if (! codeTagFlag) {
@@ -156,8 +156,8 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		}
 
 		const panel_re = /\{panel(.*)}/;
-		if (tag.match(panel_re)) {
-			if (! panelTagFlag) {
+		if (! codeTagFlag && tag.match(panel_re)) {
+			if (! panelTagFlag ) {
 				let panelStyle = "";
 				let titleStyle = "";
 				tag = tag.replace(panel_re, function (m0, m1) {
