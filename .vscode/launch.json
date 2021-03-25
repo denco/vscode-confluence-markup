@@ -26,11 +26,13 @@
 			"args": [
 				"/usr/lib/code/",
 				"--extensionDevelopmentPath=${workspaceRoot}",
-				"${workspaceRoot}/src/test/testfiles/",
-				],
+				"${workspaceRoot}/src/test/testfiles/"
+			],
 			"stopOnEntry": false,
 			"sourceMaps": true,
-			"outFiles": ["${workspaceRoot}/out"],
+			"outFiles": [
+				"${workspaceRoot}/out"
+			],
 			"preLaunchTask": "npm: watch"
 		},
 		{

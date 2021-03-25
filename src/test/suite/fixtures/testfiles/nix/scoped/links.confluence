@@ -1,0 +1,23 @@
+[simple_link] or [simple_link_other]
+
+[simple_link] or [escaped_link\]
+
+[escaped_link\] or [simple_link]
+
+[escaped_link\] or [escaped_link_other\]
+
+[www.example.com] or [www.web.com]
+
+[label|https://link] or [label_other|https://www.example.com]
+
+[textlink|https://link] or [escaped_link|https://link\]
+
+[ escaped_link_with_space|https://link1.com ] or [ escaped_link_with_space_other|https://link ]
+
+[simple_link]
+
+[text in square brackets\]
+
+[example.com|https://www.example.com]
+
+[example.com|https://www.example.com\]
