@@ -1,9 +1,9 @@
 on:
-  workflow_run:
-    workflows: ["Markup parsing tests"]
-    branches: [main]
-    types:
-      - completed
+  # workflow_run:
+  #   workflows: ["Markup parsing tests"]
+  #   branches: [main]
+  #   types:
+  #     - completed
   push:
     tags:
       - "*"
@@ -24,8 +24,6 @@ jobs:
           node-version: 14.x
       - name: Install Dependencies
         run: npm ci
-      # - name: Package Extension
-      #   run: npm run package
       - name: Publish to Visual Studio Marketplace
         run: ./node_modules/.bin/vsce publish -p ${{ secrets.VSCE_PAT }}
       - name: Publish to Open VSX Registry
