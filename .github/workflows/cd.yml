@@ -1,3 +1,5 @@
+name: Publish Extension
+
 on:
   # workflow_run:
   #   workflows: ["Markup parsing tests"]
@@ -13,7 +15,6 @@ on:
 
 jobs:
   publish:
-    name: Publish Extension
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
