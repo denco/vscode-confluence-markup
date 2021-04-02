@@ -53,7 +53,7 @@ pre > code {
 	background:rgba(0, 0, 0, 0.15);
 	word-wrap: break-word;
 	overflow-wrap: break-word;
-	word-break: break-all;
+	word-break: break-space;
 	white-space: normal;
 	margin: 0px 5px;
 	padding: 5px 1em;
