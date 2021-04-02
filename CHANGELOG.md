@@ -1,5 +1,11 @@
 # Confluence Wiki Markup
 
+## [0.1.11](https://github.com/denco/vscode-confluence-markup/releases/tag/0.1.11)
+
+- enchange color macro with support for rgb and hex colors [Support to {color:}](https://github.com/denco/vscode-confluence-markup/issues/32)
+- adjust css, word breakes on space for code/noformat macros
+- fix regex for code/noformat macro
+
 ## [0.1.10](https://github.com/denco/vscode-confluence-markup/releases/tag/0.1.10)
 
 - fix [Error by display of multiply links or escaped link markup in the same line](https://github.com/denco/vscode-confluence-markup/issues/28)
