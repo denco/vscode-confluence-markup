@@ -94,3 +94,9 @@ yet _another_ line
 [first link|www.example.com] [second link|www.example.com]
 
 [first\] [second\]
+
+[#32|https://github.com/denco/vscode-confluence-markup/issues/32]: Support to {color:}
+
+{color:cyan}cyan{color}
+
+{color:rgb(222,150,212)}rgb(222,150,212){color} or {color:#12FFFE}hex#12FFFE{color}
