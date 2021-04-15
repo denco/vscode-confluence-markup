@@ -134,7 +134,7 @@
 		"package": "vsce package",
 		"clean": "rimraf -rf ./out",
 		"clean:all": "rimraf -f ./confluence-markup*.vsix; rimraf -rf ./.vscode-test; rimraf -rf ./out; rimraf -rf ./node_modules",
-		"changelog": "if [ $((grep \"$(grep -m1 'version' package.json | cut -d '\"' -f 4)\" -n CHANGELOG.md || echo 0) | cut -d ':' -f 1) -eq 3 ]; then awk '/##/{++c;next} c==1' CHANGELOG.md | awk '!/^$/'; fi"
+		"changelog": "if [ $((grep \"$(grep -m1 'version' package.json | cut -d '\"' -f 4)\" -n CHANGELOG.md || echo 0) | cut -d ':' -f 1) -eq 3 ]; then awk '/##/{++c;next} c==1' CHANGELOG.md | awk '!/^$/'; else >&2 echo 'Unchecked version'; exit 1; fi"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.1",
