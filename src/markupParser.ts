@@ -73,7 +73,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			tag = tag.replace(/\+([^+]*)\+/g, "<u>$1</u>");
 			tag = tag.replace(/\^([^^]*)\^/g, "<sup>$1</sup>");
 			tag = tag.replace(/~([^~]*)~/g, "<sub>$1</sub>");
-			tag = tag.replace(/\{{2}([^{{2}]*)\}{2}/g, `<code style='font-family: ${MONOSPACE_FONT_FAMILY}'>$1</code>`);
+			tag = tag.replace(/\\}/g, "&rbrace;").replace(/\{{2}(.*?)\}{2}/g, `<code style='font-family: ${MONOSPACE_FONT_FAMILY}'>$1</code>`);
 			tag = tag.replace(/\?{2}(.*)\?{2}/g, "<cite>$1</cite>");
 			tag = tag.replace(/\{color:([^}]+)\}/g, "<span style='color:$1;'>").replace(/\{color\}/g, '</span>');
 
@@ -285,8 +285,10 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			tag = tag.replace(/\*([^*]*)\*/g, "<strong>$1</strong>");
 			// line-through
 			if ((!html_tag) && (!tag.match('<img')) && (!listFlag)) {
-				tag = tag.replace(/\B-([^-]*)-\B/g, " <span style='text-decoration: line-through;'>$1</span> ");
-				tag = tag.replace(/_([^_]*)_/g, "<i>$1</i>");
+				// tag = tag.replace(/\B-([^-]*)-\B/g, " <span style='text-decoration: line-through;'>$1</span> ");
+				// tag = tag.replace(/_([^_]*)_/g, "<i>$1</i>");
+				tag = tag.replace(/\B-((\([^)]*\)|{[^}]*}|\[[^]]+\]){0,3})(\S.*?\S|\S)-\B/g," <span style='text-decoration: line-through;'>$3</span> ");
+				tag = tag.replace(/(?:\b)_((\([^)]*\)|{[^}]*}|\[[^]]+\]){0,3})(\S.*?\S|\S)_(?:\b)/g, "<i>$3</i>");
 			}
 		} else {
 			if (tag !== `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`) {

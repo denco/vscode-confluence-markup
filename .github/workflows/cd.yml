@@ -7,11 +7,13 @@ on:
   #   types:
   #     - completed
   push:
+    branches:
+      - "!*"
     tags:
-      - "*"
+      - '[0-9]+.[0-9]+.[0-9]+'
+      # - "*"
 # https://stackoverflow.com/questions/58457140/dependencies-between-workflows-on-github-actions
 # https://docs.github.com/en/actions/reference/events-that-trigger-workflows#workflow_run
-# https://github.com/actions/create-release
 
 jobs:
   publish:
@@ -25,6 +27,23 @@ jobs:
           node-version: 14.x
       - name: Install Dependencies
         run: npm ci
+      - name: Build extension package
+        run: npm run build
+      # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions
+      - name: Get release version
+        run: echo "::set-output name=version::${GITHUB_REF#refs/*/}
+        id: release-version
+      - name: Create release notes for version ${{ steps.release-version.outputs.version }}
+        run: npm run --silent changelog > RELEASE_NOTES_${{ steps.release-version.outputs.version }}.md
+      # https://github.com/ncipollo/release-action
+      - name: Create github release
+        uses: ncipollo/release-action@v1
+        with:
+          name: ${{ steps.release-version.outputs.version }}
+          artifact: "confluence-markup-${{ steps.release-version.outputs.version }}.vsix"
+          artifactContentType: application/zip
+          bodyFile: "RELEASE_NOTES_${{ steps.release-version.outputs.version }}.md"
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish to Visual Studio Marketplace
         run: ./node_modules/.bin/vsce publish -p ${{ secrets.VSCE_PAT }}
       - name: Publish to Open VSX Registry
