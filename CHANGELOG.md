@@ -1,6 +1,6 @@
 # Confluence Wiki Markup
 
-## [0.1.12](https://github.com/denco/vscode-confluence-markup/releases/tag/0.1.11)
+## [0.1.12](https://github.com/denco/vscode-confluence-markup/releases/tag/0.1.12)
 
 - fix monospace with digits [Monospaced Text does not seem to be supported](https://github.com/denco/vscode-confluence-markup/issues/34)
 - add check for undefined panel and webview
