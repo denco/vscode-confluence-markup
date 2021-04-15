@@ -12,32 +12,34 @@ import { cssUri } from './markupParser';
 
 function getRenderedContent(contentProvider: ConfluenceContentProvider, uri: vscode.Uri, panel: vscode.WebviewPanel) {
 	contentProvider.provideTextDocumentContent(packConfluenceUri(uri)).then((renderedContent) => {
-		// Security
-		// https://code.visualstudio.com/api/extension-guides/webview#security
+		if (panel && panel.webview) {
+			// Security
+			// https://code.visualstudio.com/api/extension-guides/webview#security
 
-		const cssFile = cssUri('confluence.css')
-		let cssLink = ""
-		if (cssFile) {
-			const cssUrl = panel.webview.asWebviewUri(cssFile)
-			cssLink = `<link rel="stylesheet" href="${cssUrl}">`
+			const cssFile = cssUri('confluence.css')
+			let cssLink = ""
+			if (cssFile) {
+				const cssUrl = panel.webview.asWebviewUri(cssFile)
+				cssLink = `<link rel="stylesheet" href="${cssUrl}">`
+			}
+
+			panel.webview.html = `<!DOCTYPE html>
+				<html>
+				<head>
+					<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+					<meta name="viewport" content="width=device-width, initial-scale=1.0">
+					<meta http-equiv="Content-Security-Policy"
+						content="default-src 'none';
+						img-src self vscode-resource: https:;
+						script-src self vscode-resource:;
+						style-src 'unsafe-inline' self vscode-resource:;"/>
+					${cssLink}
+				</head>
+				<body>
+					${renderedContent}
+				</body>
+				</html>`;
 		}
-
-		panel.webview.html = `<!DOCTYPE html>
-			<html>
-			<head>
-				<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<meta http-equiv="Content-Security-Policy"
-					content="default-src 'none';
-					img-src self vscode-resource: https:;
-					script-src self vscode-resource:;
-					style-src 'unsafe-inline' self vscode-resource:;"/>
-				${cssLink}
-			</head>
-			<body>
-				${renderedContent}
-			</body>
-			</html>`;
 	}, (reason) => {
 		vscode.window.showErrorMessage(reason);
 	});
