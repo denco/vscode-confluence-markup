@@ -116,10 +116,14 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				html_tag = true;
 			}
 			//img
-			const img_re = /!([^|]*)\|?.*!/;
+			const img_re = /!([^|]*)\|?(.*)!/;
 			const img_match = tag.match(img_re);
 			if (img_match) {
-				tag = '<img src="' + imageUri(sourceUri, img_match[1]) + '"/>';
+				let imgAttr = ""
+				if (img_match[2].length != 0){
+					imgAttr = img_match[2].replace(/=/gi, '="').replace(/,/gi, '" ') + '"'
+				}
+				tag = `<img src="${imageUri(sourceUri, img_match[1])}" ${imgAttr}/>`;
 			}
 
 			//Table
