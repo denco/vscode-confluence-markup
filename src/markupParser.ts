@@ -125,18 +125,29 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			//Table
 			const tab_th_re = /\s*[^{]*\|{2}[^}]*$/gi;
 			const tab_td_re = /\s*[^{]*\|[^}]*$/gi;
-			if (!html_tag && (tag.match(tab_th_re) || tag.match(tab_td_re))) {
-				tag = tag.replace(/^\|{2,}/, '||');
-				tag = tag.replace(/^\|{2}/, '<th>');
-				tag = tag.replace(/\|{2}$/, '</th>');
-				tag = tag.replace(/\|{2}/gi, '</th><th>');
-				tag = tag.replace(/^\|/, '<td>');
-				tag = tag.replace(/\|$/, '</td>');
-				tag = tag.replace(/\|/gi, '</td><td>');
-				if (tableFlag == false) {
-					tag = '<table>' + tag;
+			if ((tag.match(tab_th_re) || tag.match(tab_td_re))) {
+				let closeTableCell = '';
+				if (tag.match(tab_th_re)) {
+					tag = tag.replace(/^\|{2,}/, '||');
+					tag = tag.replace(/^\|{2}/, '<th>');
+					tag = tag.replace(/\|{2}$/, '</th>');
+					tag = tag.replace(/\|{2}/gi, '</th><th>');
+					tag = tag.replace(/\|/, '</th><td>'); // row heading
+					closeTableCell = '</th>';
+				}
+				if (tag.match(tab_td_re)) {
+					tag = tag.replace(/^\|/, '<td>');
+					tag = tag.replace(/\|$/, '</td>'); //.replace(/$/, '</td>');
+					tag = tag.replace(/\|/gi, '</td><td>');
+					closeTableCell = '</td>';
+				}
+				if (!tag.endsWith('</th>') && !tag.endsWith('</td>')){
+					tag += closeTableCell;
 				}
 				tag = '<tr>' + tag + '</tr>';
+				if (tableFlag == false) {
+					tag = '<table><tbody>' + tag;
+				}
 				tableFlag = true;
 			}
 		}
@@ -242,7 +253,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
 		if (! codeTagFlag) {
 			// lists
-			const li_re = /^([-|*|#]+)\s(.*)/;
+			const li_re = /^([-*#]+)\s(.*)/;
 			const li_match = tag.match(li_re);
 			if (li_match) {
 				listFlag = true;
@@ -252,11 +263,11 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 					listTag = 'ol';
 					// reset ol after 3rd level
 					// add count of non-ol elements for mixed lists
-					if ((li_match[1].length + (li_match[1].match(/[-|*]/g) || []).length) % 3 === 1) {
+					if ((li_match[1].length + (li_match[1].match(/[-*]/g) || []).length) % 3 === 1) {
 						listStyle = ' class="initial"';
 					}
 				}
-				if (li_match[1].match(/[-|*]$/)) {
+				if (li_match[1].match(/[-*]$/)) {
 					listTag = 'ul';
 				}
 				if (li_match[1].match(/-$/)) {
@@ -302,10 +313,10 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
 		//close table
 		if (!tag.match(/<\/tr>$/) && tableFlag) {
-			tag = '</table>' + tag;
+			tag = '</tbody></table>' + tag;
 			tableFlag = false;
 		}
-		result += "<p>" + tag + "</p>";
+		result += `<p>${tag}</p>`;
 	}
 
 	return result;
