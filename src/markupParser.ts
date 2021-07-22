@@ -14,7 +14,11 @@ function imageUri(searchUri: vscode.Uri, imageLink: string) {
 	if (imageLink.match(/^(ht)|(f)tps?:\/\//)) {
 		imageUri = vscode.Uri.parse(imageLink);
 	} else {
-		imageUri = vscode.Uri.file(path.join(searchUri.fsPath, imageLink)).with({ scheme: 'vscode-resource' });
+		if (path.isAbsolute(imageLink)) {
+			imageUri = vscode.Uri.file(imageLink).with({ scheme: 'vscode-resource' });
+		} else {
+			imageUri = vscode.Uri.file(path.join(path.dirname(searchUri.fsPath), imageLink)).with({ scheme: 'vscode-resource' });
+		}
 	}
 	return imageUri;
 }
