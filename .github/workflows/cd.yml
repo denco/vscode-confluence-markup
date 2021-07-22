@@ -36,12 +36,12 @@ jobs:
       - name: Create release notes for version ${{ steps.release-version.outputs.version }}
         # run: npm run --silent changelog > RELEASE_NOTES_${{ steps.release-version.outputs.version }}.md
         run: |
-          if [ $((grep $(grep -m1 'version' package.json | cut -d '"' -f 4) -n CHANGELOG.md || echo 0) | cut -d ':' -f 1) -eq 3 ]; then \
+          if [ $((grep "$(grep -m1 'version' package.json | cut -d '"' -f 4)" -n CHANGELOG.md || echo 0)| head -1 | cut -d ':' -f 1) -eq 3 ]; then \
             awk '/##/{++c;next} c==1' CHANGELOG.md | awk '!/^$/'; \
           else \
             >&2 echo 'Unchecked version'; \
             echo 1; \
-          fi > RELEASE_NOTES_${{ steps.release-version.outputs.version }}.md
+          fi | tee RELEASE_NOTES_${{ steps.release-version.outputs.version }}.md
       # https://github.com/ncipollo/release-action
       - name: Create github release
         uses: ncipollo/release-action@v1
