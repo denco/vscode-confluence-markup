@@ -7,4 +7,4 @@ h1. cats
 -- !https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif!
 
 - *testing cat*
--- !../../media/testing_cat.gif!
+-- !../../media/testing_cat.gif|width=500,height=500!
