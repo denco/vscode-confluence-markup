@@ -23,19 +23,21 @@
 	<h4>Table without heading</h4>
 </p>
 <p>
-	<tr>
-		<table>
-			<td>test</td>
-			<td>test</td>
-		</tr>
-	</p>
-	<p>
-		<tr>
-			<td>simple table</td>
-			<td>two</td>
-		</tr>
-	</p>
-	<p></table>
+	 <table>
+				 <tbody>
+						 <tr>
+								 <td>test</td>
+								 <td>test</td>
+						 </tr>
+				 </p>
+				 <p>
+						 <tr>
+								 <td>simple table</td>
+								 <td>two</td>
+						 </tr>
+				 </p>
+				 <p></tbody>
+		 </table>
 </p>
 <p>
 	<a href='https://github.com/denco/vscode-confluence-markup/issues/6'>#6</a>: Intenting</p>
@@ -225,3 +227,51 @@
 <p>
 	<code style='font-family: Menlo, Monaco, Consolas, monospace'>monospace</code>
 </p>
+<p>
+	<a href='https://github.com/denco/vscode-confluence-markup/issues/37'>#37</a>move out of preview</p>
+<p>move out of preview, and bump to version: 1.0.0</p>
+<p>
+	<a href='https://github.com/denco/vscode-confluence-markup/issues/38'>#38</a>Preview is not working using links inside a table</p>
+<p>
+	<table>
+			<tbody>
+					<tr>
+							<th>heading 1</th>
+							<th>heading 2</th>
+							<th>heading 3</th>
+					</tr>
+			</p>
+			<p>
+					<tr>
+							<td>cell A1</td>
+							<td>cell A2</td>
+							<td>cell A3</td>
+					</tr>
+			</p>
+			<p>
+					<tr>
+							<td>cell B1</td>
+							<td>cell B2</td>
+							<td>cell B3</td>
+					</tr>
+			</p>
+			<p>
+					<tr>
+							<td>
+									<a href='www.example.com'>example</a>
+							</td>
+							<td>
+									<a href='www.google.com'>google</a>
+							</td>
+							<td>
+									<a href='https://code.visualstudio.com/'>vscode</a>
+							</td>
+					</tr>
+			</p>
+			<p></tbody>
+	</table>
+</p>
+<p>
+	<a href='https://github.com/denco/vscode-confluence-markup/issues/39'>#39</a>Local image preview</p>
+<p>
+	<img src="vscode-resource:_TEST_EXTENSION_PATH_PLACEHOLDER_/src/test/suite/fixtures/testfiles/media/testing_cat.gif" width="500"/></p>

@@ -1,5 +1,12 @@
 # Confluence Wiki Markup
 
+## [1.0.0](https://github.com/denco/vscode-confluence-markup/releases/tag/1.0.0)
+
+- non preview release [1.0.0](https://github.com/denco/vscode-confluence-markup/issues/37)
+- fix render links inside of table [Preview is not working using links inside a table](https://github.com/denco/vscode-confluence-markup/issues/38)
+- fix render local images [Image preview](https://github.com/denco/vscode-confluence-markup/issues/39)
+- render image attributes
+
 ## [0.1.12](https://github.com/denco/vscode-confluence-markup/releases/tag/0.1.12)
 
 - fix monospace with digits [Monospaced Text does not seem to be supported](https://github.com/denco/vscode-confluence-markup/issues/34)
