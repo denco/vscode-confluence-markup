@@ -22,7 +22,7 @@ Provide syntax highlighting and snippets.
 
 LanguageID: `confluence`
 
-Defaulft supported file extentions:
+Default supported file extentions:
 
 - `.confluence`
 - `.wiki`
