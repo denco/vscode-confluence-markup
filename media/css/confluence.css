@@ -48,44 +48,65 @@ table, th, td {
 	padding: 7px;
 }
 
-pre > code {
-	display: block;
-	background:rgba(0, 0, 0, 0.15);
-	word-wrap: break-word;
-	overflow-wrap: break-word;
-	word-break: break-space;
-	white-space: normal;
-	margin: 0px 5px;
-	padding: 5px 1em;
-	line-height: 1.5em;
-}
-
 .code-panel {
-	display: inline-block;
-	width: 90%;
+	display: block;
     color: black;
-	margin: 0px;
-	background-color: #f5f5f5;
+	background-color: red;
 	border-width: 1px;
 }
 
 .code-title {
+	display: block;
+	background:rgb(216, 207, 207);
+	color: black;
 	font-weight: bold;
 	padding: 5px 3px;
+	margin: 0px;
 	border-bottom: none;
 }
 
-.code-body {
-	padding: 3px;
-    font-family: monospace;
-    color: white;
-    background:rgba(17, 16, 16, 0.75);
+pre {
+	margin: 0px;
+}
+
+pre > code {
+	display: block;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	word-break: break-space;
 	white-space: normal;
+	/* margin: 0px 5px; */
+	margin: 0px;
+	padding: 5px 1em;
 	line-height: 1.5em;
+	background-color: rebeccapurple;
 }
+
+code {
+	display: block;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	word-break: break-space;
+	white-space: normal;
+	/* margin: 0px 5px; */
+	margin: 0px;
+	padding: 5px 1em;
+	line-height: 1.5em;
+	background-color: rebeccapurple;
+}
+
+pre > code > p {
+	margin: 0px;
+}
+
+p:has(code) {
+	margin: 0px;
+  }
+
+/* This makes things way too tight, but it does get rid of the spacing issue with code blocks. */
+/* p:empty {
+	margin: 0px;
+} */
 
 .panel {
 	display: inline-block;
@@ -108,10 +129,6 @@ pre > code {
 	padding: 3px;
 }
 
-
-pre > code > p {
-	margin: 0px;
-}
 
 ul {
 	list-style-type: disc;

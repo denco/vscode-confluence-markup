@@ -67,18 +67,22 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			&& (! listFlag)
 			&& (! tableFlag)
 			&& (! codeTagFlag)
+			// Added and disabled for now
+			&& (! codeBlockTagFlag)
 			) {
 			continue;
 		}
 
-		if (! codeTagFlag) {
+		if (! codeBlockTagFlag) {
 			tag = tag.replace(/h(\d+)\.\s([^\n]+)/g, "<h$1>$2</h$1>");
 
 			// tag = tag.replace(/_([^_]*)_/g, "<em>$1</em>");
+
 			tag = tag.replace(/\+([^+]*)\+/g, "<u>$1</u>");
 			tag = tag.replace(/\^([^^]*)\^/g, "<sup>$1</sup>");
 			tag = tag.replace(/~([^~]*)~/g, "<sub>$1</sub>");
-			tag = tag.replace(/\\}/g, "&rbrace;").replace(/\{{2}(.*?)\}{2}/g, `<code style='font-family: ${MONOSPACE_FONT_FAMILY}'>$1</code>`);
+			//Modidfied to add pre tag
+			tag = tag.replace(/\\}/g, "&rbrace;").replace(/\{{2}(.*?)\}{2}/g, `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>$1</code></pre>`);
 			tag = tag.replace(/\?{2}(.*)\?{2}/g, "<cite>$1</cite>");
 			tag = tag.replace(/\{color:([^}]+)\}/g, "<span style='color:$1;'>").replace(/\{color\}/g, '</span>');
 
@@ -164,19 +168,22 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		});
 
 		// code block tag
-		const code_block_re = /\{code(.*)}/;
+		// const code_block_re = /\{code(.*)}/
+		const code_block_re = /\{code([^}]*)\}/;
 		const code_block_match = tag.match(code_block_re);
 		if (code_block_match) {
 			if (! codeBlockTagFlag) {
 				let panelStyle = "";
 				let titleStyle = "";
-				tag = tag.replace(code_block_re, function (m0, m1) {
-					let res = '<div class="code-panel code-body" $panelStyle>'
+				tag = tag.replace(code_block_re, function (m0, m1, m2) {
+					let res = '<pre><code $panelStyle>'
 					const splits = m1.split(/[|:]/);
 					splits.forEach( (el:string) => {
 						const elems = el.split('=');
 						if (elems[0] === "title"){
-							res = `<div class="code-panel code-title" $titleStyle>${elems[1]}</div>${res}`;
+							res = `<div class="code-panel"><span class="code-title" $titleStyle>${elems[1]}</span>${res}`;
+						} else {
+							res = `<div class="code-panel">${res}`;
 						}
                         // Disabled for now.
 						// if (elems[0] === "theme"){
@@ -199,15 +206,62 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				});
 				codeBlockTagFlag = true;
 			} else {
-				tag = '</div>';
+				// This seems inververted. I'm not sure if it needs corrected.
+				// tag = '</pre></code>';
+				tag = '</code></pre>';
 				codeBlockTagFlag = false;
 			}
 		}
 
+		// Attempt #2
+		// const code_re = /\{code(.*)}/;
+		// const code_match = tag.match(code_re);
+		// if (code_match) {
+		// 	if (! codeTagFlag) {
+		// 		let panelStyle = "";
+		// 		let titleStyle = "";
+		// 		tag = tag.replace(code_re, function (m0, m1, m2) {
+		// 			let res = '<code class="code-body" $panelStyle>'
+		// 			const splits = m1.split(/[|:]/);
+		// 			splits.forEach( (el:string) => {
+		// 				const elems = el.split('=');
+		// 				if (elems[0] === "title"){
+		// 					// res = `<pre><div class="code-panel code-title" $titleStyle>${elems[1]}</div>${res}`;
+		// 					res = `<pre><span class="code-title" $titleStyle>${elems[1]}</span>${res}`;
+		// 				} else {
+		// 					res = `<pre>${res}`;
+		// 				}
+        //                 // Disabled for now.
+		// 				// if (elems[0] === "theme"){
+		// 				// 	if (panelStyle.length === 0) {
+		// 				// 		panelStyle = `style='background-color: ${elems[1]};`;
+		// 				// 	} else {
+		// 				// 		panelStyle += ` background-color: ${elems[1]};`;
+		// 				// 	}
+		// 				// }
+		// 			});
+		// 			if (titleStyle.length > 0) {
+		// 				titleStyle += `'`;
+		// 			}
+		// 			if (panelStyle.length > 0) {
+		// 				panelStyle += `'`;
+		// 			}
+		// 			res = res.replace('$panelStyle', panelStyle);
+		// 			res = res.replace('$titleStyle', titleStyle);
+		// 			return res;
+		// 		});
+		// 		codeTagFlag = true;
+		// 	} else {
+		// 		tag = '</pre></code>';
+		// 		codeTagFlag = false;
+		// 	}
+		// }
+
 
 		// old code tag
-		// const code_re = /\{(noformat|code)[^}]*\}/;
+		// const code_re = /\{code[^}]*\}/;
 		// const code_match = tag.match(code_re);
+		// console.log(code_match);
 		// if (code_match) {
 		// 	if (! codeTagFlag) {
 		// 		tag = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`;
