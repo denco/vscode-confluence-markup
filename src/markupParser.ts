@@ -53,6 +53,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	let listTag = '';
 	let listStyle = '';
 	let codeTagFlag = false;
+	let codeBlockTagFlag = false;
 	let panelTagFlag = false;
 	let tableFlag = false;
 	let listFlag = false;
@@ -162,17 +163,59 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			return `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>${m2.replace(/</gi, '&lt;')}</code></pre>`;
 		});
 
-		const code_re = /\{(noformat|code)[^}]*\}/;
-		const code_match = tag.match(code_re);
-		if (code_match) {
-			if (! codeTagFlag) {
-				tag = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`;
-				codeTagFlag = true;
+		// code block tag
+		const code_block_re = /\{code(.*)}/;
+		const code_block_match = tag.match(code_block_re);
+		if (code_block_match) {
+			if (! codeBlockTagFlag) {
+				let panelStyle = "";
+				let titleStyle = "";
+				tag = tag.replace(code_block_re, function (m0, m1) {
+					let res = '<div class="code-panel code-body" $panelStyle>'
+					const splits = m1.split(/[|:]/);
+					splits.forEach( (el:string) => {
+						const elems = el.split('=');
+						if (elems[0] === "title"){
+							res = `<div class="code-panel code-title" $titleStyle>${elems[1]}</div>${res}`;
+						}
+                        // Disabled for now.
+						// if (elems[0] === "theme"){
+						// 	if (panelStyle.length === 0) {
+						// 		panelStyle = `style='background-color: ${elems[1]};`;
+						// 	} else {
+						// 		panelStyle += ` background-color: ${elems[1]};`;
+						// 	}
+						// }
+					});
+					if (titleStyle.length > 0) {
+						titleStyle += `'`;
+					}
+					if (panelStyle.length > 0) {
+						panelStyle += `'`;
+					}
+					res = res.replace('$panelStyle', panelStyle);
+					res = res.replace('$titleStyle', titleStyle);
+					return res;
+				});
+				codeBlockTagFlag = true;
 			} else {
-				tag = '</pre></code>';
-				codeTagFlag = false;
+				tag = '</div>';
+				codeBlockTagFlag = false;
 			}
-		}
+
+
+		// old code tag
+		// const code_re = /\{(noformat|code)[^}]*\}/;
+		// const code_match = tag.match(code_re);
+		// if (code_match) {
+		// 	if (! codeTagFlag) {
+		// 		tag = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`;
+		// 		codeTagFlag = true;
+		// 	} else {
+		// 		tag = '</pre></code>';
+		// 		codeTagFlag = false;
+		// 	}
+		// }
 
 		const panel_re = /\{panel(.*)}/;
 		if (! codeTagFlag && tag.match(panel_re)) {

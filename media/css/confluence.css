@@ -60,6 +60,32 @@ pre > code {
 	line-height: 1.5em;
 }
 
+.code-panel {
+	display: inline-block;
+	width: 90%;
+    color: black;
+	margin: 0px;
+	background-color: #f5f5f5;
+	border-width: 1px;
+}
+
+.code-title {
+	font-weight: bold;
+	padding: 5px 3px;
+	border-bottom: none;
+}
+
+.code-body {
+	padding: 3px;
+    font-family: monospace;
+    color: white;
+    background:rgba(17, 16, 16, 0.75);
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	word-break: break-space;
+	white-space: normal;
+	line-height: 1.5em;
+}
 
 .panel {
 	display: inline-block;
