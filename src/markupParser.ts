@@ -202,6 +202,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				tag = '</div>';
 				codeBlockTagFlag = false;
 			}
+		}
 
 
 		// old code tag
