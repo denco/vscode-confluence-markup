@@ -185,11 +185,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 					}
 					// Disabled for now. I'd like to add the standard confluence code block themes later.
 					// if (elems[0] === "theme"){
-					// 	if (panelStyle.length === 0) {
-					// 		panelStyle = `style='background-color: ${elems[1]};`;
-					// 	} else {
-					// 		panelStyle += ` background-color: ${elems[1]};`;
-					// 	}
+						// Add some sort of switch statement in here.
 					// }
 				});
 				res = `<div class="code-panel">${res}`;
@@ -201,11 +197,10 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				}
 				res = res.replace('$panelStyle', panelStyle);
 				tag = res.replace('$titleStyle', titleStyle);
-				// console.log('tag=' + tag);
 				codeBlockTagFlag = true;
 			} else {
-				// This seems inververted. I'm not sure if it needs corrected.
-				// tag = '</pre></code>';
+				// This seems inververted and has been corrected.
+				// tag = '</pre></code></div>';
 				tag = '</code></pre></div>';
 				codeBlockTagFlag = false;
 			}
@@ -217,7 +212,6 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		// if (code_match) {
 		// 	if (! codeTagFlag) {
 		// 		tag = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`;
-		// 		console.log('tag=' + tag);
 		// 		codeTagFlag = true;
 		// 	} else {
 		// 		tag = '</pre></code>';
