@@ -168,11 +168,11 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
 
 
-		// code block tag
-		// const code_re = /\{code[^}]*\}/;
-		const code_re = /\{code(.*)\}/;
-		const code_match = tag.match(code_re);
-		if (code_match) {
+		// code panel tag
+		// const code_panel_re = /\{code[^}]*\}/;
+		const code_panel_re = /\{code(.*)\}/;
+		const code_panel_match = tag.match(code_panel_re);
+		if (code_panel_match) {
 			if (! codeBlockTagFlag) {
 				let panelStyle = "";
 				let titleStyle = "";
