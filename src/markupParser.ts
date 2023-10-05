@@ -81,8 +81,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			tag = tag.replace(/\+([^+]*)\+/g, "<u>$1</u>");
 			tag = tag.replace(/\^([^^]*)\^/g, "<sup>$1</sup>");
 			tag = tag.replace(/~([^~]*)~/g, "<sub>$1</sub>");
-			//Modidfied to add pre tag
-			tag = tag.replace(/\\}/g, "&rbrace;").replace(/\{{2}(.*?)\}{2}/g, `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>$1</code></pre>`);
+			tag = tag.replace(/\\}/g, "&rbrace;").replace(/\{{2}(.*?)\}{2}/g, `<code style='font-family: ${MONOSPACE_FONT_FAMILY}'>$1</code>`);
 			tag = tag.replace(/\?{2}(.*)\?{2}/g, "<cite>$1</cite>");
 			tag = tag.replace(/\{color:([^}]+)\}/g, "<span style='color:$1;'>").replace(/\{color\}/g, '</span>');
 
@@ -167,104 +166,58 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			return `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>${m2.replace(/</gi, '&lt;')}</code></pre>`;
 		});
 
+
+
 		// code block tag
-		// const code_block_re = /\{code(.*)}/
-		const code_block_re = /\{code([^}]*)\}/;
-		const code_block_match = tag.match(code_block_re);
-		if (code_block_match) {
+		// const code_re = /\{code[^}]*\}/;
+		const code_re = /\{code(.*)\}/;
+		const code_match = tag.match(code_re);
+		if (code_match) {
 			if (! codeBlockTagFlag) {
 				let panelStyle = "";
 				let titleStyle = "";
-				tag = tag.replace(code_block_re, function (m0, m1, m2) {
-					let res = '<pre><code $panelStyle>'
-					const splits = m1.split(/[|:]/);
-					splits.forEach( (el:string) => {
-						const elems = el.split('=');
-						if (elems[0] === "title"){
-							res = `<div class="code-panel"><span class="code-title" $titleStyle>${elems[1]}</span>${res}`;
-						} else {
-							res = `<div class="code-panel">${res}`;
-						}
-                        // Disabled for now.
-						// if (elems[0] === "theme"){
-						// 	if (panelStyle.length === 0) {
-						// 		panelStyle = `style='background-color: ${elems[1]};`;
-						// 	} else {
-						// 		panelStyle += ` background-color: ${elems[1]};`;
-						// 	}
-						// }
-					});
-					if (titleStyle.length > 0) {
-						titleStyle += `'`;
+				let res = '<pre><code $panelStyle>'
+				const splits = tag.split(/[|:]/);
+				splits.forEach( (el:string) => {
+					const elems = el.split('=');
+					if (elems[0] === "title"){
+						res = `<span class="code-title" $titleStyle>${elems[1]}</span>${res}`;
 					}
-					if (panelStyle.length > 0) {
-						panelStyle += `'`;
-					}
-					res = res.replace('$panelStyle', panelStyle);
-					res = res.replace('$titleStyle', titleStyle);
-					return res;
+					// Disabled for now. I'd like to add the standard confluence code block themes later.
+					// if (elems[0] === "theme"){
+					// 	if (panelStyle.length === 0) {
+					// 		panelStyle = `style='background-color: ${elems[1]};`;
+					// 	} else {
+					// 		panelStyle += ` background-color: ${elems[1]};`;
+					// 	}
+					// }
 				});
+				res = `<div class="code-panel">${res}`;
+				if (titleStyle.length > 0) {
+					titleStyle += `'`;
+				}
+				if (panelStyle.length > 0) {
+					panelStyle += `'`;
+				}
+				res = res.replace('$panelStyle', panelStyle);
+				tag = res.replace('$titleStyle', titleStyle);
+				// console.log('tag=' + tag);
 				codeBlockTagFlag = true;
 			} else {
 				// This seems inververted. I'm not sure if it needs corrected.
 				// tag = '</pre></code>';
-				tag = '</code></pre>';
+				tag = '</code></pre></div>';
 				codeBlockTagFlag = false;
 			}
 		}
 
-		// Attempt #2
-		// const code_re = /\{code(.*)}/;
-		// const code_match = tag.match(code_re);
-		// if (code_match) {
-		// 	if (! codeTagFlag) {
-		// 		let panelStyle = "";
-		// 		let titleStyle = "";
-		// 		tag = tag.replace(code_re, function (m0, m1, m2) {
-		// 			let res = '<code class="code-body" $panelStyle>'
-		// 			const splits = m1.split(/[|:]/);
-		// 			splits.forEach( (el:string) => {
-		// 				const elems = el.split('=');
-		// 				if (elems[0] === "title"){
-		// 					// res = `<pre><div class="code-panel code-title" $titleStyle>${elems[1]}</div>${res}`;
-		// 					res = `<pre><span class="code-title" $titleStyle>${elems[1]}</span>${res}`;
-		// 				} else {
-		// 					res = `<pre>${res}`;
-		// 				}
-        //                 // Disabled for now.
-		// 				// if (elems[0] === "theme"){
-		// 				// 	if (panelStyle.length === 0) {
-		// 				// 		panelStyle = `style='background-color: ${elems[1]};`;
-		// 				// 	} else {
-		// 				// 		panelStyle += ` background-color: ${elems[1]};`;
-		// 				// 	}
-		// 				// }
-		// 			});
-		// 			if (titleStyle.length > 0) {
-		// 				titleStyle += `'`;
-		// 			}
-		// 			if (panelStyle.length > 0) {
-		// 				panelStyle += `'`;
-		// 			}
-		// 			res = res.replace('$panelStyle', panelStyle);
-		// 			res = res.replace('$titleStyle', titleStyle);
-		// 			return res;
-		// 		});
-		// 		codeTagFlag = true;
-		// 	} else {
-		// 		tag = '</pre></code>';
-		// 		codeTagFlag = false;
-		// 	}
-		// }
-
-
 		// old code tag
 		// const code_re = /\{code[^}]*\}/;
 		// const code_match = tag.match(code_re);
-		// console.log(code_match);
 		// if (code_match) {
 		// 	if (! codeTagFlag) {
 		// 		tag = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`;
+		// 		console.log('tag=' + tag);
 		// 		codeTagFlag = true;
 		// 	} else {
 		// 		tag = '</pre></code>';
@@ -273,7 +226,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		// }
 
 		const panel_re = /\{panel(.*)}/;
-		if (! codeTagFlag && tag.match(panel_re)) {
+		if (! codeBlockTagFlag && tag.match(panel_re)) {
 			if (! panelTagFlag ) {
 				let panelStyle = "";
 				let titleStyle = "";

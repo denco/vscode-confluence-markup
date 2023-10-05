@@ -82,31 +82,13 @@ pre > code {
 	background-color: rebeccapurple;
 }
 
-code {
-	display: block;
-	word-wrap: break-word;
-	overflow-wrap: break-word;
-	word-break: break-space;
-	white-space: normal;
-	/* margin: 0px 5px; */
-	margin: 0px;
-	padding: 5px 1em;
-	line-height: 1.5em;
-	background-color: rebeccapurple;
-}
-
 pre > code > p {
 	margin: 0px;
 }
 
-p:has(code) {
+/* p:has(code) {
 	margin: 0px;
-  }
-
-/* This makes things way too tight, but it does get rid of the spacing issue with code blocks. */
-/* p:empty {
-	margin: 0px;
-} */
+  } */
 
 .panel {
 	display: inline-block;
