@@ -52,9 +52,8 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	let result = '';
 	let listTag = '';
 	let listStyle = '';
-	let codeTagFlag = false;
+	let codeBlockTagFlag = false;
 	let innerCodeTagFlag = false;
-	let paneledCodeTagFlag = false;
 	let panelTagFlag = false;
 	let tableFlag = false;
 	let listFlag = false;
@@ -67,13 +66,13 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		if ((tag.length === 0 )
 			&& (! listFlag)
 			&& (! tableFlag)
-			&& (! codeTagFlag)
+			&& (! codeBlockTagFlag)
 			&& (! innerCodeTagFlag)
 			) {
 			continue;
 		}
 
-		if (! codeTagFlag || ! innerCodeTagFlag) {
+		if (! codeBlockTagFlag || ! innerCodeTagFlag) {
 			tag = tag.replace(/h(\d+)\.\s([^\n]+)/g, "<h$1>$2</h$1>");
 
 			// tag = tag.replace(/_([^_]*)_/g, "<em>$1</em>");
@@ -167,18 +166,18 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		});
 
 
-		// code panel tag
-		const code_re = /\{code[^}]*\}/;
+		// code block tag
+		// const code_re = /\{code[^}]*\}/;
+		const code_re = /\{code(.*)\}/;
 		const code_match = tag.match(code_re);
-		const code_panel_open_re = /\{code:(.*)\}/;
-		const code_panel_open_match = tag.match(code_panel_open_re);
-		const code_panel_close_re = /\{code\}/;
-		const code_panel_close_match = tag.match(code_panel_close_re);
+		// const code_panel_open_match = tag.match(code_panel_open_re);
+		// const code_panel_close_re = /\{code\}/;
+		// const code_panel_close_match = tag.match(code_panel_close_re);
 		if (code_match) {
-			if (code_panel_open_match && ! paneledCodeTagFlag) {
+			if (! innerCodeTagFlag  && ! codeBlockTagFlag) {
 				let codeBlockStyle = "";
 				// let titleStyle = "";
-				tag = tag.replace(code_panel_open_re, function (m0, m1) {
+				tag = tag.replace(code_re, function (m0, m1) {
 					let res = '<pre><code $codeBlockStyle>'
 					const splits = m1.split(/[|:]/);
 					splits.forEach( (el:string) => {
@@ -190,7 +189,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 						}
 						// Basic theme matching.
 						if (elems[0] === "theme"){
-							// Add some sort of switch statement in here.
+							// Predefined confluence themes.
 							switch (elems[1].toLowerCase()) {
 								case "django":
 									codeBlockStyle = `style='color:#f8f8f8;background-color:#0a2b1d;'`;
@@ -220,27 +219,22 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 					// res = res.replace('$titleStyle', titleStyle);
 					return res;
 				});
-				paneledCodeTagFlag = true;
+				codeBlockTagFlag = true;
 				// If the opening match isn't found. Check for a simple code block by looking for the closing tag without an innner code tag.
 			}
-			if (! innerCodeTagFlag && code_panel_close_match && ! paneledCodeTagFlag) {
-				tag = '<div class="code-panel"><pre><code>';
-				paneledCodeTagFlag = true;
-			}
 		}
-		// if (paneledCodeTagFlag && ! code_panel_open_match && ! code_panel_close_match) {
-		if (paneledCodeTagFlag && ! code_match) {
+		if (codeBlockTagFlag && ! code_match) {
 			// Flag the inner code, so it doesn't get modified.
 			innerCodeTagFlag = true;
 		}
-		if (code_panel_close_match && paneledCodeTagFlag && innerCodeTagFlag) {
+		if (code_match && codeBlockTagFlag && innerCodeTagFlag) {
 			tag = '</code></pre></div>';
 			//This pays attention to the list flag and adds the closing </li> tag if needed.
 			if (listFlag) {
 				tag = `${tag}</li>`;
 			}
 			innerCodeTagFlag = false;
-			paneledCodeTagFlag = false;
+			codeBlockTagFlag = false;
 		}
 
 		// original code block. keeping for reference.
@@ -257,7 +251,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		// }
 
 		const panel_re = /\{panel(.*)}/;
-		if (! paneledCodeTagFlag && tag.match(panel_re)) {
+		if (! codeBlockTagFlag && tag.match(panel_re)) {
 			if (! panelTagFlag ) {
 				let panelStyle = "";
 				let titleStyle = "";
@@ -340,7 +334,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			}
 		}
 
-		if (! codeTagFlag || ! innerCodeTagFlag) {
+		if (! innerCodeTagFlag) {
 			// lists
 			const li_re = /^([-*#]+)\s(.*)/;
 			const li_match = tag.match(li_re);
@@ -371,7 +365,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 					listArr = listArr.slice(0, li_match[1].length);
 				}
 				// This prevents the closing </li> tag from being added too prematurely.
-				if (paneledCodeTagFlag || panelTagFlag) {
+				if (codeBlockTagFlag || panelTagFlag) {
 					tag += "<li>" + li_match[2];
 				} else {
 					tag += "<li>" + li_match[2] + "</li>";
