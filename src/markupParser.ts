@@ -54,6 +54,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	let listStyle = '';
 	let codeBlockTagFlag = false;
 	let innerCodeTagFlag = false;
+	let noFormatBlockTagFlag = false;
 	let panelTagFlag = false;
 	let tableFlag = false;
 	let listFlag = false;
@@ -68,15 +69,15 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			&& (! tableFlag)
 			&& (! codeBlockTagFlag)
 			&& (! innerCodeTagFlag)
+			&& (! noFormatBlockTagFlag)
 			) {
 			continue;
 		}
 
-		if (! codeBlockTagFlag || ! innerCodeTagFlag) {
+		if (! codeBlockTagFlag || ! innerCodeTagFlag || ! noFormatBlockTagFlag) {
 			tag = tag.replace(/h(\d+)\.\s([^\n]+)/g, "<h$1>$2</h$1>");
 
 			// tag = tag.replace(/_([^_]*)_/g, "<em>$1</em>");
-
 			tag = tag.replace(/\+([^+]*)\+/g, "<u>$1</u>");
 			tag = tag.replace(/\^([^^]*)\^/g, "<sup>$1</sup>");
 			tag = tag.replace(/~([^~]*)~/g, "<sub>$1</sub>");
@@ -178,7 +179,9 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				let codeBlockStyle = "";
 				// let titleStyle = "";
 				tag = tag.replace(code_re, function (m0, m1) {
-					let res = '<pre><code $codeBlockStyle>'
+					// let res = '<pre><code $codeBlockStyle>'
+					// let res = `'<pre><code style="font-family:"'${MONOSPACE_FONT_FAMILY} $codeBlockStyle>`
+					let res = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}$codeBlockStyle'>`;
 					const splits = m1.split(/[|:]/);
 					splits.forEach( (el:string) => {
 						const elems = el.split('=');
@@ -192,29 +195,29 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 							// Predefined confluence themes.
 							switch (elems[1].toLowerCase()) {
 								case "django":
-									codeBlockStyle = `style='color:#f8f8f8;background-color:#0a2b1d;'`;
+									codeBlockStyle = `;color:#f8f8f8;background-color:#0a2b1d;`;
 									break;
 								case "emacs":
-									codeBlockStyle = `style='color:#d3d3d3;background-color:black;'`;
+									codeBlockStyle = `;color:#d3d3d3;background-color:black;`;
 									break;
 								case "fadetogrey":
-									codeBlockStyle = `style='color:white;background-color:#121212;'`;
+									codeBlockStyle = `;color:white;background-color:#121212;`;
 									break;
 								case "midnight":
-									codeBlockStyle = `style='color:#d1edff;background-color:#0f192a;'`;
+									codeBlockStyle = `;color:#d1edff;background-color:#0f192a;`;
 									break;
 								case "rdark":
-									codeBlockStyle = `style='color:#b9bdb6;background-color:#1b2426;'`;
+									codeBlockStyle = `;color:#b9bdb6;background-color:#1b2426;`;
 									break;
 								case "eclipse":
-									codeBlockStyle = `style='color:white;background-color:black;'`;
+									codeBlockStyle = `;color:white;background-color:black;`;
 									break;
 								case "confluence":
-									codeBlockStyle = `style='color:white;background-color:black;'`;
+									codeBlockStyle = `;color:white;background-color:black;`;
 								}
 						}
 					});
-					res = `<div class="code-panel">${res}`;
+					res = `<div class="code-block">${res}`;
 					res = res.replace('$codeBlockStyle', codeBlockStyle);
 					// res = res.replace('$titleStyle', titleStyle);
 					return res;
@@ -224,11 +227,12 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			}
 		}
 		if (codeBlockTagFlag && ! code_match) {
+			tag = tag.replace(/</gi, '&lt;') + '<br />';
 			// Flag the inner code, so it doesn't get modified.
 			innerCodeTagFlag = true;
 		}
 		if (code_match && codeBlockTagFlag && innerCodeTagFlag) {
-			tag = '</code></pre></div>';
+			tag = '</pre></code></div>';
 			//This pays attention to the list flag and adds the closing </li> tag if needed.
 			if (listFlag) {
 				tag = `${tag}</li>`;
@@ -237,8 +241,24 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			codeBlockTagFlag = false;
 		}
 
+		const noformat_re = /\{(noformat)[^}]*\}/;
+		const noformat_match = tag.match(noformat_re);
+		if (noformat_match) {
+			if (! noFormatBlockTagFlag) {
+				tag = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`;
+				noFormatBlockTagFlag = true;
+			} else {
+				tag = '</pre></code>';
+				noFormatBlockTagFlag = false;
+			}
+		}
+		if (noFormatBlockTagFlag) {
+			if (!noformat_match) {
+				tag = tag.replace(/</gi, '&lt;') + '<br />';
+			}
+		}
 		// original code block. keeping for reference.
-		// const code_re = /\{code[^}]*\}/;
+		// const code_re = /\{(noformat|code)[^}]*\}/;
 		// const code_match = tag.match(code_re);
 		// if (code_match) {
 		// 	if (! codeTagFlag) {
@@ -251,7 +271,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		// }
 
 		const panel_re = /\{panel(.*)}/;
-		if (! codeBlockTagFlag && tag.match(panel_re)) {
+		if ((! codeBlockTagFlag || ! noFormatBlockTagFlag) && tag.match(panel_re)) {
 			if (! panelTagFlag ) {
 				let panelStyle = "";
 				let titleStyle = "";
@@ -334,7 +354,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			}
 		}
 
-		if (! innerCodeTagFlag) {
+		if (! innerCodeTagFlag || ! noFormatBlockTagFlag) {
 			// lists
 			const li_re = /^([-*#]+)\s(.*)/;
 			const li_match = tag.match(li_re);

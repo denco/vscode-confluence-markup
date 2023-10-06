@@ -48,7 +48,7 @@ table, th, td {
 	padding: 7px;
 }
 
-.code-panel {
+.code-block {
 	display: block;
 	width: 90%;
 	/* background-color: red; */
@@ -72,20 +72,17 @@ pre {
 
 pre > code {
 	display: block;
+	background:rgba(0, 0, 0, 0.15);
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	word-break: break-space;
 	white-space: normal;
 	/* margin: 0px 5px; */
-	background:rgba(0, 0, 0, 0.15);
 	margin: 0px;
 	padding: 5px 1em;
 	line-height: 1.5em;
 }
 
-pre > code > p {
-	margin: .5em 0;
-}
 
 .panel {
 	display: inline-block;
@@ -106,6 +103,11 @@ pre > code > p {
 .panel-body {
 	background-color: lightgrey;
 	padding: 3px;
+}
+
+
+pre > code > p {
+	margin: .5em 0;
 }
 
 ul {
