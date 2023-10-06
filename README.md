@@ -55,6 +55,8 @@ Originally syntax from the [Confluence® Textmate Bundle](https://github.com/alk
 - Run `npm i` to install dependencies.
 - Run `npm run watch` to start compilation in watch mode.
 - Open the repository folder in VS Code and press `F5` to compile and run in a new Extension Development Host Window.
+- Local Install
+	- Run `vcse package` to create a .vsix file
 
 ----
 

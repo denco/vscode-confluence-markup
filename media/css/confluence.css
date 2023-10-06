@@ -77,11 +77,10 @@ pre > code {
 	word-break: break-space;
 	white-space: normal;
 	/* margin: 0px 5px; */
+	background:rgba(0, 0, 0, 0.15);
 	margin: 0px;
 	padding: 5px 1em;
 	line-height: 1.5em;
-	color: #d1edff;
-	background-color: #0f192a;
 }
 
 pre > code > p {
