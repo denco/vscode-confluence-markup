@@ -51,19 +51,19 @@ table, th, td {
 .code-panel {
 	display: block;
 	width: 90%;
-    /* color: black; */
 	/* background-color: red; */
 	border-width: 1px;
 }
 
 .code-title {
 	display: block;
-	background:rgb(216, 207, 207);
+	background:#c6c3c3;
 	color: black;
 	font-weight: bold;
-	padding: 5px 3px;
-	margin: 0px;
-	border-bottom: none;
+	border-bottom-color: #ccc;
+    padding: 5px 10px;
+    overflow: hidden;
+    position: relative;
 }
 
 pre {
@@ -80,11 +80,12 @@ pre > code {
 	margin: 0px;
 	padding: 5px 1em;
 	line-height: 1.5em;
-	background-color: rebeccapurple;
+	color: #d1edff;
+	background-color: #0f192a;
 }
 
 pre > code > p {
-	margin: 0px;
+	margin: .5em 0;
 }
 
 .panel {

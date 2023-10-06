@@ -173,30 +173,48 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		const code_panel_close_match = tag.match(code_panel_close_re);
 		if (code_panel_open_match) {
 			if (! codeBlockTagFlag) {
-				let panelStyle = "";
-				let titleStyle = "";
+				let codeBlockStyle = "";
+				// let titleStyle = "";
 				tag = tag.replace(code_panel_open_re, function (m0, m1) {
-					let res = '<pre><code $panelStyle>'
+					let res = '<pre><code $codeBlockStyle>'
 					const splits = m1.split(/[|:]/);
 					splits.forEach( (el:string) => {
 						const elems = el.split('=');
 						if (elems[0] === "title"){
-							res = `<span class="code-title" $titleStyle>${elems[1]}</span>${res}`;
+							res = `<span class="code-title">${elems[1]}</span>${res}`;
+							// Title style is unecessary for now.
+							// res = `<span class="code-title" $titleStyle>${elems[1]}</span>${res}`;
 						}
-						// Disabled for now. I'd like to add the standard confluence code block themes later.
-						// if (elems[0] === "theme"){
+						// Basic theme matching.
+						if (elems[0] === "theme"){
 							// Add some sort of switch statement in here.
-						// }
+							switch (elems[1].toLowerCase()) {
+								case "django":
+									codeBlockStyle = `style='color:#f8f8f8;background-color:#0a2b1d;'`;
+									break;
+								case "emacs":
+									codeBlockStyle = `style='color:#d3d3d3;background-color:black;'`;
+									break;
+								case "fadetogrey":
+									codeBlockStyle = `style='color:white;background-color:#121212;'`;
+									break;
+								case "midnight":
+									codeBlockStyle = `style='color:#d1edff;background-color:#0f192a;'`;
+									break;
+								case "rdark":
+									codeBlockStyle = `style='color:#b9bdb6;background-color:#1b2426;'`;
+									break;
+								case "eclipse":
+									codeBlockStyle = `style='color:white;background-color:black;'`;
+									break;
+								case "confluence":
+									codeBlockStyle = `style='color:white;background-color:black;'`;
+								}
+						}
 					});
 					res = `<div class="code-panel">${res}`;
-					if (titleStyle.length > 0) {
-						titleStyle += `'`;
-					}
-					if (panelStyle.length > 0) {
-						panelStyle += `'`;
-					}
-					res = res.replace('$panelStyle', panelStyle);
-					res = res.replace('$titleStyle', titleStyle);
+					res = res.replace('$codeBlockStyle', codeBlockStyle);
+					// res = res.replace('$titleStyle', titleStyle);
 					return res;
 				});
 				codeBlockTagFlag = true;
