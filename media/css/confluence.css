@@ -66,23 +66,6 @@ table, th, td {
 	border-bottom: none;
 }
 
-/* The two sets below provide bullets and indentation, but if another ul follows it appears as a child or inline. */
-/* this provides bullets, and indentation. */
-ul .code-panel {
-	display: list-item;
-	list-style-type: disc;
-	margin-left: 20px;
-	/* list-style-position: inside; */
-}
-
-/* this provides bullets, and indentation. But it makes it so if you want code blocks to be part ordered lists, then you're stuck with bullets.*/
-ol .code-panel {
-	display: list-item;
-	list-style-type: disc;
-	margin-left: 20px;
-	/* list-style-position: inside; */
-}
-
 pre {
 	margin: 0px;
 }
@@ -104,10 +87,6 @@ pre > code > p {
 	margin: 0px;
 }
 
-/* p:has(code) {
-	margin: 0px;
-  } */
-
 .panel {
 	display: inline-block;
 	width: 90%;
@@ -128,7 +107,6 @@ pre > code > p {
 	background-color: lightgrey;
 	padding: 3px;
 }
-
 
 ul {
 	list-style-type: disc;

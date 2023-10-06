@@ -67,13 +67,12 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			&& (! listFlag)
 			&& (! tableFlag)
 			&& (! codeTagFlag)
-			// Added and disabled for now
 			&& (! codeBlockTagFlag)
 			) {
 			continue;
 		}
 
-		if (! codeBlockTagFlag) {
+		if (! codeTagFlag) {
 			tag = tag.replace(/h(\d+)\.\s([^\n]+)/g, "<h$1>$2</h$1>");
 
 			// tag = tag.replace(/_([^_]*)_/g, "<em>$1</em>");
@@ -167,43 +166,52 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		});
 
 
-
 		// code panel tag
-		// const code_panel_re = /\{code[^}]*\}/;
-		const code_panel_re = /\{code(.*)\}/;
-		const code_panel_match = tag.match(code_panel_re);
-		if (code_panel_match) {
+		const code_panel_open_re = /\{code:(.*)\}/;
+		const code_panel_open_match = tag.match(code_panel_open_re);
+		const code_panel_close_re = /\{code\}/;
+		const code_panel_close_match = tag.match(code_panel_close_re);
+		if (code_panel_open_match) {
 			if (! codeBlockTagFlag) {
 				let panelStyle = "";
 				let titleStyle = "";
-				let res = '<pre><code $panelStyle>'
-				const splits = tag.split(/[|:]/);
-				splits.forEach( (el:string) => {
-					const elems = el.split('=');
-					if (elems[0] === "title"){
-						res = `<span class="code-title" $titleStyle>${elems[1]}</span>${res}`;
+				tag = tag.replace(code_panel_open_re, function (m0, m1) {
+					let res = '<pre><code $panelStyle>'
+					const splits = m1.split(/[|:]/);
+					splits.forEach( (el:string) => {
+						const elems = el.split('=');
+						if (elems[0] === "title"){
+							res = `<span class="code-title" $titleStyle>${elems[1]}</span>${res}`;
+						}
+						// Disabled for now. I'd like to add the standard confluence code block themes later.
+						// if (elems[0] === "theme"){
+							// Add some sort of switch statement in here.
+						// }
+					});
+					res = `<div class="code-panel">${res}`;
+					if (titleStyle.length > 0) {
+						titleStyle += `'`;
 					}
-					// Disabled for now. I'd like to add the standard confluence code block themes later.
-					// if (elems[0] === "theme"){
-						// Add some sort of switch statement in here.
-					// }
+					if (panelStyle.length > 0) {
+						panelStyle += `'`;
+					}
+					res = res.replace('$panelStyle', panelStyle);
+					res = res.replace('$titleStyle', titleStyle);
+					return res;
 				});
-				res = `<div class="code-panel">${res}`;
-				if (titleStyle.length > 0) {
-					titleStyle += `'`;
-				}
-				if (panelStyle.length > 0) {
-					panelStyle += `'`;
-				}
-				res = res.replace('$panelStyle', panelStyle);
-				tag = res.replace('$titleStyle', titleStyle);
 				codeBlockTagFlag = true;
-			} else {
-				// This seems inververted and has been corrected.
-				// tag = '</pre></code></div>';
-				tag = '</code></pre></div>';
-				codeBlockTagFlag = false;
 			}
+			} else if (codeBlockTagFlag && ! code_panel_open_match && ! code_panel_close_match) {
+				// Flag the inner code, so it doesn't get modified.
+				codeTagFlag = true;
+			} else if (code_panel_close_match) {
+				tag = '</code></pre></div>';
+				//This pays attention to the list flag and adds the closing </li> tag if needed.
+				if (listFlag) {
+					tag = `${tag}</li>`;
+				}
+				codeTagFlag = false;
+				codeBlockTagFlag = false;
 		}
 
 		// old code tag
@@ -296,6 +304,9 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				panelTagFlag = true;
 			} else {
 				tag = '</div>';
+				if (listFlag) {
+					tag = `${tag}</li>`;
+				}
 				panelTagFlag = false;
 			}
 		}
@@ -330,7 +341,12 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 					tag = '</' + listArr.slice(li_match[1].length, listArr.length).reverse().join('></') + '>';
 					listArr = listArr.slice(0, li_match[1].length);
 				}
-				tag += "<li>" + li_match[2] + "</li>";
+				// This prevents the closing </li> tag from being added too prematurely.
+				if (codeBlockTagFlag || panelTagFlag) {
+					tag += "<li>" + li_match[2];
+				} else {
+					tag += "<li>" + li_match[2] + "</li>";
+				}
 			}
 
 
