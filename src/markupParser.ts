@@ -157,13 +157,13 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		}
 
 		// code
-		// one line code and noformat tag
+		// oneline code and noformat tag
 		tag = tag.replace(/\{(noformat|code)[^}]*\}(.*)\{(noformat|code)\}/, function (m0, m1, m2) {
 			return `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>${m2.replace(/</gi, '&lt;')}</code></pre>`;
 		});
 
 
-		// code and noformat block tag
+		// code and noformat tag
 		const code_re = /\{(noformat|code)([^}]*)\}/;
 		const code_match = tag.match(code_re);
 		if (code_match) {
@@ -226,7 +226,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		}
 
 		const panel_re = /\{panel(.*)}/;
-		if ((! codeTagFlag) && tag.match(panel_re)) {
+		if (! codeTagFlag && tag.match(panel_re)) {
 			if (! panelTagFlag ) {
 				let panelStyle = "";
 				let titleStyle = "";

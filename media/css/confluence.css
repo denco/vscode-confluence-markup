@@ -60,9 +60,9 @@ table, th, td {
 	color: black;
 	font-weight: bold;
 	border-bottom-color: #ccc;
-    padding: 5px 10px;
-    overflow: hidden;
-    position: relative;
+	padding: 5px 10px;
+	overflow: hidden;
+	position: relative;
 }
 
 pre {
@@ -76,7 +76,6 @@ pre > code {
 	overflow-wrap: break-word;
 	word-break: break-space;
 	white-space: normal;
-	/* margin: 0px 5px; */
 	margin: 0px;
 	padding: 5px 1em;
 	line-height: 1.5em;
