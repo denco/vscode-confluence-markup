@@ -2,7 +2,10 @@
 
 ## [1.0.1]
 
-- put things here
+- modified code/noformat blocks so they can be used in lists to match confluence behaviour
+- added support for code block macro titles and themes (only standard themes are supported, and there's no syntax highlighting)
+- changed test files to accomodate above changes
+- updated github workflow actions to v3
 
 ## [1.0.0](https://github.com/denco/vscode-confluence-markup/releases/tag/1.0.0)
 
