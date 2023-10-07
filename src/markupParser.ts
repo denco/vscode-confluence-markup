@@ -53,8 +53,6 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	let listTag = '';
 	let listStyle = '';
 	let codeBlockTagFlag = false;
-	let innerCodeTagFlag = false;
-	let noFormatBlockTagFlag = false;
 	let panelTagFlag = false;
 	let tableFlag = false;
 	let listFlag = false;
@@ -68,13 +66,11 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			&& (! listFlag)
 			&& (! tableFlag)
 			&& (! codeBlockTagFlag)
-			&& (! innerCodeTagFlag)
-			&& (! noFormatBlockTagFlag)
 			) {
 			continue;
 		}
 
-		if (! codeBlockTagFlag || ! innerCodeTagFlag || ! noFormatBlockTagFlag) {
+		if (! codeBlockTagFlag) {
 			tag = tag.replace(/h(\d+)\.\s([^\n]+)/g, "<h$1>$2</h$1>");
 
 			// tag = tag.replace(/_([^_]*)_/g, "<em>$1</em>");
@@ -161,33 +157,28 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		}
 
 		// code
-		// one line code tag
+		// one line code and noformat tag
 		tag = tag.replace(/\{(noformat|code)[^}]*\}(.*)\{(noformat|code)\}/, function (m0, m1, m2) {
 			return `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>${m2.replace(/</gi, '&lt;')}</code></pre>`;
 		});
 
 
-		// code block tag
-		// const code_re = /\{code[^}]*\}/;
-		const code_re = /\{code(.*)\}/;
+		// code and noformat block tag
+		const code_re = /\{(noformat|code)([^}]*)\}/;
 		const code_match = tag.match(code_re);
-		// const code_panel_open_match = tag.match(code_panel_open_re);
-		// const code_panel_close_re = /\{code\}/;
-		// const code_panel_close_match = tag.match(code_panel_close_re);
 		if (code_match) {
-			if (! innerCodeTagFlag  && ! codeBlockTagFlag) {
+			if (! codeBlockTagFlag) {
 				let codeBlockStyle = "";
+				// Title style is unecessary for now. It can't be easily customized in Confluence.
 				// let titleStyle = "";
-				tag = tag.replace(code_re, function (m0, m1) {
+				tag = tag.replace(code_re, function (m0, m1, m2) {
 					// let res = '<pre><code $codeBlockStyle>'
-					// let res = `'<pre><code style="font-family:"'${MONOSPACE_FONT_FAMILY} $codeBlockStyle>`
 					let res = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}$codeBlockStyle'>`;
-					const splits = m1.split(/[|:]/);
+					const splits = m2.split(/[|:]/);
 					splits.forEach( (el:string) => {
 						const elems = el.split('=');
 						if (elems[0] === "title"){
 							res = `<span class="code-title">${elems[1]}</span>${res}`;
-							// Title style is unecessary for now.
 							// res = `<span class="code-title" $titleStyle>${elems[1]}</span>${res}`;
 						}
 						// Basic theme matching.
@@ -210,8 +201,6 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 									codeBlockStyle = `;color:#b9bdb6;background-color:#1b2426;`;
 									break;
 								case "eclipse":
-									codeBlockStyle = `;color:white;background-color:black;`;
-									break;
 								case "confluence":
 									codeBlockStyle = `;color:white;background-color:black;`;
 								}
@@ -223,55 +212,21 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 					return res;
 				});
 				codeBlockTagFlag = true;
-				// If the opening match isn't found. Check for a simple code block by looking for the closing tag without an innner code tag.
+			} else {
+				tag = '</pre></code></div>';
+				//This pays attention to the list flag and adds the closing </li> tag if needed.
+				if (listFlag) {
+					tag = `${tag}</li>`;
+				}
+				codeBlockTagFlag = false;
 			}
 		}
 		if (codeBlockTagFlag && ! code_match) {
 			tag = tag.replace(/</gi, '&lt;') + '<br />';
-			// Flag the inner code, so it doesn't get modified.
-			innerCodeTagFlag = true;
 		}
-		if (code_match && codeBlockTagFlag && innerCodeTagFlag) {
-			tag = '</pre></code></div>';
-			//This pays attention to the list flag and adds the closing </li> tag if needed.
-			if (listFlag) {
-				tag = `${tag}</li>`;
-			}
-			innerCodeTagFlag = false;
-			codeBlockTagFlag = false;
-		}
-
-		const noformat_re = /\{(noformat)[^}]*\}/;
-		const noformat_match = tag.match(noformat_re);
-		if (noformat_match) {
-			if (! noFormatBlockTagFlag) {
-				tag = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`;
-				noFormatBlockTagFlag = true;
-			} else {
-				tag = '</pre></code>';
-				noFormatBlockTagFlag = false;
-			}
-		}
-		if (noFormatBlockTagFlag) {
-			if (!noformat_match) {
-				tag = tag.replace(/</gi, '&lt;') + '<br />';
-			}
-		}
-		// original code block. keeping for reference.
-		// const code_re = /\{(noformat|code)[^}]*\}/;
-		// const code_match = tag.match(code_re);
-		// if (code_match) {
-		// 	if (! codeTagFlag) {
-		// 		tag = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`;
-		// 		codeTagFlag = true;
-		// 	} else {
-		// 		tag = '</pre></code>';
-		// 		codeTagFlag = false;
-		// 	}
-		// }
 
 		const panel_re = /\{panel(.*)}/;
-		if ((! codeBlockTagFlag || ! noFormatBlockTagFlag) && tag.match(panel_re)) {
+		if ((! codeBlockTagFlag) && tag.match(panel_re)) {
 			if (! panelTagFlag ) {
 				let panelStyle = "";
 				let titleStyle = "";
@@ -354,7 +309,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			}
 		}
 
-		if (! innerCodeTagFlag || ! noFormatBlockTagFlag) {
+		// if (! innerCodeTagFlag) {
 			// lists
 			const li_re = /^([-*#]+)\s(.*)/;
 			const li_match = tag.match(li_re);
@@ -413,11 +368,12 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				tag = tag.replace(/\B-((\([^)]*\)|{[^}]*}|\[[^]]+\]){0,3})(\S.*?\S|\S)-\B/g," <span style='text-decoration: line-through;'>$3</span> ");
 				tag = tag.replace(/(?:\b)_((\([^)]*\)|{[^}]*}|\[[^]]+\]){0,3})(\S.*?\S|\S)_(?:\b)/g, "<i>$3</i>");
 			}
-		} else {
-			if (tag !== `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`) {
-				tag = tag.replace(/</gi, '&lt;') + '<br />';
-			}
-		}
+		// This only really applied to the inner part of code blocks and noformat blocks, so I moved it there and used a flag to trigger it.
+		// } else {
+		// 	if (tag !== `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`) {
+		// 		tag = tag.replace(/</gi, '&lt;') + '<br />';
+		// 	}
+		// }
 
 		//close table
 		if (!tag.match(/<\/tr>$/) && tableFlag) {

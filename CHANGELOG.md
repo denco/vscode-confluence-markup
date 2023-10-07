@@ -1,5 +1,9 @@
 # Confluence Wiki Markup
 
+## [1.0.1]
+
+- put things here
+
 ## [1.0.0](https://github.com/denco/vscode-confluence-markup/releases/tag/1.0.0)
 
 - non preview release [1.0.0](https://github.com/denco/vscode-confluence-markup/issues/37)

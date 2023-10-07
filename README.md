@@ -49,15 +49,6 @@ The extension can be activated in two ways
 
 Originally syntax from the [Confluence® Textmate Bundle](https://github.com/alkemist/Confluence.tmbundle).
 
-## Development
-- Fork and clone the repository.
-- cd into the repository folder.
-- Run `npm i` to install dependencies.
-- Run `npm run watch` to start compilation in watch mode.
-- Open the repository folder in VS Code and press `F5` to compile and run in a new Extension Development Host Window.
-- Local Install
-	- Run `vcse package` to create a .vsix file
-
 ----
 
 > Confluence® and Jira® is registered trademark owned by [Atlassian](https://www.atlassian.com/)

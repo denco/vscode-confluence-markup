@@ -51,7 +51,6 @@ table, th, td {
 .code-block {
 	display: block;
 	width: 90%;
-	/* background-color: red; */
 	border-width: 1px;
 }
 

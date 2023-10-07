@@ -1,12 +1,12 @@
 {
 	"name": "confluence-markup",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"lockfileVersion": 2,
 	"requires": true,
 	"packages": {
 		"": {
 			"name": "confluence-markup",
-			"version": "1.0.0",
+			"version": "1.0.1",
 			"license": "MIT",
 			"devDependencies": {
 				"@types/glob": "^7.1.4",
