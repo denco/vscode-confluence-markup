@@ -4,7 +4,7 @@
 
 - modified code/noformat blocks so they can be used in lists to match confluence behaviour
 - added support for code block macro titles and themes (only standard themes are supported, and there's no syntax highlighting)
-- removed `white-space: normal` for `pre > code` CSS to match confluence behaviour and commonmark spec (white space is preserved)
+- changed `white-space: normal` to `white-space: pre-wrap` for `pre > code` CSS to match confluence behaviour and commonmark spec (white space is preserved)
 - changed test files to accomodate above changes
 - updated github workflow actions to v3
 
