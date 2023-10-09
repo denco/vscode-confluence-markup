@@ -75,7 +75,8 @@ pre > code {
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	word-break: break-space;
-	white-space: normal;
+	/* Confluence allows for indentations and whitespace preservation in code blocks */
+	/* white-space: normal; */
 	margin: 0px;
 	padding: 5px 1em;
 	line-height: 1.5em;
