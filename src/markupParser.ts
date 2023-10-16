@@ -355,10 +355,13 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				listFlag = false;
 			}
 
+			if (! codeTagFlag) {
 			// hr and dash lines
 			tag = tag.replace(/-{4,}/gi, '<hr />');
 			tag = tag.replace(/-{3}/gi, '&mdash;');
 			tag = tag.replace(/-{2}/gi, '&ndash;');
+			}
+
 			// strong
 			tag = tag.replace(/\*([^*]*)\*/g, "<strong>$1</strong>");
 			// line-through
