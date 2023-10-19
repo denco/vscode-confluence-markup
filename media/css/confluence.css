@@ -48,14 +48,37 @@ table, th, td {
 	padding: 7px;
 }
 
+.code-block {
+	display: block;
+	width: 90%;
+	border-width: 1px;
+}
+
+.code-title {
+	display: block;
+	background:#c6c3c3;
+	color: black;
+	font-weight: bold;
+	border-bottom-color: #ccc;
+	padding: 5px 10px;
+	overflow: hidden;
+	position: relative;
+}
+
+pre {
+	margin: 0px;
+}
+
 pre > code {
 	display: block;
 	background:rgba(0, 0, 0, 0.15);
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	word-break: break-space;
-	white-space: normal;
-	margin: 0px 5px;
+	/* Confluence allows for indentations and whitespace preservation in code blocks */
+	/* white-space: normal; */
+	white-space: pre-wrap;
+	margin: 0px;
 	padding: 5px 1em;
 	line-height: 1.5em;
 }
@@ -84,7 +107,7 @@ pre > code {
 
 
 pre > code > p {
-	margin: 0px;
+	margin: .5em 0;
 }
 
 ul {

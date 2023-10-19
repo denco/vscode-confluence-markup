@@ -157,21 +157,72 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		}
 
 		// code
-		// online code tag
+		// oneline code and noformat tag
 		tag = tag.replace(/\{(noformat|code)[^}]*\}(.*)\{(noformat|code)\}/, function (m0, m1, m2) {
 			return `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>${m2.replace(/</gi, '&lt;')}</code></pre>`;
 		});
 
-		const code_re = /\{(noformat|code)[^}]*\}/;
+
+		// code and noformat tag
+		const code_re = /\{(noformat|code)([^}]*)\}/;
 		const code_match = tag.match(code_re);
 		if (code_match) {
 			if (! codeTagFlag) {
-				tag = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`;
+				let codeBlockStyle = "";
+				// Title style is unecessary for now. It can't be easily customized in Confluence.
+				// let titleStyle = "";
+				tag = tag.replace(code_re, function (m0, m1, m2) {
+					// let res = '<pre><code $codeBlockStyle>'
+					let res = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}$codeBlockStyle'>`;
+					const splits = m2.split(/[|:]/);
+					splits.forEach( (el:string) => {
+						const elems = el.split('=');
+						if (elems[0] === "title"){
+							res = `<span class="code-title">${elems[1]}</span>${res}`;
+							// res = `<span class="code-title" $titleStyle>${elems[1]}</span>${res}`;
+						}
+						// Basic theme matching.
+						if (elems[0] === "theme"){
+							// Predefined confluence themes.
+							switch (elems[1].toLowerCase()) {
+								case "django":
+									codeBlockStyle = `;color:#f8f8f8;background-color:#0a2b1d;`;
+									break;
+								case "emacs":
+									codeBlockStyle = `;color:#d3d3d3;background-color:black;`;
+									break;
+								case "fadetogrey":
+									codeBlockStyle = `;color:white;background-color:#121212;`;
+									break;
+								case "midnight":
+									codeBlockStyle = `;color:#d1edff;background-color:#0f192a;`;
+									break;
+								case "rdark":
+									codeBlockStyle = `;color:#b9bdb6;background-color:#1b2426;`;
+									break;
+								case "eclipse":
+								case "confluence":
+									codeBlockStyle = `;color:white;background-color:black;`;
+								}
+						}
+					});
+					res = `<div class="code-block">${res}`;
+					res = res.replace('$codeBlockStyle', codeBlockStyle);
+					// res = res.replace('$titleStyle', titleStyle);
+					return res;
+				});
 				codeTagFlag = true;
 			} else {
-				tag = '</pre></code>';
+				tag = '</pre></code></div>';
+				//This pays attention to the list flag and adds the closing </li> tag if needed.
+				if (listFlag) {
+					tag = `${tag}</li>`;
+				}
 				codeTagFlag = false;
 			}
+		}
+		if (codeTagFlag && ! code_match) {
+			tag = tag.replace(/</gi, '&lt;') + '<br />';
 		}
 
 		const panel_re = /\{panel(.*)}/;
@@ -251,11 +302,14 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				panelTagFlag = true;
 			} else {
 				tag = '</div>';
+				if (listFlag) {
+					tag = `${tag}</li>`;
+				}
 				panelTagFlag = false;
 			}
 		}
 
-		if (! codeTagFlag) {
+		// if (! codeTagFlag) {
 			// lists
 			const li_re = /^([-*#]+)\s(.*)/;
 			const li_match = tag.match(li_re);
@@ -285,7 +339,12 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 					tag = '</' + listArr.slice(li_match[1].length, listArr.length).reverse().join('></') + '>';
 					listArr = listArr.slice(0, li_match[1].length);
 				}
-				tag += "<li>" + li_match[2] + "</li>";
+				// This prevents the closing </li> tag from being added too prematurely.
+				if (codeTagFlag || panelTagFlag) {
+					tag += "<li>" + li_match[2];
+				} else {
+					tag += "<li>" + li_match[2] + "</li>";
+				}
 			}
 
 
@@ -296,10 +355,13 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				listFlag = false;
 			}
 
+			if (! codeTagFlag) {
 			// hr and dash lines
 			tag = tag.replace(/-{4,}/gi, '<hr />');
 			tag = tag.replace(/-{3}/gi, '&mdash;');
 			tag = tag.replace(/-{2}/gi, '&ndash;');
+			}
+
 			// strong
 			tag = tag.replace(/\*([^*]*)\*/g, "<strong>$1</strong>");
 			// line-through
@@ -309,11 +371,12 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				tag = tag.replace(/\B-((\([^)]*\)|{[^}]*}|\[[^]]+\]){0,3})(\S.*?\S|\S)-\B/g," <span style='text-decoration: line-through;'>$3</span> ");
 				tag = tag.replace(/(?:\b)_((\([^)]*\)|{[^}]*}|\[[^]]+\]){0,3})(\S.*?\S|\S)_(?:\b)/g, "<i>$3</i>");
 			}
-		} else {
-			if (tag !== `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`) {
-				tag = tag.replace(/</gi, '&lt;') + '<br />';
-			}
-		}
+		// This only really applied to the inner part of code blocks and noformat blocks, so I moved it there and used a flag to trigger it.
+		// } else {
+		// 	if (tag !== `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`) {
+		// 		tag = tag.replace(/</gi, '&lt;') + '<br />';
+		// 	}
+		// }
 
 		//close table
 		if (!tag.match(/<\/tr>$/) && tableFlag) {
