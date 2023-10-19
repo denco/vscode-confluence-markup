@@ -7,7 +7,7 @@
 - changed `white-space: normal` to `white-space: pre-wrap` for `pre > code` CSS to match confluence behaviour and commonmark spec (white space is preserved)
 - changed test files to accomodate above changes
 - updated github workflow actions to v3
-- Big Thanks to [NSHenry](https://github.com/NSHenry) to providing:
+- Big Thanks to [NSHenry](https://github.com/NSHenry) to providing this features
 
 ## [1.0.0](https://github.com/denco/vscode-confluence-markup/releases/tag/1.0.0)
 
