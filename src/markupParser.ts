@@ -59,7 +59,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	let listArr: string[] = [];
 
 	for (const entry of sourceText.split(/\r?\n/gi)) {
-		let tag = entry;
+		let tag = entry.replace(/^\s*/,''); //replace leading spaces
 		let html_tag = false;
 
 		if ((tag.length === 0 )
@@ -355,7 +355,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				listFlag = false;
 			}
 
-			if (! codeTagFlag) {
+			if (!codeTagFlag && !listFlag) {
 			// hr and dash lines
 			tag = tag.replace(/-{4,}/gi, '<hr />');
 			tag = tag.replace(/-{3}/gi, '&mdash;');
