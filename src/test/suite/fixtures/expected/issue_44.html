@@ -1,0 +1,102 @@
+<p>
+<h1>Issue <a href='https://github.com/denco/vscode-confluence-markup/issues/44'>#44</a> - lists with leading spaces</h1>
+</p>
+<p>
+<h2>Case 1</h2>
+</p>
+<p>
+<ul class="alternate">
+	<li>abc</li>
+	</p>
+	<p>
+	<ul class="alternate">
+		<li>abcdef</li>
+		</p>
+		<p>
+	</ul>
+</ul>
+</p>
+<p>
+<h2>Case 2</h2>
+</p>
+<p>
+<ul class="alternate">
+	<li>abc</li>
+	</p>
+	<p>
+	<ul class="alternate">
+		<li>abcdef</li>
+		</p>
+		<p>
+	</ul>
+</ul>
+</p>
+<p>
+<h2>Case 3</h2>
+</p>
+<p>
+<ol class="initial">
+	<li>abc</li>
+	</p>
+	<p>
+		<li>def</li>
+	</p>
+	<p>
+	<ul>
+		<li>foo</li>
+		</p>
+		<p>
+		<ul>
+			<li>bar</li>
+			</p>
+			<p>
+		</ul>
+	</ul>
+</ol>
+</p>
+<p>
+<h2>Case 4</h2>
+</p>
+<p>
+<ol class="initial">
+	<li>abcv</li>
+	</p>
+	<p>
+		<li>def</li>
+	</p>
+	<p>
+	<ul>
+		<li>foo</li>
+		</p>
+		<p>
+		<ul>
+			<li>bar</li>
+			</p>
+			<p>
+		</ul>
+	</ul>
+</ol>
+</p>
+<p>
+<h2>Case 5</h2>
+</p>
+<p>
+<ol class="initial">
+	<li>abc</li>
+	</p>
+	<p>
+		<li>def</li>
+	</p>
+	<p>
+	<ol>
+		<li>foo</li>
+		</p>
+		<p>
+		<ol>
+			<li>bar</li>
+			</p>
+			<p>
+		</ol>
+	</ol>
+</ol>
+</p>

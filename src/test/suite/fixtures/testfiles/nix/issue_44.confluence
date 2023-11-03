@@ -1,0 +1,32 @@
+h1. Issue [#44|https://github.com/denco/vscode-confluence-markup/issues/44] - lists with leading spaces
+
+h2. Case 1
+
+- abc
+-- abcdef
+
+h2. Case 2
+
+- abc
+  -- abcdef
+
+h2. Case 3
+
+# abc
+# def
+  #* foo
+    #** bar
+
+h2. Case 4
+
+# abcv
+# def
+  ** foo
+    *** bar
+
+h2. Case 5
+
+# abc
+# def
+  ## foo
+    ### bar
