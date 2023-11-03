@@ -16,7 +16,7 @@ export function run(): Promise<void> {
 
 		const files = globSync('**/**.test.js', { cwd: testsRoot })
 
-		console.log(files);
+		console.log(files); // eslint-disable-line no-console
 
 		// Add files to the test suite
 		files.forEach((f: string) => mocha.addFile(path.resolve(testsRoot, f)));

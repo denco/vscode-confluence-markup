@@ -6,7 +6,7 @@ import * as path from 'path';
 import { parseMarkup, cssUri } from '../../markupParser';
 import * as fs from 'fs';
 
-const HTML_FORMATTER = require('html-formatter');
+const HTML_FORMATTER = require('html-formatter'); // eslint-disable-line @typescript-eslint/no-var-requires
 
 const FILE_ENCODING = 'utf8';
 
