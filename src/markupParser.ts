@@ -232,7 +232,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				let titleStyle = "";
 				let iconlessFlag = "";
 				tag = tag.replace(panel_re, function (m0, m1, m2) {
-					let panelClass = m1;
+					const panelClass = m1;
 
 					let res = `<div class="${panelClass} ${panelClass}-body" $panelStyle>`
 					const splits = m2.split(/[|:]/);
