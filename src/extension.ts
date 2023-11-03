@@ -2,11 +2,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-
+import * as path from 'path';
 import { packConfluenceUri, ConfluenceContentProvider } from './ConfluenceContentProvider';
-
-const path = require('path');
-
 import { cssUri } from './markupParser';
 
 
@@ -63,8 +60,7 @@ function createPanel(contentProvider: ConfluenceContentProvider, editor: vscode.
 	return panel;
 }
 
-function setDispose(panel: vscode.WebviewPanel, subscriptions: any) {
-	// Reset when the current panel is closed
+function setDispose(panel: vscode.WebviewPanel, subscriptions: { dispose(): vscode.Disposable; }[] | undefined) {
 	// Reset when the current panel is closed
 	panel.onDidDispose(
 		() => { },
