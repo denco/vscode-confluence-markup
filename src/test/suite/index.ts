@@ -1,9 +1,8 @@
 import * as path from 'path';
 import * as Mocha from 'mocha';
+import { globSync } from 'glob';
 
 export function run(): Promise<void> {
-
-	const { globSync } = require("glob");
 
 	// Create the mocha test
 	const mocha = new Mocha({
