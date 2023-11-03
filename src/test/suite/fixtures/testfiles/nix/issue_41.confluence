@@ -1,0 +1,79 @@
+h1. Issue [#41|https://github.com/denco/vscode-confluence-markup/issues/41] - macros: info,tip,note and warning
+
+h2. macro-info
+
+{info:title=This is info title}
+This is Info information.
+{info}
+{info}
+This is info without title information.
+{info}
+{info:title=Info with title w/o icon|icon=false}
+This is Info information.
+{info}
+{info:icon=false}
+INFO: titleless and iconless
+{info}
+
+            {info:title=This is my title|icon=false}
+This is _important_ information.
+{info}
+
+h2. macro-tip
+
+{tip:title=This is tip title}
+This is Tip information.
+{tip}
+{tip}
+This is tip without title information.
+{tip}
+{tip:title=Tip with title w/o icon|icon=false}
+This is Tip information.
+{tip}
+{tip:icon=false}
+TIP: titleless and iconless
+{tip}
+
+h2. macro-note
+
+{note:title=This is note title}
+This is note information.
+{note}
+{note}
+This is note without title information.
+{note}
+{note:title=Note with title w/o icon|icon=false}
+This is note information.
+{note}
+{note:icon=false}
+NOTE: titleless and iconless
+{note}
+
+h2. macro-warning
+
+{warning:title=This is warning title}
+This is warning information.
+{warning}
+{warning}
+This is warning without title information.
+{warning}
+{warning:title=This is warning title without icon|icon=false}
+This is warning information.
+{warning}
+{warning:icon=false}
+WARNING: titleless and iconless
+{warning}
+
+h2. formatted panel
+
+{panel:title=My title|borderStyle=dashed|borderColor=YellowGreen|titleBGColor=#00a400|titleColor=white|bgColor=#72bc72}
+A formatted panel
+{panel}
+
+{panel:title=My title|borderStyle=solid|borderColor=Violet|titleBGColor=#00a400|titleColor=white|bgColor=#72bc72}
+A formatted panel
+{panel}
+
+{panel:title=My title|borderStyle=dotted|borderColor=red}
+A formatted panel
+{panel}
