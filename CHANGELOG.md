@@ -1,5 +1,10 @@
 # Confluence Wiki Markup
 
+## [1.0.2](https://github.com/denco/vscode-confluence-markup/releases/tag/1.0.2)
+
+- add render tip, note, info and warning macros [he info, tip, note, and warning macros are not rendered](https://github.com/denco/vscode-confluence-markup/issues/41)
+- fix render bulleted list with leading spaces [Not rendering variations of bulleted list correctly](https://github.com/denco/vscode-confluence-markup/issues/44)
+
 ## [1.0.1](https://github.com/denco/vscode-confluence-markup/releases/tag/1.0.1)
 
 - modified code/noformat blocks so they can be used in lists to match confluence behaviour

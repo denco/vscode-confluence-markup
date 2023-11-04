@@ -225,18 +225,21 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			tag = tag.replace(/</gi, '&lt;') + '<br />';
 		}
 
-		const panel_re = /\{panel(.*)}/;
+		const panel_re = /\{(panel|tip|info|note|warning)(.*)}/;
 		if (! codeTagFlag && tag.match(panel_re)) {
 			if (! panelTagFlag ) {
 				let panelStyle = "";
 				let titleStyle = "";
-				tag = tag.replace(panel_re, function (m0, m1) {
-					let res = '<div class="panel panel-body" $panelStyle>'
-					const splits = m1.split(/[|:]/);
+				let iconlessFlag = "";
+				tag = tag.replace(panel_re, function (m0, m1, m2) {
+					const panelClass = m1;
+
+					let res = `<div class="${panelClass} ${panelClass}-body" $panelStyle>`
+					const splits = m2.split(/[|:]/);
 					splits.forEach( (el:string) => {
 						const elems = el.split('=');
 						if (elems[0] === "title"){
-							res = `<div class="panel panel-title" $titleStyle>${elems[1]}</div>${res}`;
+							res = `<div class="${panelClass} ${panelClass}-title$iconlessFlag" $titleStyle>${elems[1]}</div>${res}`;
 						}
 						if (elems[0] === "titleBGColor"){
 							if (titleStyle.length === 0) {
@@ -288,6 +291,9 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 								titleStyle += ` border-width: ${elems[1]}; `;
 							}
 						}
+						if (elems[0] === "icon" && elems[1] === "false"){
+							iconlessFlag = "-iconless";
+						}
 					});
 					if (titleStyle.length > 0) {
 						titleStyle += `'`;
@@ -295,8 +301,17 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 					if (panelStyle.length > 0) {
 						panelStyle += `'`;
 					}
-					res = res.replace('$panelStyle', panelStyle);
+					if (panelClass != 'panel') {
+						panelStyle = "";
+						titleStyle = "";
+						if (!res.match(`${panelClass}-title`)){
+							res = `<div class="${panelClass} ${panelClass}-title$iconlessFlag"></div>${res}`;
+						}
+					}
+
+					res = res.replace('$iconlessFlag', iconlessFlag);
 					res = res.replace('$titleStyle', titleStyle);
+					res = res.replace('$panelStyle', panelStyle);
 					return res;
 				});
 				panelTagFlag = true;

@@ -37,8 +37,7 @@ h1, h2, h3 {
 }
 
 blockquote {
-	margin: 0 7px 0 5px;
-	padding: 0 16px 0 10px;
+	padding: 1px 2px;
 	border-left: 5px solid;
 }
 
@@ -83,28 +82,104 @@ pre > code {
 	line-height: 1.5em;
 }
 
-
-.panel {
+.panel, .tip, .info, .note, .warning {
 	display: inline-block;
 	width: 90%;
 	color: black;
 	margin: 0px;
 	background-color: lightslategrey;
-	border-width: 1px;
-
+	border-width: 2px;
+	vertical-align: middle;
 }
 
 .panel-title {
 	font-weight: bold;
 	padding: 5px 3px;
-	border-bottom: none;
+	border-style: solid;
+	/* border-bottom: none; */
 }
 
 .panel-body {
 	background-color: lightgrey;
 	padding: 3px;
+	border-style: solid;
+	border-top: none;
 }
 
+.info, .info-title, .info-body {
+	border-color: #aab8c6;
+	border-style: solid;
+	background-color: #fcfcfc;
+}
+
+.tip, .tip-title, .tip-body {
+	border-color: #91c89c;
+	border-style: solid;
+	background-color: #f3f9f4;
+}
+
+.note, .note-title, .note-body {
+	border-color: #ffeaae;
+	border-style: solid;
+	background-color: #fffdf6;
+}
+
+.warning, .warning-title, .warning-body {
+	border-color: #d04437;
+	border-style: solid;
+	background-color: #fff8f7;
+}
+
+.info-title, .tip-title, .note-title, .warning-title,
+.info-title-iconless, .tip-title-iconless, .note-title-iconless, .warning-title-iconless {
+	font-weight: bold;
+	padding: 2px;
+	margin: 0px;
+	padding-left: 30px;
+	padding-bottom: 0px;
+	width: 80%;
+	border-top-left-radius: 15px;
+	border-top-right-radius: 15px;
+	border-bottom: none;
+}
+
+.info-body, .tip-body, .note-body, .warning-body {
+	padding: 2px;
+	margin: 0px;
+	padding-left: 35px;
+	padding-top: 0px;
+	width: calc(80% - 5px);
+	border-bottom-left-radius: 15px;
+	border-bottom-right-radius: 15px;
+	border-top: none;
+}
+
+.info-title:before, .tip-title:before, .note-title:before, .warning-title:before,
+.info-title-iconless:before, .tip-title-iconless:before, .note-title-iconless:before, .warning-title-iconless:before {
+	margin-left: -16px;
+	margin-right: 5px;
+	vertical-align: middle;
+}
+
+.info-title:before, .info-title-iconless:before {
+	content: url('./../icons/macro-info.png');
+}
+
+.tip-title:before, .tip-title-iconless:before {
+	content: url('./../icons/macro-tip.png');
+}
+
+.note-title:before, .note-title-iconless:before {
+	content: url('./../icons/macro-note.png');
+}
+
+.warning-title:before, .warning-title-iconless:before {
+	content: url('./../icons/macro-warning.png');
+}
+
+.info-title-iconless:before, .tip-title-iconless:before,.note-title-iconless:before, .warning-title-iconless:before {
+	opacity: 0.0;
+}
 
 pre > code > p {
 	margin: .5em 0;
