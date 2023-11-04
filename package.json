@@ -30,8 +30,10 @@
 	"license": "MIT",
 	"homepage": "https://github.com/denco/vscode-confluence-markup/blob/master/README.md",
 	"engines": {
-		"vscode": "^1.40.0"
+		"vscode": "^1.75.0"
 	},
+	"activationEvents": [
+	],
 	"main": "./out/extension",
 	"contributes": {
 		"configuration": {
@@ -135,7 +137,7 @@
 		"@types/glob": "^8.1.0",
 		"@types/mocha": "^10.0.3",
 		"@types/node": "^20.8.10",
-		"@types/vscode": "^1.84.0",
+		"@types/vscode": "^1.75.0",
 		"@typescript-eslint/eslint-plugin": "^6.9.1",
 		"@typescript-eslint/parser": "^6.9.1",
 		"eslint": "^8.5.2",
