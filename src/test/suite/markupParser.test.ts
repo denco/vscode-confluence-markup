@@ -70,11 +70,11 @@ suite("MarkupParser Tests", function () {
 
                 let project_root_dir = PROJECT_ROOT_DIR;
                 if (process.platform === 'win32') {
-                    project_root_dir = `${project_root_dir.split(path.sep).join(path.posix.sep).replace(':', '%3A')}`;
+                    project_root_dir = `/${project_root_dir.split(path.sep).join(path.posix.sep).replace(':', '%3A')}`;
                 }
 
                 const expectedContent = prettier.format(
-                    fs.readFileSync(fixtureFile, FILE_ENCODING).replace(new RegExp(TEST_EXTENSION_PATH_PLACEHOLDER, 'g'), `${TEST_EXTENSION_PATH_PLACEHOLDER_REPLACE_PREFIX}/${project_root_dir}`),
+                    fs.readFileSync(fixtureFile, FILE_ENCODING).replace(new RegExp(TEST_EXTENSION_PATH_PLACEHOLDER, 'g'), `${TEST_EXTENSION_PATH_PLACEHOLDER_REPLACE_PREFIX}${project_root_dir}`),
                     { parser: "html" }
                 );
 
