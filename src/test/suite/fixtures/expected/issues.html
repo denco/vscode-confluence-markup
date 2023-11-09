@@ -1,279 +1,223 @@
-<p>
-	<h1>
-		<strong>Issues</strong>
-	</h1>
-</p>
-<p>
-	<a href='https://github.com/denco/vscode-confluence-markup/issues/3'>#3</a>: Noformat macro</p>
-<p>
-	<div class="code-block">
-		<pre>
-			<code style='font-family: Menlo, Monaco, Consolas, monospace'></p>
-			<p>$ date -R -v+1d
-				<br />
-			</p>
-			<p>Sat, 10 Feb 2018 10:37:39 +0100
-				<br />
-			</p>
-			<p></pre>
-		</code>
-	</div>
-</p>
-<p>
-	<a href='https://github.com/denco/vscode-confluence-markup/issues/5'>#5</a>: Table without heading</p>
-<p>
-	<h4>Table without heading</h4>
-</p>
-<p>
-	 <table>
-				 <tbody>
-						 <tr>
-								 <td>test</td>
-								 <td>test</td>
-						 </tr>
-				 </p>
-				 <p>
-						 <tr>
-								 <td>simple table</td>
-								 <td>two</td>
-						 </tr>
-				 </p>
-				 <p></tbody>
-		 </table>
-</p>
-<p>
-	<a href='https://github.com/denco/vscode-confluence-markup/issues/6'>#6</a>: Intenting</p>
-<p>
-	<h4>Header Four</h4>
-</p>
-<p>
-	<ul class="alternate">
-		<li>list one</li>
-	</p>
-	<p>
-		<li>list two</li>
-	</p>
-	<p>
-		<li>list three</li>
-	</p>
-	<p></ul>
-</p>
-<p>
-	<h4>next header (should not be indented)</h4>
-</p>
-<p>
-	<ul>
-		<li>list</li>
-	</p>
-	<p>
-		<li>list two</li>
-	</p>
-	<p></ul>
-</p>
-<p>
-	<h3>third header</h3>
-</p>
-<p>
-	<ul class="alternate">
-		<li>one</li>
-	</p>
-	<p>
-		<li>two</li>
-	</p>
-	<p></ul>
-</p>
-<p>
-	<a href='https://github.com/denco/vscode-confluence-markup/issues/7'>#7</a>: Nested lists</p>
-<p>
-	<ul>
-		<li>el. 1</li>
-	</p>
-	<p>
-		<ul>
-			<li>el. 1.2.</li>
-		</p>
-		<p>
-			<li>el. 1.3.</li>
-		</p>
-		<p>
-			<ul>
-				<li>el. 1.3.1</li>
-			</p>
-			<p></ul>
-		</ul>
-		<li>el. 2</li>
-	</p>
-	<p></ul>
-</p>
-<p>
-	<ul class="alternate">
-		<li>el. 1</li>
-	</p>
-	<p>
-		<ul class="alternate">
-			<li>el. 1.2.</li>
-		</p>
-		<p>
-			<li>el. 1.3.</li>
-		</p>
-		<p>
-			<ul class="alternate">
-				<li>el. 1.3.1</li>
-			</p>
-			<p></ul>
-		</ul>
-		<li>el. 2</li>
-	</p>
-	<p></ul>
-</p>
-<p>
-	<ol class="initial">
-		<li>el. 1</li>
-	</p>
-	<p>
-		<ol>
-			<li>el. 1.2.</li>
-		</p>
-		<p>
-			<li>el. 1.3.</li>
-		</p>
-		<p>
-			<ol>
-				<li>el. 1.3.1</li>
-			</p>
-			<p></ol>
-		</ol>
-		<li>el. 2</li>
-	</p>
-	<p></ol>
-</p>
-<p>
-	<a href='https://github.com/denco/vscode-confluence-markup/issues/8'>#8</a>:</p>
-<p>Dublicate of
-	<a href='https://github.com/denco/vscode-confluence-markup/issues/5'>#5</a>
-</p>
-<p>
-	<a href='https://github.com/denco/vscode-confluence-markup/issues/17'>#17</a>: Two or more monospace-formatted words</p>
-<p>This is a
-	<code style='font-family: Menlo, Monaco, Consolas, monospace'>test</code>of how things work with
-	<code style='font-family: Menlo, Monaco, Consolas, monospace'>confluence</code>markup.</p>
-<p>
-	<a href='https://github.com/denco/vscode-confluence-markup/issues/18'>#18</a>: Italic text with dot in the end</p>
-<p>
-	<i>Blah blah blah.</i>
-</p>
-<p>
-	<a href='https://github.com/denco/vscode-confluence-markup/issues/22'>#22</a>panel support</p>
-<p>
-	<div class="panel panel-body"></p>
-	<p>Some text</p>
-	<p></div>
-</p>
-<p>
-	<div class="panel panel-title">My Title</div>
-	<div class="panel panel-body"></p>
-	<p>Some text with a title</p>
-	<p></div>
-</p>
-<p>
-	<div class="panel panel-title" style='border-style: dashed; border-bottom:none; border-color: #ccc; background-color: #F7D6C1;'>My Title</div>
-	<div class="panel panel-body" style='border-style: dashed; border-color: #ccc; background-color: #FFFFCE;'></p>
-	<p>a block of text surrounded with a
-		<strong>panel</strong>
-	</p>
-	<p>yet
-		<i>another</i>line</p>
-	<p></div>
-</p>
-<p>
-	<a href='https://github.com/denco/vscode-confluence-markup/issues/24'>#24</a>: Can't use [ and ] in string</p>
-<p>
-	<a href='lalala'>lalala</a>
-</p>
-<p>[lalala]</p>
-<p>
-	<a href='https://link'>text</a>
-</p>
-<p>[text&vert;https://link]</p>
-<p>[ text&vert;https://link ]</p>
-<p>
-	<a href='https://github.com/denco/vscode-confluence-markup/issues/28'>#28</a>: Error by display of multiply links or escaped link markup in the same line.</p>
-<p>
-	<a href='first'>first</a>
-	<a href='second'>second</a>
-</p>
-<p>
-	<a href='www.example.com'>first link</a>
-	<a href='www.example.com'>second link</a>
-</p>
-<p>[first] [second]</p>
-<p>
-	<a href='https://github.com/denco/vscode-confluence-markup/issues/32'>#32</a>: Support to {color:}</p>
-<p>
-	<span style='color:cyan;'>cyan</span>
-</p>
-<p>
-	<span style='color:rgb(222,150,212);'>rgb(222,150,212)</span>or
-	<span style='color:#12FFFE;'>hex#12FFFE</span>
-</p>
-<p>
-	<a href='https://github.com/denco/vscode-confluence-markup/issues/34'>#34</a>
-</p>
-<p>
- 	<code style='font-family: Menlo, Monaco, Consolas, monospace'>h244000c8</code>
-</p>
-<p>
- 	<code style='font-family: Menlo, Monaco, Consolas, monospace'>text</code>
-</p>
-<p>h244000c8</p>
-<p>
-	<code style='font-family: Menlo, Monaco, Consolas, monospace'>monospace</code>
-</p>
-<p>
-	<a href='https://github.com/denco/vscode-confluence-markup/issues/37'>#37</a>move out of preview</p>
-<p>move out of preview, and bump to version: 1.0.0</p>
-<p>
-	<a href='https://github.com/denco/vscode-confluence-markup/issues/38'>#38</a>Preview is not working using links inside a table</p>
-<p>
-	<table>
-			<tbody>
-					<tr>
-							<th>heading 1</th>
-							<th>heading 2</th>
-							<th>heading 3</th>
-					</tr>
-			</p>
-			<p>
-					<tr>
-							<td>cell A1</td>
-							<td>cell A2</td>
-							<td>cell A3</td>
-					</tr>
-			</p>
-			<p>
-					<tr>
-							<td>cell B1</td>
-							<td>cell B2</td>
-							<td>cell B3</td>
-					</tr>
-			</p>
-			<p>
-					<tr>
-							<td>
-									<a href='www.example.com'>example</a>
-							</td>
-							<td>
-									<a href='www.google.com'>google</a>
-							</td>
-							<td>
-									<a href='https://code.visualstudio.com/'>vscode</a>
-							</td>
-					</tr>
-			</p>
-			<p></tbody>
-	</table>
-</p>
-<p>
-	<a href='https://github.com/denco/vscode-confluence-markup/issues/39'>#39</a>Local image preview</p>
-<p>
-	<img src="vscode-resource:_TEST_EXTENSION_PATH_PLACEHOLDER_/src/test/suite/fixtures/testfiles/media/testing_cat.gif" width="500"/></p>
+<div>
+  <h1><strong>Issues</strong></h1>
+</div>
+<div>
+  <a href="https://github.com/denco/vscode-confluence-markup/issues/3">#3</a>:
+  Noformat macro
+</div>
+<div class="code-block">
+  <pre><code style='font-family: Menlo, Monaco, Consolas, monospace'>$ date -R -v+1d
+Sat, 10 Feb 2018 10:37:39 +0100
+</code></pre>
+</div>
+<div>
+  <a href="https://github.com/denco/vscode-confluence-markup/issues/5">#5</a>:
+  Table without heading
+</div>
+<div><h4>Table without heading</h4></div>
+<table>
+  <tbody>
+    <tr>
+      <td>test</td>
+      <td>test</td>
+    </tr>
+    <tr>
+      <td>simple table</td>
+      <td>two</td>
+    </tr>
+  </tbody>
+</table>
+<div>
+  <a href="https://github.com/denco/vscode-confluence-markup/issues/6">#6</a>:
+  Intenting
+</div>
+<div><h4>Header Four</h4></div>
+<ul class="alternate">
+  <li>list one</li>
+  <li>list two</li>
+  <li>list three</li>
+</ul>
+<div><h4>next header (should not be indented)</h4></div>
+<ul>
+  <li>list</li>
+  <li>list two</li>
+</ul>
+<div><h3>third header</h3></div>
+<ul class="alternate">
+  <li>one</li>
+  <li>two</li>
+</ul>
+<div>
+  <a href="https://github.com/denco/vscode-confluence-markup/issues/7">#7</a>:
+  Nested lists
+</div>
+<ul>
+  <li>
+    el. 1
+    <ul>
+      <li>el. 1.2.</li>
+      <li>
+        el. 1.3.
+        <ul>
+          <li>el. 1.3.1</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>el. 2</li>
+</ul>
+<ul class="alternate">
+  <li>
+    el. 1
+    <ul class="alternate">
+      <li>el. 1.2.</li>
+      <li>
+        el. 1.3.
+        <ul class="alternate">
+          <li>el. 1.3.1</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>el. 2</li>
+</ul>
+<ol class="initial">
+  <li>
+    el. 1
+    <ol>
+      <li>el. 1.2.</li>
+      <li>
+        el. 1.3.
+        <ol>
+          <li>el. 1.3.1</li>
+        </ol>
+      </li>
+    </ol>
+  </li>
+  <li>el. 2</li>
+</ol>
+<div>
+  <a href="https://github.com/denco/vscode-confluence-markup/issues/8">#8</a>:
+</div>
+<div>
+  Dublicate of
+  <a href="https://github.com/denco/vscode-confluence-markup/issues/5">#5</a>
+</div>
+<div>
+  <a href="https://github.com/denco/vscode-confluence-markup/issues/17">#17</a>:
+  Two or more monospace-formatted words
+</div>
+This is a
+<code style="font-family: Menlo, Monaco, Consolas, monospace">test</code> of how
+things work with
+<code style="font-family: Menlo, Monaco, Consolas, monospace">confluence</code>
+markup.
+<div>
+  <a href="https://github.com/denco/vscode-confluence-markup/issues/18">#18</a>:
+  Italic text with dot in the end
+</div>
+<div><i>Blah blah blah.</i></div>
+<div>
+  <a href="https://github.com/denco/vscode-confluence-markup/issues/22">#22</a>
+  panel support
+</div>
+<div class="panel panel-body"><div>Some text</div></div>
+<div class="panel panel-title">My Title</div>
+<div class="panel panel-body"><div>Some text with a title</div></div>
+<div
+  class="panel panel-title"
+  style="
+    border-style: dashed;
+    border-bottom: none;
+    border-color: #ccc;
+    background-color: #f7d6c1;
+  "
+>
+  My Title
+</div>
+<div
+  class="panel panel-body"
+  style="border-style: dashed; border-color: #ccc; background-color: #ffffce"
+>
+  <div>a block of text surrounded with a <strong>panel</strong></div>
+  <div>yet <i>another</i> line</div>
+</div>
+<div>
+  <a href="https://github.com/denco/vscode-confluence-markup/issues/24">#24</a>:
+  Can't use [ and ] in string
+</div>
+<div><a href="lalala">lalala</a></div>
+<div>[lalala]</div>
+<div><a href="https://link">text</a></div>
+<div>[text&vert;https://link]</div>
+<div>[ text&vert;https://link ]</div>
+<div>
+  <a href="https://github.com/denco/vscode-confluence-markup/issues/28">#28</a>:
+  Error by display of multiply links or escaped link markup in the same line.
+</div>
+<div><a href="first">first</a> <a href="second">second</a></div>
+<div>
+  <a href="www.example.com">first link</a>
+  <a href="www.example.com">second link</a>
+</div>
+<div>[first] [second]</div>
+<div>
+  <a href="https://github.com/denco/vscode-confluence-markup/issues/32">#32</a>:
+  Support to {color:}
+</div>
+<div><span style="color: cyan">cyan</span></div>
+<div>
+  <span style="color: rgb(222, 150, 212)">rgb(222,150,212)</span> or
+  <span style="color: #12fffe">hex#12FFFE</span>
+</div>
+<div>
+  <a href="https://github.com/denco/vscode-confluence-markup/issues/34">#34</a>
+</div>
+<code style="font-family: Menlo, Monaco, Consolas, monospace">h244000c8</code
+><code style="font-family: Menlo, Monaco, Consolas, monospace">text</code>
+<div>h244000c8</div>
+<code style="font-family: Menlo, Monaco, Consolas, monospace">monospace</code>
+<div>
+  <a href="https://github.com/denco/vscode-confluence-markup/issues/37">#37</a>
+  move out of preview
+</div>
+<div>move out of preview, and bump to version: 1.0.0</div>
+<div>
+  <a href="https://github.com/denco/vscode-confluence-markup/issues/38">#38</a>
+  Preview is not working using links inside a table
+</div>
+<table>
+  <tbody>
+    <tr>
+      <th>heading 1</th>
+      <th>heading 2</th>
+      <th>heading 3</th>
+    </tr>
+    <tr>
+      <td>cell A1</td>
+      <td>cell A2</td>
+      <td>cell A3</td>
+    </tr>
+    <tr>
+      <td>cell B1</td>
+      <td>cell B2</td>
+      <td>cell B3</td>
+    </tr>
+    <tr>
+      <td><a href="www.example.com">example</a></td>
+      <td><a href="www.google.com">google</a></td>
+      <td><a href="https://code.visualstudio.com/">vscode</a></td>
+    </tr>
+  </tbody>
+</table>
+<div>
+  <a href="https://github.com/denco/vscode-confluence-markup/issues/39">#39</a>
+  Local image preview
+</div>
+<div>
+  <img
+    alt="testing_cat.gif"
+    src="_TEST_EXTENSION_PATH_PLACEHOLDER_/src/test/suite/fixtures/testfiles/media/testing_cat.gif"
+    width="500"
+  />
+</div>
