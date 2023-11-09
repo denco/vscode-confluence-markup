@@ -1,8 +1,0 @@
-{color:red}look ma, red text!{color}
-{color:blue}look ma, blue text!{color}
-{color:green}look ma, green text!{color}
-
-{color:red}red{color}{color:yellow}yellow{color}{color:green}green{color}
-
-{color:rgb(202,200,100)}rgb(202,200,100){color} or {color:rgb(200,100,212)}rgb(12,200,112){color}
-{color:#12FFFE}hex#12FFFE{color} or {color:#51F02E}hex#51F02E{color}
