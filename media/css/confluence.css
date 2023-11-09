@@ -14,7 +14,11 @@ a {
 	color: #4080D0;
 	text-decoration: none;
 }
-a:focus, input:focus, select:focus, textarea:focus {
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
 	outline: 1px solid -webkit-focus-ring-color;
 	outline-offset: -1px;
 }
@@ -32,7 +36,9 @@ h1 {
 	border-bottom-style: solid;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
 	font-weight: normal;
 }
 
@@ -41,7 +47,9 @@ blockquote {
 	border-left: 5px solid;
 }
 
-table, th, td {
+table,
+th,
+td {
 	border: 1px solid;
 	border-collapse: collapse;
 	padding: 7px;
@@ -55,7 +63,7 @@ table, th, td {
 
 .code-title {
 	display: block;
-	background:#c6c3c3;
+	background: #c6c3c3;
 	color: black;
 	font-weight: bold;
 	border-bottom-color: #ccc;
@@ -68,9 +76,9 @@ pre {
 	margin: 0px;
 }
 
-pre > code {
+pre>code {
 	display: block;
-	background:rgba(0, 0, 0, 0.15);
+	background: rgba(0, 0, 0, 0.15);
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	word-break: break-space;
@@ -82,7 +90,11 @@ pre > code {
 	line-height: 1.5em;
 }
 
-.panel, .tip, .info, .note, .warning {
+.panel,
+.tip,
+.info,
+.note,
+.warning {
 	display: inline-block;
 	width: 90%;
 	color: black;
@@ -106,32 +118,46 @@ pre > code {
 	border-top: none;
 }
 
-.info, .info-title, .info-body {
+.info,
+.info-title,
+.info-body {
 	border-color: #aab8c6;
 	border-style: solid;
 	background-color: #fcfcfc;
 }
 
-.tip, .tip-title, .tip-body {
+.tip,
+.tip-title,
+.tip-body {
 	border-color: #91c89c;
 	border-style: solid;
 	background-color: #f3f9f4;
 }
 
-.note, .note-title, .note-body {
+.note,
+.note-title,
+.note-body {
 	border-color: #ffeaae;
 	border-style: solid;
 	background-color: #fffdf6;
 }
 
-.warning, .warning-title, .warning-body {
+.warning,
+.warning-title,
+.warning-body {
 	border-color: #d04437;
 	border-style: solid;
 	background-color: #fff8f7;
 }
 
-.info-title, .tip-title, .note-title, .warning-title,
-.info-title-iconless, .tip-title-iconless, .note-title-iconless, .warning-title-iconless {
+.info-title,
+.tip-title,
+.note-title,
+.warning-title,
+.info-title-iconless,
+.tip-title-iconless,
+.note-title-iconless,
+.warning-title-iconless {
 	font-weight: bold;
 	padding: 2px;
 	margin: 0px;
@@ -143,7 +169,10 @@ pre > code {
 	border-bottom: none;
 }
 
-.info-body, .tip-body, .note-body, .warning-body {
+.info-body,
+.tip-body,
+.note-body,
+.warning-body {
 	padding: 2px;
 	margin: 0px;
 	padding-left: 35px;
@@ -154,34 +183,47 @@ pre > code {
 	border-top: none;
 }
 
-.info-title:before, .tip-title:before, .note-title:before, .warning-title:before,
-.info-title-iconless:before, .tip-title-iconless:before, .note-title-iconless:before, .warning-title-iconless:before {
+.info-title:before,
+.tip-title:before,
+.note-title:before,
+.warning-title:before,
+.info-title-iconless:before,
+.tip-title-iconless:before,
+.note-title-iconless:before,
+.warning-title-iconless:before {
 	margin-left: -16px;
 	margin-right: 5px;
 	vertical-align: middle;
 }
 
-.info-title:before, .info-title-iconless:before {
+.info-title:before,
+.info-title-iconless:before {
 	content: url('./../icons/macro-info.png');
 }
 
-.tip-title:before, .tip-title-iconless:before {
+.tip-title:before,
+.tip-title-iconless:before {
 	content: url('./../icons/macro-tip.png');
 }
 
-.note-title:before, .note-title-iconless:before {
+.note-title:before,
+.note-title-iconless:before {
 	content: url('./../icons/macro-note.png');
 }
 
-.warning-title:before, .warning-title-iconless:before {
+.warning-title:before,
+.warning-title-iconless:before {
 	content: url('./../icons/macro-warning.png');
 }
 
-.info-title-iconless:before, .tip-title-iconless:before,.note-title-iconless:before, .warning-title-iconless:before {
+.info-title-iconless:before,
+.tip-title-iconless:before,
+.note-title-iconless:before,
+.warning-title-iconless:before {
 	opacity: 0.0;
 }
 
-pre > code > p {
+pre>code>p {
 	margin: .5em 0;
 }
 
@@ -197,10 +239,10 @@ ol.initial {
 	list-style: decimal;
 }
 
-ol.initial > ol {
+ol.initial>li>ol {
 	list-style-type: lower-alpha;
 }
 
-ol.initial > ol > ol {
+ol.initial>li>ol>li>ol {
 	list-style-type: lower-roman;
 }
