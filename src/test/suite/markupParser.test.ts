@@ -75,7 +75,7 @@ suite("MarkupParser Tests", function () {
 
                 const expectedContent = prettier.format(
                     fs.readFileSync(fixtureFile, FILE_ENCODING).replace(new RegExp(TEST_EXTENSION_PATH_PLACEHOLDER, 'g'), `${TEST_EXTENSION_PATH_PLACEHOLDER_REPLACE_PREFIX}${project_root_dir}`),
-                    { parser: "html", endOfLine: 'auto'}
+                    { parser: "html", endOfLine: 'lf'}
                 );
 
                 const testFileUri = vscode.Uri.file(fullFilePath);
@@ -83,7 +83,7 @@ suite("MarkupParser Tests", function () {
 
                 // const rawRenderedHtml = `<!DOCTYPE html><html lang="und"><head><title>${testName}</title></head><body>${parseMarkup(testFileUri, confluenceContent)}</body></html>`;
                 const rawRenderedHtml = parseMarkup(testFileUri, confluenceContent);
-                const formattedContent = prettier.format(rawRenderedHtml, { parser: "html", endOfLine: 'auto'});
+                const formattedContent = prettier.format(rawRenderedHtml, { parser: "html", endOfLine: 'lf'});
                 assert.strictEqual(expectedContent, formattedContent);
             });
         });
