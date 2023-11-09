@@ -67,7 +67,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			&& (!tableFlag)
 			&& (!codeTagFlag)
 		) {
-			result += '<div></div>';
+			// result += '<div></div>';
 			continue;
 		}
 
