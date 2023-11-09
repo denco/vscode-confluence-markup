@@ -19,9 +19,8 @@ function getRenderedContent(contentProvider: ConfluenceContentProvider, uri: vsc
 				const cssUrl = panel.webview.asWebviewUri(cssFile)
 				cssLink = `<link rel="stylesheet" href="${cssUrl}">`
 			}
-
 			panel.webview.html = `<!DOCTYPE html>
-				<html>
+				<html lang="und">
 				<head>
 					<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
 					<meta name="viewport" content="width=device-width, initial-scale=1.0">
