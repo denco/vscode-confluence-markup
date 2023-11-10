@@ -19,6 +19,7 @@ function getRenderedContent(contentProvider: ConfluenceContentProvider, uri: vsc
 				const cssUrl = panel.webview.asWebviewUri(cssFile)
 				cssLink = `<link rel="stylesheet" href="${cssUrl}">`
 			}
+			const title = 'Preview ' + path.basename(uri.fsPath);
 			panel.webview.html = `<!DOCTYPE html>
 				<html lang="und">
 				<head>
@@ -30,6 +31,7 @@ function getRenderedContent(contentProvider: ConfluenceContentProvider, uri: vsc
 						script-src self vscode-resource:;
 						style-src 'unsafe-inline' self vscode-resource:;"/>
 					${cssLink}
+					<title>${title}</title>
 				</head>
 				<body>
 					${renderedContent}
