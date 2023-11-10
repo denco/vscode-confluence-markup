@@ -43,7 +43,7 @@ h2. *text effects:*
 
 _emphasis_
 
-_italics_ : Thing_x_
+_italics_ : Thing{_}x_
 
 _italics with spaces_
 
