@@ -47,9 +47,9 @@ suite("MarkupParser Tests", function () {
     });
 
     const eolMap = new Map();
-    eolMap.set("LF", "\n");
-    eolMap.set("CR", "\r");
-    eolMap.set("CRLF", "\r\n");
+    eolMap.set('lf', "\n");
+    eolMap.set('cr', "\r");
+    eolMap.set('crlf', "\r\n");
 
     for (const eolMapKey of eolMap.keys()) {
 
@@ -64,26 +64,36 @@ suite("MarkupParser Tests", function () {
                 typeDir = path.basename(path.dirname(dirName));
             }
 
-            const testName = `Render testfile: ${path.join(typeDir, scopedDir, fileName)} with EOL: ${eolMapKey}`
+            const testName = `Render testfile: ${path.join(typeDir, scopedDir, fileName)} with EOL: ${eolMapKey.toUpperCase()}`
             test(testName, function () {
                 const fixtureFile = path.join(FIXTURES_ROOT, scopedDir, fileName.replace(CONFLUENCE_FILENAME_EXTENSION, HTML_FILENAME_EXTENSION));
+                const testFileUri = vscode.Uri.file(fullFilePath);
 
                 let project_root_dir = PROJECT_ROOT_DIR;
                 if (process.platform === 'win32') {
                     project_root_dir = `/${project_root_dir.split(path.sep).join(path.posix.sep).replace(':', '%3A')}`;
                 }
 
+                const readedFixtureContent = fs.readFileSync(fixtureFile, FILE_ENCODING)
+                    .replace(new RegExp(TEST_EXTENSION_PATH_PLACEHOLDER, 'g'), `${TEST_EXTENSION_PATH_PLACEHOLDER_REPLACE_PREFIX}${project_root_dir}`)
+                    .replace(/\r?\n/g, eolMap.get(eolMapKey));  //fix win git checkout issue: normalize eol
+
                 const expectedContent = prettier.format(
-                    fs.readFileSync(fixtureFile, FILE_ENCODING).replace(new RegExp(TEST_EXTENSION_PATH_PLACEHOLDER, 'g'), `${TEST_EXTENSION_PATH_PLACEHOLDER_REPLACE_PREFIX}${project_root_dir}`),
-                    { parser: "html", endOfLine: 'lf'}
+                    readedFixtureContent,
+                    { parser: "html", endOfLine: eolMapKey }
                 );
 
-                const testFileUri = vscode.Uri.file(fullFilePath);
-                const confluenceContent = fs.readFileSync(testFileUri.fsPath, FILE_ENCODING).replace(/\n/g, eolMap.get(eolMapKey));
+                const confluenceContent = fs.readFileSync(testFileUri.fsPath, FILE_ENCODING)
+                    .replace(/\r?\n/g, eolMap.get(eolMapKey));  //fix win git checkout issue: normalize eol
 
-                // const rawRenderedHtml = `<!DOCTYPE html><html lang="und"><head><title>${testName}</title></head><body>${parseMarkup(testFileUri, confluenceContent)}</body></html>`;
+                // // const rawRenderedHtml = `<!DOCTYPE html><html lang="und"><head><title>${testName}</title></head><body>${parseMarkup(testFileUri, confluenceContent)}</body></html>`;
                 const rawRenderedHtml = parseMarkup(testFileUri, confluenceContent);
-                const formattedContent = prettier.format(rawRenderedHtml, { parser: "html", endOfLine: 'lf'});
+
+                const formattedContent = prettier.format(
+                    rawRenderedHtml,
+                    { parser: "html", endOfLine: eolMapKey }
+                );
+
                 assert.strictEqual(expectedContent, formattedContent);
             });
         });
