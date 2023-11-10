@@ -30,7 +30,7 @@
 	"license": "MIT",
 	"homepage": "https://github.com/denco/vscode-confluence-markup/blob/master/README.md",
 	"engines": {
-		"vscode": "^1.75.0"
+		"vscode": "^1.84.0"
 	},
 	"activationEvents": [],
 	"main": "./out/extension",
