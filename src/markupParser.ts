@@ -316,6 +316,10 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 						if (!res.match(`${panelClass}-title`)) {
 							res = `<div><div class="${panelClass} ${panelClass}-title$iconlessFlag"></div>${res}`;
 						}
+					} else {
+						if (!res.match(`${panelClass}-title`)) {
+							res = `<div>${res}`; // wrap titleles panel;
+						}
 					}
 
 					res = res.replace('$iconlessFlag', iconlessFlag);
