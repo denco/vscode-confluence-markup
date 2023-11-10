@@ -247,68 +247,38 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 					const splits = m2.split(/[|:]/);
 					splits.forEach((el: string) => {
 						const elems = el.split('=');
-						if (elems[0] === "title") {
-							res = `<div><div class="${panelClass} ${panelClass}-title$iconlessFlag" $titleStyle>${elems[1]}</div>${res}`;
-						}
-						if (elems[0] === "titleBGColor") {
-							if (titleStyle.length === 0) {
-								titleStyle = `style='background-color: ${elems[1]};`;
-							} else {
-								titleStyle += ` background-color: ${elems[1]};`;
-							}
-						}
-						if (elems[0] === "bgColor") {
-							if (panelStyle.length === 0) {
-								panelStyle = `style='background-color: ${elems[1]};`;
-							} else {
-								panelStyle += ` background-color: ${elems[1]};`;
-							}
-						}
-						if (elems[0] === "borderStyle") {
-							if (panelStyle.length === 0) {
-								panelStyle = `style='border-style: ${elems[1]}; `;
-							} else {
-								panelStyle += ` border-style: ${elems[1]}; `;
-							}
-							if (titleStyle.length === 0) {
-								titleStyle = `style='border-style: ${elems[1]}; border-bottom:none; `;
-							} else {
-								titleStyle += ` border-style: ${elems[1]}; border-bottom:none; `;
-							}
-						}
-						if (elems[0] === "borderColor") {
-							if (panelStyle.length === 0) {
-								panelStyle = `style='border-color: ${elems[1]}; `;
-							} else {
-								panelStyle += ` border-color: ${elems[1]}; `;
-							}
-							if (titleStyle.length === 0) {
-								titleStyle = `style='border-color: ${elems[1]}; `;
-							} else {
-								titleStyle += ` border-color: ${elems[1]}; `;
-							}
-						}
-						if (elems[0] === "borderWidth") {
-							if (panelStyle.length === 0) {
-								panelStyle = `style='border-width: ${elems[1]}; `;
-							} else {
-								panelStyle += ` border-width: ${elems[1]}; `;
-							}
-							if (titleStyle.length === 0) {
-								titleStyle = `style='border-width: ${elems[1]}; `;
-							} else {
-								titleStyle += ` border-width: ${elems[1]}; `;
-							}
-						}
-						if (elems[0] === "icon" && elems[1] === "false") {
-							iconlessFlag = "-iconless";
+						switch (elems[0]) {
+							case "title":
+								res = `<div><div class="${panelClass} ${panelClass}-title$iconlessFlag" $titleStyle>${elems[1]}</div>${res}`;
+								break;
+							case "titleBGColor":
+								titleStyle += `background-color: ${elems[1]}; `;
+								break;
+							case "bgColor":
+								panelStyle += `background-color: ${elems[1]}; `;
+								break;
+							case "borderStyle":
+								panelStyle += `border-style: ${elems[1]}; `;
+								titleStyle += `border-style: ${elems[1]}; border-bottom:none; `;
+								break;
+							case "borderColor":
+								panelStyle += `border-color: ${elems[1]}; `;
+								titleStyle += `border-color: ${elems[1]}; `;
+								break;
+							case "borderWidth":
+								panelStyle += `border-width: ${elems[1]}; `;
+								titleStyle += `border-width: ${elems[1]}; `;
+								break;
+							case "icon":
+								iconlessFlag = (elems[1] === "false") ? "-iconless" : "";
+								break;
 						}
 					});
 					if (titleStyle.length > 0) {
-						titleStyle += `'`;
+						titleStyle = `style='${titleStyle.trim()}'`;
 					}
 					if (panelStyle.length > 0) {
-						panelStyle += `'`;
+						panelStyle = `style='${panelStyle.trim()}'`;
 					}
 					if (panelClass != 'panel') {
 						panelStyle = "";
