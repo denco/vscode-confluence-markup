@@ -159,7 +159,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				}
 				tag = '<tr>' + tag + '</tr>';
 				if (tableFlag == false) {
-					tag = '<table><tbody>' + tag;
+					tag = '<div><table><tbody>' + tag;
 				}
 				tableFlag = true;
 			}
@@ -409,7 +409,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
 		//close table
 		if (!tag.match(/<\/tr>$/) && tableFlag) {
-			tag = '</tbody></table>' + tag;
+			tag = '</tbody></table></div>' + tag;
 			tableFlag = false;
 		}
 
