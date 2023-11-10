@@ -79,7 +79,6 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		if (!codeTagFlag) {
 			tag = tag.replace(/h(\d+)\.\s([^\r?\n]+)/g, "<h$1>$2</h$1>");
 
-			// tag = tag.replace(/_([^_]*)_/g, "<em>$1</em>");
 			tag = tag.replace(/\+([^+]*)\+/g, "<u>$1</u>");
 			tag = tag.replace(/\^([^^]*)\^/g, "<sup>$1</sup>");
 			tag = tag.replace(/~([^~]*)~/g, "<sub>$1</sub>");
@@ -307,7 +306,6 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			}
 		}
 
-		// if (! codeTagFlag) {
 		// lists
 		const li_re = /^([-*#]+)\s(.*)/;
 		const li_match = tag.match(li_re);
@@ -337,13 +335,9 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				tag = '</' + listArr.slice(li_match[1].length, listArr.length).reverse().join('></') + '>';
 				listArr = listArr.slice(0, li_match[1].length);
 			}
-			// // This prevents the closing </li> tag from being added too prematurely.
-			// if (codeTagFlag || panelTagFlag) {
+			// This prevents the closing </li> tag from being added too prematurely.
+			// ToDo: lists are 'open', means not all tags are closed
 			tag += "<li>" + li_match[2];
-			// } else {
-			// 	// tag += "<li>" + li_match[2] + "</li>";
-			// 	tag += "<li>" + li_match[2];
-			// }
 		}
 
 
@@ -363,19 +357,16 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
 		// strong
 		tag = tag.replace(/\*([^*]*)\*/g, "<strong>$1</strong>");
-		// line-through
+
+		// line-through and italic
 		if ((!html_tag) && (!tag.match('<img')) && (!listFlag)) {
 			// tag = tag.replace(/\B-([^-]*)-\B/g, " <span style='text-decoration: line-through;'>$1</span> ");
-			// tag = tag.replace(/_([^_]*)_/g, "<i>$1</i>");
+			// special case: in word italic
+			// s. https://confluence.atlassian.com/doc/confluence-wiki-markup-251003035.html#ConfluenceWikiMarkup-TextEffects
+			tag = tag.replace(/{_}([^_]*)_/g, "<i>$1</i>");
 			tag = tag.replace(/\B-((\([^)]*\)|{[^}]*}|\[[^]]+\]){0,3})(\S.*?\S|\S)-\B/g, " <span style='text-decoration: line-through;'>$3</span> ");
 			tag = tag.replace(/(?:\b)_((\([^)]*\)|{[^}]*}|\[[^]]+\]){0,3})(\S.*?\S|\S)_(?:\b)/g, "<i>$3</i>");
 		}
-		// This only really applied to the inner part of code blocks and noformat blocks, so I moved it there and used a flag to trigger it.
-		// } else {
-		// 	if (tag !== `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>`) {
-		// 		tag = tag.replace(/</gi, '&lt;') + '<br />';
-		// 	}
-		// }
 
 		//close table
 		if (!tag.match(/<\/tr>$/) && tableFlag) {
