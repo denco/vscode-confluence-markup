@@ -168,7 +168,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		// code
 		// oneline code and noformat tag
 		tag = tag.replace(/\{(noformat|code)[^}]*\}(.*)\{(noformat|code)\}/, function (m0, m1, m2) {
-			return `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>${m2.replace(/</gi, '&lt;')}</code></pre>`;
+			return `<div class="code-block"><pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>${m2.replace(/</gi, '&lt;')}</code></pre></div>`;
 		});
 
 
@@ -181,7 +181,6 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				// Title style is unecessary for now. It can't be easily customized in Confluence.
 				// let titleStyle = "";
 				tag = tag.replace(code_re, function (m0, m1, m2) {
-					// let res = '<pre><code $codeBlockStyle>'
 					let res = `<pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}$codeBlockStyle'>`;
 					const splits = m2.split(/[|:]/);
 					splits.forEach((el: string) => {
@@ -249,7 +248,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 					splits.forEach((el: string) => {
 						const elems = el.split('=');
 						if (elems[0] === "title") {
-							res = `<div class="${panelClass} ${panelClass}-title$iconlessFlag" $titleStyle>${elems[1]}</div>${res}`;
+							res = `<div><div class="${panelClass} ${panelClass}-title$iconlessFlag" $titleStyle>${elems[1]}</div>${res}`;
 						}
 						if (elems[0] === "titleBGColor") {
 							if (titleStyle.length === 0) {
@@ -315,7 +314,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 						panelStyle = "";
 						titleStyle = "";
 						if (!res.match(`${panelClass}-title`)) {
-							res = `<div class="${panelClass} ${panelClass}-title$iconlessFlag"></div>${res}`;
+							res = `<div><div class="${panelClass} ${panelClass}-title$iconlessFlag"></div>${res}`;
 						}
 					}
 
@@ -326,7 +325,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				});
 				panelTagFlag = true;
 			} else {
-				tag = '</div>';
+				tag = '</div></div>';
 				if (listFlag) {
 					tag = `${tag}</li>`;
 				}
