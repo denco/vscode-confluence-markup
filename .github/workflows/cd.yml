@@ -29,6 +29,8 @@ jobs:
         run: npm ci
       - name: Build extension package
         run: npm run build
+      - name: Build checksum
+        run: sha512sum confluence-markup-${{ steps.release-version.outputs.version }}.vsix > confluence-markup-${{ steps.release-version.outputs.version }}.vsix.sha512
       # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions
       - name: Get release version
       # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter
@@ -48,8 +50,8 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           name: ${{ steps.release-version.outputs.version }}
-          artifact: "confluence-markup-${{ steps.release-version.outputs.version }}.vsix"
-          artifactContentType: application/zip
+          artifacts: "confluence-markup-${{ steps.release-version.outputs.version }}.vsix,confluence-markup-${{ steps.release-version.outputs.version }}.vsix.sha512"
+          # artifactContentType: application/zip
           bodyFile: "RELEASE_NOTES_${{ steps.release-version.outputs.version }}.md"
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish to Visual Studio Marketplace
