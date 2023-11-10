@@ -29,7 +29,7 @@ function getRenderedContent(contentProvider: ConfluenceContentProvider, uri: vsc
 						content="default-src 'none';
 						img-src self vscode-resource: https:;
 						script-src self vscode-resource:;
-						style-src 'unsafe-inline' self vscode-resource:;"/>
+						style-src 'unsafe-inline' self vscode-resource:;">
 					${cssLink}
 					<title>${title}</title>
 				</head>
