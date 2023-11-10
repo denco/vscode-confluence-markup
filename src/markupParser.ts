@@ -59,7 +59,12 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	let listArr: string[] = [];
 
 	for (const entry of sourceText.split(/\r?\n|\r/gi)) {
-		let tag = entry.trim(); //remove leading and trailing spaces
+		let tag = entry
+
+		if (!codeTagFlag) {
+			tag = tag.trim(); //remove leading and trailing spaces
+		}
+
 		let html_tag = false;
 
 		if ((tag.length === 0)
@@ -72,7 +77,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		}
 
 		if (!codeTagFlag) {
-			tag = tag.replace(/h(\d+)\.\s([^\n]+)/g, "<h$1>$2</h$1>");
+			tag = tag.replace(/h(\d+)\.\s([^\r?\n]+)/g, "<h$1>$2</h$1>");
 
 			// tag = tag.replace(/_([^_]*)_/g, "<em>$1</em>");
 			tag = tag.replace(/\+([^+]*)\+/g, "<u>$1</u>");
@@ -407,11 +412,10 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
 		if (!tag.match(/<\/?code|<\/?pre>|<\/?table>|<\/?t[r|d|h]|<\/?li|<\/?ul|<\/?ol|<\/?div/) && !codeTagFlag) {
 			tag = `<div>${tag}</div>`;
-		} else if (codeTagFlag && tag.indexOf('>') < 0) {
-			tag = tag + '\n';
+		} else if (codeTagFlag && tag.indexOf('<') < 0) {
+			tag = `${tag}\n`;
 		}
 		result += `${tag}`;
 	}
-
 	return result;
 }
