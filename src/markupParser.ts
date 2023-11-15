@@ -13,8 +13,16 @@ const CSS_PATH = '/media/css/';
 const MONOSPACE_FONT_FAMILY = vscode.workspace.getConfiguration("confluenceMarkup").monospaceFont;
 const LOCAL_FILE_OPTS = { scheme: 'https', authority: 'file+.vscode-resource.vscode-cdn.net' };
 
-const GRAMMAR_FILE = getUri("syntaxes", "confluence-markup.tmLanguage").fsPath;
-const WASP_FILE = getUri("node_modules\\vscode-oniguruma\\release", "onig.wasm").fsPath;
+const GRAMMAR_FILE = getUri("/syntaxes", "confluence-markup.tmLanguage").fsPath;
+const GRAMMER_SCOPE_NAME = 'text.html.confluence';
+const WASP_FILE = getUri("/node_modules/vscode-oniguruma/release", "onig.wasm").fsPath;
+
+class LineTag {
+	tag: string = "";
+	tagValue: string = "";
+	tagAttributes: Map<string, string> = new Map();
+	closedTag: boolean = false;
+}
 
 function imageUri(searchUri: vscode.Uri, imageLink: string) {
 	let imageUri
@@ -48,6 +56,7 @@ function emoticonUri(emoticonFile: string) {
 	if (emoticonUrl) {
 		return emoticonUrl.with(LOCAL_FILE_OPTS);
 	}
+	return vscode.Uri.prototype;
 }
 
 export function cssUri(cssFile: string) {
@@ -64,47 +73,120 @@ function readFile(path: string): Promise<Buffer> {
 }
 
 export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
-	//TODO: use Tokenizer instead of line loop
-	oniguruma.loadWASM(fs.readFileSync(WASP_FILE).buffer);
 
+	// s. https://github.com/Microsoft/vscode-textmate
 	// Create a registry that can create a grammar from a scope name.
 	const registry = new vsctm.Registry({
-		onigLib: Promise.resolve({
-			createOnigScanner: (sources) => new oniguruma.OnigScanner(sources),
-			createOnigString: (str) => new oniguruma.OnigString(str)
+		onigLib: oniguruma.loadWASM(fs.readFileSync(WASP_FILE)).then(() => {
+			return {
+				createOnigScanner: (patterns: string[]) => new oniguruma.OnigScanner(patterns),
+				createOnigString: (s: string) => new oniguruma.OnigString(s)
+			};
 		}),
 		loadGrammar: () => {
 			return readFile(GRAMMAR_FILE)
 				.then(data => {
 					return vsctm.parseRawGrammar(data.toString())
-				}).catch(null)
+				})
 		}
 	});
 
 	// Load the JavaScript grammar and any other grammars included by it async.
-	registry.loadGrammar('text.html.confluence').then(grammar => {
+	const content = registry.loadGrammar(GRAMMER_SCOPE_NAME).then(grammar => {
+		let renderedContent = '';
 		if (grammar) {
 			let ruleStack = vsctm.INITIAL;
 			for (const line of sourceText.split(/\r?\n|\r/gi)) {
-				// console.log(`\nTokenizing line: ${line}`);
 				const lineTokens = grammar.tokenizeLine(line, ruleStack);
-
-				for (const token of lineTokens.tokens) {
-					console.log(` - token from ${token.startIndex} to ${token.endIndex} ` +
-						`(${line.substring(token.startIndex, token.endIndex)}) ` +
-						`with scopes ${token.scopes.join(', ')}`
-					);
-				}
 				ruleStack = lineTokens.ruleStack;
+				renderedContent += toLineTag(line, lineTokens);
 			}
-			console.log(ruleStack);
 		} else {
-			console.log("UPS grammar is null");
+			new Error("Grammer is undefined!");
 		}
+		return renderedContent;
 	});
 
-	let result = '<div>Hallo</div>';
-	return result;
+
+	// console.log(content);
+	return content;
+}
+
+function toLineTag(line: string, lineTokens: vsctm.ITokenizeLineResult): string {
+	// let tag = '';
+	// let tagValue = '';
+	// const tagAttribues = new Map<string, string>();
+	// let closedTag = true;
+	let lineTag = new LineTag();
+
+	// var elem = document.createElement('div');
+
+	for (const token of lineTokens.tokens) {
+		console.log(`- line ${line}\n- token from ${token.startIndex} to ${token.endIndex} ` +
+			`[${line.substring(token.startIndex, token.endIndex)}] ` +
+			`has scopes: ${token.scopes.join(',')}`
+		);
+
+		const tokenLastScope = token.scopes.at(-1);
+		const tokenValue = line.substring(token.startIndex, token.endIndex);
+		switch (tokenLastScope) {
+			case 'entity.name.tag.heading.confluence':
+				lineTag.tag = tokenValue
+				break;
+			case 'markup.heading.confluence':
+				lineTag.tagValue = tokenValue.trim()
+				break;
+			case 'markup.image.emoticon.confluence':
+				lineTag = genereateEmoticon(tokenValue);
+			case 'meta.paragraph.confluence':
+				lineTag.tagValue = tokenValue;
+			default:
+				lineTag.tagValue = tokenValue;
+				break;
+		}
+	}
+
+	let renderedLine = '';
+	if (lineTag.tag !== '') {
+		const tagAttributesString = Array.from(lineTag.tagAttributes.keys()).map((key) => { return `${key}='${lineTag.tagAttributes.get(key)}'` }).join(" ");
+		renderedLine += `<div><${lineTag.tag} ${tagAttributesString}>${lineTag.tagValue}`;
+		if (lineTag.closedTag) {
+			renderedLine += `</${lineTag.tag}></div>`;
+		} else {
+			renderedLine += '</div>';
+		}
+	}
+	else {
+		renderedLine = `<div>${lineTag.tagValue}</div>`;
+	}
+
+	console.log(`renderedLine: ${renderedLine}`);
+	return renderedLine;
+}
+
+function genereateEmoticon(emoticon: string) {
+	const foundEmoticon = [
+		{ emoticon: ':)', alt: 'smile', filename: 'smile.png' },
+		{ emoticon: ':(', alt: 'sad', filename: 'sad.png' },
+		{ emoticon: ':P', alt: 'cheeky', filename: 'cheeky.png' },
+		{ emoticon: ':D', alt: 'laugh', filename: 'biggrin.png' },
+		{ emoticon: ';)', alt: 'wink', filename: 'wink.png' },
+		{ emoticon: '(y)', alt: 'thumbs-up', filename: 'thumbs-up.png' },
+		{ emoticon: '(n)', alt: 'thumbs-down', filename: 'thumbs-down.png' },
+		{ emoticon: '(i)', alt: 'information', filename: 'information.png' },
+		{ emoticon: '(/)', alt: 'tick', filename: 'tick.png' },
+		{ emoticon: '(x)', alt: 'cross', filename: 'cross.png' },
+		{ emoticon: '(!)', alt: 'warning', filename: 'warning.png' },
+	].find((element) => element.emoticon === emoticon);
+
+	const imageTag = new LineTag();
+	if (foundEmoticon) {
+		imageTag.tag = 'img';
+		imageTag.tagAttributes.set('alt', foundEmoticon.alt);
+		imageTag.tagAttributes.set('src', emoticonUri(foundEmoticon.filename).toString());
+		imageTag.closedTag = false;
+	}
+	return imageTag;
 }
 
 /**
