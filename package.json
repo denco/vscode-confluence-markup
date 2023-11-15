@@ -1,7 +1,7 @@
 {
 	"name": "confluence-markup",
 	"displayName": "Confluence markup",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"publisher": "denco",
 	"description": "Confluence markup language support for Visual Studio Code",
 	"keywords": [
@@ -119,8 +119,8 @@
 	"scripts": {
 		"build": "npm run package",
 		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
+		"compile": "tsc --skipLibCheck -p ./",
+		"watch": "tsc --skipLibCheck -watch -p ./",
 		"pretest": "npm run clean && npm run compile",
 		"lint": "eslint --cache=true --ext ts,tsx .",
 		"test": "run-script-os",
@@ -132,14 +132,18 @@
 		"clean:all": "rimraf -f ./confluence-markup*.vsix; rimraf -rf ./.vscode-test; rimraf -rf ./out; rimraf -rf ./node_modules",
 		"changelog": "if [ $((grep \"$(grep -m1 'version' package.json | cut -d '\"' -f 4)\" -n CHANGELOG.md || echo 0) | cut -d ':' -f 1) -eq 3 ]; then awk '/##/{++c;next} c==1' CHANGELOG.md | awk '!/^$/'; else >&2 echo 'Unchecked version'; exit 1; fi"
 	},
+	"dependencies": {
+		"vscode-textmate": "9.0.0",
+		"vscode-oniguruma": "2.0.1"
+	},
 	"devDependencies": {
 		"@prettier/sync": "^0.3.0",
 		"@types/glob": "8.1.0",
 		"@types/mocha": "10.0.4",
 		"@types/node": "20.9.0",
 		"@types/vscode": "1.84.1",
-		"@typescript-eslint/eslint-plugin": "6.10.0",
-		"@typescript-eslint/parser": "6.10.0",
+		"@typescript-eslint/eslint-plugin": "6.11.0",
+		"@typescript-eslint/parser": "6.11.0",
 		"@vscode/test-electron": "2.3.6",
 		"@vscode/vsce": "2.22.0",
 		"eslint": "8.53.0",
@@ -147,7 +151,7 @@
 		"html-formatter": "0.1.9",
 		"mocha": "10.2.0",
 		"ovsx": "0.8.3",
-		"prettier": "^3.0.3",
+		"prettier": "3.1.0",
 		"rimraf": "5.0.5",
 		"run-script-os": "1.1.6",
 		"source-map-support": "0.5.21",
