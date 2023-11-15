@@ -119,8 +119,8 @@
 	"scripts": {
 		"build": "npm run package",
 		"vscode:prepublish": "npm run compile",
-		"compile": "tsc --skipLibCheck -p ./",
-		"watch": "tsc --skipLibCheck -watch -p ./",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
 		"pretest": "npm run clean && npm run compile",
 		"lint": "eslint --cache=true --ext ts,tsx .",
 		"test": "run-script-os",
