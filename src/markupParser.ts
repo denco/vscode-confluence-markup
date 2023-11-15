@@ -3,11 +3,18 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
+import * as fs from 'fs';
+import * as vsctm from 'vscode-textmate';
+import * as oniguruma from 'vscode-oniguruma';
+
 const EXTENTION_ID = 'denco.confluence-markup';
 const EMOTICON_PATH = '/media/emoticons/';
 const CSS_PATH = '/media/css/';
 const MONOSPACE_FONT_FAMILY = vscode.workspace.getConfiguration("confluenceMarkup").monospaceFont;
 const LOCAL_FILE_OPTS = { scheme: 'https', authority: 'file+.vscode-resource.vscode-cdn.net' };
+
+const GRAMMAR_FILE = getUri("syntaxes", "confluence-markup.tmLanguage").fsPath;
+const WASP_FILE = getUri("node_modules\\vscode-oniguruma\\release", "onig.wasm").fsPath;
 
 function imageUri(searchUri: vscode.Uri, imageLink: string) {
 	let imageUri
@@ -33,6 +40,7 @@ function getUri(filepath: string, filename: string) {
 		const uri = vscode.Uri.file(path.join(extPath, filepath, filename))
 		return uri
 	}
+	return vscode.Uri.prototype;
 }
 
 function emoticonUri(emoticonFile: string) {
@@ -46,7 +54,63 @@ export function cssUri(cssFile: string) {
 	return getUri(CSS_PATH, cssFile);
 }
 
+/**
+ * Utility to read a file as a promise
+ */
+function readFile(path: string): Promise<Buffer> {
+	return new Promise((resolve, reject) => {
+		fs.readFile(path, (error, data) => error ? reject(error) : resolve(data));
+	})
+}
+
 export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
+	//TODO: use Tokenizer instead of line loop
+	oniguruma.loadWASM(fs.readFileSync(WASP_FILE).buffer);
+
+	// Create a registry that can create a grammar from a scope name.
+	const registry = new vsctm.Registry({
+		onigLib: Promise.resolve({
+			createOnigScanner: (sources) => new oniguruma.OnigScanner(sources),
+			createOnigString: (str) => new oniguruma.OnigString(str)
+		}),
+		loadGrammar: () => {
+			return readFile(GRAMMAR_FILE)
+				.then(data => {
+					return vsctm.parseRawGrammar(data.toString())
+				}).catch(null)
+		}
+	});
+
+	// Load the JavaScript grammar and any other grammars included by it async.
+	registry.loadGrammar('text.html.confluence').then(grammar => {
+		if (grammar) {
+			let ruleStack = vsctm.INITIAL;
+			for (const line of sourceText.split(/\r?\n|\r/gi)) {
+				// console.log(`\nTokenizing line: ${line}`);
+				const lineTokens = grammar.tokenizeLine(line, ruleStack);
+
+				for (const token of lineTokens.tokens) {
+					console.log(` - token from ${token.startIndex} to ${token.endIndex} ` +
+						`(${line.substring(token.startIndex, token.endIndex)}) ` +
+						`with scopes ${token.scopes.join(', ')}`
+					);
+				}
+				ruleStack = lineTokens.ruleStack;
+			}
+			console.log(ruleStack);
+		} else {
+			console.log("UPS grammar is null");
+		}
+	});
+
+	let result = '<div>Hallo</div>';
+	return result;
+}
+
+/**
+ * @deprecated old method based on regex
+ */
+function parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
 	//TODO: use Tokenizer instead of line loop
 
 	let result = '';
