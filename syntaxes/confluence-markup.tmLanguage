@@ -33,11 +33,11 @@
 					<key>name</key>
 					<string>entity.name.type.confluence</string>
 				</dict>
-				<key>4</key>
+				<!-- <key>4</key>
 				<dict>
 					<key>name</key>
-					<string>entity.name.tag.heading.confluence</string>
-				</dict>
+					<string>entity.name.tag.heading.end.confluence</string>
+				</dict> -->
 			</dict>
 			<key>end</key>
 			<string>^$</string>
@@ -782,6 +782,12 @@
 					<string>\B(\*\*?)((\([^)]*\)|{[^}]*}|\[[^]]+\]){0,3})(\S.*?\S|\S)\1\B</string>
 					<key>name</key>
 					<string>markup.bold.confluence</string>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>\B:\)|:\(|:P|:D|;\)|\(y\)|\(n\)|\(i\)|\(\/\)|\(x\)|\(!\)\B</string>
+					<key>name</key>
+					<string>markup.image.emoticon.confluence</string>
 				</dict>
 				<dict>
 					<key>captures</key>
