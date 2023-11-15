@@ -87,14 +87,13 @@ suite("MarkupParser Tests", function () {
                     .replace(/\r?\n/g, eolMap.get(eolMapKey));  //fix win git checkout issue: normalize eol
 
                 // // const rawRenderedHtml = `<!DOCTYPE html><html lang="und"><head><title>${testName}</title></head><body>${parseMarkup(testFileUri, confluenceContent)}</body></html>`;
-                const rawRenderedHtml = parseMarkup(testFileUri, confluenceContent);
-
-                const formattedContent = prettier.format(
-                    rawRenderedHtml,
-                    { parser: "html", endOfLine: eolMapKey }
-                );
-
-                assert.strictEqual(expectedContent, formattedContent);
+                const rawRenderedHtml = parseMarkup(testFileUri, confluenceContent).then(rawRenderedHtml => {
+                    const formattedContent = prettier.format(
+                        rawRenderedHtml,
+                        { parser: "html", endOfLine: eolMapKey }
+                    );
+                    assert.strictEqual(expectedContent, formattedContent);
+                });
             });
         });
     }
