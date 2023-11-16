@@ -20,6 +20,27 @@
 	<array>
 		<dict>
 			<key>begin</key>
+			<string>(^-{4,})</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.tag.hr.confluence</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.type.confluence</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>^$</string>
+			<key>name</key>
+			<string>markup.hr.confluence</string>
+		</dict>
+		<dict>
+			<key>begin</key>
 			<string>(^h[1-6]([&lt;&gt;=()]+)?)(\([^)]*\)|{[^}]*})*(\.)</string>
 			<key>captures</key>
 			<dict>
@@ -772,14 +793,15 @@
 				<dict>
 					<key>captures</key>
 					<dict>
-						<key>3</key>
+						<key>2</key>
 						<dict>
 							<key>name</key>
-							<string>entity.name.type.confluence</string>
+							<string>text.html.bold.element.confluence</string>
 						</dict>
 					</dict>
 					<key>match</key>
-					<string>\B(\*\*?)((\([^)]*\)|{[^}]*}|\[[^]]+\]){0,3})(\S.*?\S|\S)\1\B</string>
+					<string>\B(\*)([^*]*)\1\B</string>
+					<!-- <string>\B(\*\*?)((\([^)]*\)|{[^}]*}|\[[^]]+\]){0,3})(\S.*?\S|\S)\1\B</string> -->
 					<key>name</key>
 					<string>markup.bold.confluence</string>
 				</dict>
@@ -788,6 +810,18 @@
 					<string>\B:\)|:\(|:P|:D|;\)|\(y\)|\(n\)|\(i\)|\(\/\)|\(x\)|\(!\)\B</string>
 					<key>name</key>
 					<string>markup.image.emoticon.confluence</string>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>\B-{3}\B</string>
+					<key>name</key>
+					<string>markup.other.mdash.confluence</string>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>--</string>
+					<key>name</key>
+					<string>markup.other.ndash.confluence</string>
 				</dict>
 				<dict>
 					<key>captures</key>
@@ -868,11 +902,12 @@
 						<key>2</key>
 						<dict>
 							<key>name</key>
-							<string>entity.name.type.confluence</string>
+							<string>text.html.italic.element.confluence</string>
 						</dict>
 					</dict>
 					<key>match</key>
-					<string>(?:\b|\s)_((\([^)]*\)|{[^}]*}|\[[^]]+\]){0,3})(\S.*?\S|\S)_(?:\b|\s)</string>
+					<string>\b(\_)(.*)\1\b</string>
+					<!-- <string>(?:\b)_((\([^)]*\)|{[^}]*}|\[[^]]+\]){0,3})(\S.*?\S|\S)_(?:\b)</string> -->
 					<key>name</key>
 					<string>markup.italic.confluence</string>
 				</dict>
