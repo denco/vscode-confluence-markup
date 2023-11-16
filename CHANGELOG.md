@@ -1,5 +1,12 @@
 # Confluence Wiki Markup
 
+## [1.0.3](https://github.com/denco/vscode-confluence-markup/releases/tag/1.0.3)
+
+- fix render emoticons and local image files
+- render to valid html
+- disable output channel log on disposed panel
+- code cosmetic
+
 ## [1.0.2](https://github.com/denco/vscode-confluence-markup/releases/tag/1.0.2)
 
 - add render tip, note, info and warning macros [he info, tip, note, and warning macros are not rendered](https://github.com/denco/vscode-confluence-markup/issues/41)
