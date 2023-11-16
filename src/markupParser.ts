@@ -13,15 +13,26 @@ const CSS_PATH = '/media/css/';
 const MONOSPACE_FONT_FAMILY = vscode.workspace.getConfiguration("confluenceMarkup").monospaceFont;
 const LOCAL_FILE_OPTS = { scheme: 'https', authority: 'file+.vscode-resource.vscode-cdn.net' };
 
-const GRAMMAR_FILE = getUri("/syntaxes", "confluence-markup.tmLanguage").fsPath;
+const GRAMMAR_FILE = getUri("/syntaxes", "confluence-markup.tmLanguage.xml").fsPath;
 const GRAMMER_SCOPE_NAME = 'text.html.confluence';
 const WASP_FILE = getUri("/node_modules/vscode-oniguruma/release", "onig.wasm").fsPath;
 
-class LineTag {
-	tag: string = "";
-	tagValue: string = "";
-	tagAttributes: Map<string, string> = new Map();
-	closedTag: boolean = false;
+class RenderedElement {
+	tag: string = 'span';
+	value: string | undefined;
+	attributes: Map<string, string> = new Map();
+	closed: boolean = true;
+	parent: RenderedElement | undefined;
+	childs: Array<RenderedElement> = new Array();
+
+	public constructor(re: Partial<RenderedElement> = {}) {
+		Object.assign(this, re);
+	}
+
+	toString(): string {
+		return `{"tag"="${this.tag}","value"="${this.value}","closed"="${this.closed}", "attributes":[${Array.from(this.attributes.keys()).map((key) => { return `"${key}":"${this.attributes.get(key)}"` }).join(",")}
+		]}`;
+	}
 }
 
 function imageUri(searchUri: vscode.Uri, imageLink: string) {
@@ -99,72 +110,78 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			for (const line of sourceText.split(/\r?\n|\r/gi)) {
 				const lineTokens = grammar.tokenizeLine(line, ruleStack);
 				ruleStack = lineTokens.ruleStack;
-				renderedContent += toLineTag(line, lineTokens);
+				renderedContent += toRenderedElement(line, lineTokens);
 			}
 		} else {
 			new Error("Grammer is undefined!");
 		}
 		return renderedContent;
 	});
-
-
-	// console.log(content);
 	return content;
 }
 
-function toLineTag(line: string, lineTokens: vsctm.ITokenizeLineResult): string {
-	// let tag = '';
-	// let tagValue = '';
-	// const tagAttribues = new Map<string, string>();
-	// let closedTag = true;
-	let lineTag = new LineTag();
+function toRenderedElement(line: string, lineTokens: vsctm.ITokenizeLineResult): string {
+	let lineParent = new RenderedElement({ tag: 'div' });
 
-	// var elem = document.createElement('div');
-
+	// console.log(`Line [${line}]:`);
+	let futureTag = '';
 	for (const token of lineTokens.tokens) {
-		console.log(`- line ${line}\n- token from ${token.startIndex} to ${token.endIndex} ` +
+		console.log(`\t- token from ${token.startIndex} to ${token.endIndex} ` +
 			`[${line.substring(token.startIndex, token.endIndex)}] ` +
 			`has scopes: ${token.scopes.join(',')}`
 		);
-
-		const tokenLastScope = token.scopes.at(-1);
+		const tokenScope = token.scopes.at(-1); // use last scope
 		const tokenValue = line.substring(token.startIndex, token.endIndex);
-		switch (tokenLastScope) {
+		// console.log(`- usedScope: ${tokenScope}`);
+		switch (tokenScope) {
 			case 'entity.name.tag.heading.confluence':
-				lineTag.tag = tokenValue
+				futureTag = tokenValue;
 				break;
 			case 'markup.heading.confluence':
-				lineTag.tagValue = tokenValue.trim()
+				lineParent.childs.push(new RenderedElement({ tag: futureTag, value: tokenValue, closed: true }))
+				futureTag = ''; // reset future tag
+				break;
+			case 'entity.name.tag.hr.confluence':
+				lineParent.childs.push(new RenderedElement({ tag: 'hr', closed: false }));
 				break;
 			case 'markup.image.emoticon.confluence':
-				lineTag = genereateEmoticon(tokenValue);
+				lineParent.childs.push(emoticonElement(tokenValue));
+				break;
+			case 'markup.other.mdash.confluence':
+				lineParent.childs.push(new RenderedElement({ value: '&mdash;' }));
+				break;
+			case 'text.html.bold.element.confluence':
+				lineParent.childs.push(new RenderedElement({ tag: 'b', value: tokenValue }));
+				break;
+			case 'text.html.italic.element.confluence':
+				lineParent.childs.push(new RenderedElement({ tag: 'i', value: tokenValue }));
+				break;
+			case 'markup.other.ndash.confluence':
+				lineParent.childs.push(new RenderedElement({ value: '&ndash;' }));
+				break;
 			case 'meta.paragraph.confluence':
-				lineTag.tagValue = tokenValue;
+				lineParent.childs.push(new RenderedElement({ value: tokenValue }));
+				break;
 			default:
-				lineTag.tagValue = tokenValue;
 				break;
 		}
 	}
 
-	let renderedLine = '';
-	if (lineTag.tag !== '') {
-		const tagAttributesString = Array.from(lineTag.tagAttributes.keys()).map((key) => { return `${key}='${lineTag.tagAttributes.get(key)}'` }).join(" ");
-		renderedLine += `<div><${lineTag.tag} ${tagAttributesString}>${lineTag.tagValue}`;
-		if (lineTag.closedTag) {
-			renderedLine += `</${lineTag.tag}></div>`;
-		} else {
-			renderedLine += '</div>';
+	let lineRendered = '';
+	for (const element of lineParent.childs) {
+		let elementAttributs = ''
+		if (element.attributes.size > 0) {
+			elementAttributs = ' ' + Array.from(element.attributes.keys()).map((key) => { return `${key}='${element.attributes.get(key)}'` }).join(" ");
 		}
+		lineRendered += `<${element.tag}${elementAttributs}>${((element.value) ? element.value : '')}${((element.closed) ? `</${element.tag}>` : '')}`
 	}
-	else {
-		renderedLine = `<div>${lineTag.tagValue}</div>`;
-	}
-
-	console.log(`renderedLine: ${renderedLine}`);
-	return renderedLine;
+	lineRendered = `<${lineParent.tag}>${lineRendered}${((lineParent.closed) ? `</${lineParent.tag}>` : '')}`;
+	// console.log(`lineParent: [${lineParent}]`);
+	console.log(`LineRendered: [${lineRendered}]`);
+	return lineRendered;
 }
 
-function genereateEmoticon(emoticon: string) {
+function emoticonElement(emoticon: string) {
 	const foundEmoticon = [
 		{ emoticon: ':)', alt: 'smile', filename: 'smile.png' },
 		{ emoticon: ':(', alt: 'sad', filename: 'sad.png' },
@@ -179,12 +196,12 @@ function genereateEmoticon(emoticon: string) {
 		{ emoticon: '(!)', alt: 'warning', filename: 'warning.png' },
 	].find((element) => element.emoticon === emoticon);
 
-	const imageTag = new LineTag();
+	const imageTag = new RenderedElement();
 	if (foundEmoticon) {
 		imageTag.tag = 'img';
-		imageTag.tagAttributes.set('alt', foundEmoticon.alt);
-		imageTag.tagAttributes.set('src', emoticonUri(foundEmoticon.filename).toString());
-		imageTag.closedTag = false;
+		imageTag.attributes.set('alt', foundEmoticon.alt);
+		imageTag.attributes.set('src', emoticonUri(foundEmoticon.filename).toString());
+		imageTag.closed = false;
 	}
 	return imageTag;
 }
