@@ -39,7 +39,8 @@ function getRenderedContent(contentProvider: ConfluenceContentProvider, uri: vsc
 				</html>`;
 		}
 	}, (reason) => {
-		vscode.window.showErrorMessage(reason);
+		// stop spam output channel
+		// vscode.window.showErrorMessage(reason);
 	});
 }
 
