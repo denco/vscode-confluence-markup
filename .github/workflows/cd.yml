@@ -21,6 +21,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions
+      - name: Get release version
+      # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter
+        run: echo "version=${GITHUB_REF#refs/*/}" >> "$GITHUB_OUTPUT"
+        id: release-version
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
@@ -31,11 +36,6 @@ jobs:
         run: npm run build
       - name: Build checksum
         run: sha512sum confluence-markup-${{ steps.release-version.outputs.version }}.vsix > confluence-markup-${{ steps.release-version.outputs.version }}.vsix.sha512
-      # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions
-      - name: Get release version
-      # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter
-        run: echo "version=${GITHUB_REF#refs/*/}" >> "$GITHUB_OUTPUT"
-        id: release-version
       - name: Create release notes for version ${{ steps.release-version.outputs.version }}
         # run: npm run --silent changelog > RELEASE_NOTES_${{ steps.release-version.outputs.version }}.md
         run: |
