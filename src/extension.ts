@@ -39,7 +39,9 @@ function getRenderedContent(contentProvider: ConfluenceContentProvider, uri: vsc
 				</html>`;
 		}
 	}, (reason) => {
-		vscode.window.showErrorMessage(reason);
+		// https://code.visualstudio.com/api/references/vscode-api#window.createOutputChannel
+		// ToDo: custom output channel
+		// vscode.window.showErrorMessage(reason); // disable spam
 	});
 }
 
