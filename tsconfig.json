@@ -12,6 +12,7 @@
 		"strict": true
 	},
 	"exclude": [
+		".github",
 		"node_modules",
 		".vscode-test"
 	]
