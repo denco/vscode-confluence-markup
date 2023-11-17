@@ -13,19 +13,37 @@ const CSS_PATH = '/media/css/';
 const MONOSPACE_FONT_FAMILY = vscode.workspace.getConfiguration("confluenceMarkup").monospaceFont;
 const LOCAL_FILE_OPTS = { scheme: 'https', authority: 'file+.vscode-resource.vscode-cdn.net' };
 
-const GRAMMAR_FILE = getUri("/syntaxes", "confluence-markup.tmLanguage.xml").fsPath;
+const GRAMMAR_FILE = getUri("/syntaxes", "confluence-markup.tmLanguage").fsPath;
 const GRAMMER_SCOPE_NAME = 'text.html.confluence';
 const WASP_FILE = getUri("/node_modules/vscode-oniguruma/release", "onig.wasm").fsPath;
 
-class RenderedElement {
+// s. https://github.com/Microsoft/vscode-textmate
+// Create a registry that can create a grammar from a scope name.
+const TOKEN_REGISTRY = new vsctm.Registry({
+	onigLib: oniguruma.loadWASM(fs.readFileSync(WASP_FILE)).then(() => {
+		return {
+			createOnigScanner: (patterns: string[]) => new oniguruma.OnigScanner(patterns),
+			createOnigString: (s: string) => new oniguruma.OnigString(s)
+		};
+	}),
+	loadGrammar: () => {
+		return readFile(GRAMMAR_FILE)
+			.then(data => {
+				return vsctm.parseRawGrammar(data.toString())
+			})
+	}
+});
+
+
+class DomElement {
 	tag: string = 'span';
 	value: string | undefined;
 	attributes: Map<string, string> = new Map();
 	closed: boolean = true;
-	parent: RenderedElement | undefined;
-	childs: Array<RenderedElement> = new Array();
+	parent: DomElement | undefined;
+	childs: Array<DomElement> = new Array();
 
-	public constructor(re: Partial<RenderedElement> = {}) {
+	public constructor(re: Partial<DomElement> = {}) {
 		Object.assign(this, re);
 	}
 
@@ -85,100 +103,96 @@ function readFile(path: string): Promise<Buffer> {
 
 export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
-	// s. https://github.com/Microsoft/vscode-textmate
-	// Create a registry that can create a grammar from a scope name.
-	const registry = new vsctm.Registry({
-		onigLib: oniguruma.loadWASM(fs.readFileSync(WASP_FILE)).then(() => {
-			return {
-				createOnigScanner: (patterns: string[]) => new oniguruma.OnigScanner(patterns),
-				createOnigString: (s: string) => new oniguruma.OnigString(s)
-			};
-		}),
-		loadGrammar: () => {
-			return readFile(GRAMMAR_FILE)
-				.then(data => {
-					return vsctm.parseRawGrammar(data.toString())
-				})
-		}
-	});
-
 	// Load the JavaScript grammar and any other grammars included by it async.
-	const content = registry.loadGrammar(GRAMMER_SCOPE_NAME).then(grammar => {
+	const start = Date.now();
+	const content = TOKEN_REGISTRY.loadGrammar(GRAMMER_SCOPE_NAME).then(grammar => {
 		let renderedContent = '';
 		if (grammar) {
 			let ruleStack = vsctm.INITIAL;
 			for (const line of sourceText.split(/\r?\n|\r/gi)) {
 				const lineTokens = grammar.tokenizeLine(line, ruleStack);
 				ruleStack = lineTokens.ruleStack;
-				renderedContent += toRenderedElement(line, lineTokens);
+				renderedContent += toDomElement(line, lineTokens);
+				// renderedContent += toDomElementDirect(line, lineTokens);
 			}
 		} else {
 			new Error("Grammer is undefined!");
 		}
 		return renderedContent;
 	});
-	return content;
+
+	return content.finally(() => {
+		console.debug(`rendering of ${sourceUri.path.split('/').at(-1)}, took: ${Date.now() - start}ms.`);
+	});
 }
 
-function toRenderedElement(line: string, lineTokens: vsctm.ITokenizeLineResult): string {
-	let lineParent = new RenderedElement({ tag: 'div' });
+function toDomElement(line: string, lineTokens: vsctm.ITokenizeLineResult): string {
+	let lineRootElement = new DomElement({ tag: 'div' });
+	let parentElement: DomElement = lineRootElement;
 
 	// console.log(`Line [${line}]:`);
-	let futureTag = '';
 	for (const token of lineTokens.tokens) {
-		console.log(`\t- token from ${token.startIndex} to ${token.endIndex} ` +
-			`[${line.substring(token.startIndex, token.endIndex)}] ` +
-			`has scopes: ${token.scopes.join(',')}`
-		);
-		const tokenScope = token.scopes.at(-1); // use last scope
-		const tokenValue = line.substring(token.startIndex, token.endIndex);
-		// console.log(`- usedScope: ${tokenScope}`);
-		switch (tokenScope) {
-			case 'entity.name.tag.heading.confluence':
-				futureTag = tokenValue;
-				break;
-			case 'markup.heading.confluence':
-				lineParent.childs.push(new RenderedElement({ tag: futureTag, value: tokenValue, closed: true }))
-				futureTag = ''; // reset future tag
-				break;
-			case 'entity.name.tag.hr.confluence':
-				lineParent.childs.push(new RenderedElement({ tag: 'hr', closed: false }));
-				break;
-			case 'markup.image.emoticon.confluence':
-				lineParent.childs.push(emoticonElement(tokenValue));
-				break;
-			case 'markup.other.mdash.confluence':
-				lineParent.childs.push(new RenderedElement({ value: '&mdash;' }));
-				break;
-			case 'text.html.bold.element.confluence':
-				lineParent.childs.push(new RenderedElement({ tag: 'b', value: tokenValue }));
-				break;
-			case 'text.html.italic.element.confluence':
-				lineParent.childs.push(new RenderedElement({ tag: 'i', value: tokenValue }));
-				break;
-			case 'markup.other.ndash.confluence':
-				lineParent.childs.push(new RenderedElement({ value: '&ndash;' }));
-				break;
-			case 'meta.paragraph.confluence':
-				lineParent.childs.push(new RenderedElement({ value: tokenValue }));
-				break;
-			default:
-				break;
-		}
-	}
+		// console.log(`\t- token from ${token.startIndex} to ${token.endIndex} ` +
+		// 	`[${line.substring(token.startIndex, token.endIndex)}] ` +
+		// 	`has scopes: ${token.scopes.join(',')}`
+		// );
 
-	let lineRendered = '';
-	for (const element of lineParent.childs) {
-		let elementAttributs = ''
-		if (element.attributes.size > 0) {
-			elementAttributs = ' ' + Array.from(element.attributes.keys()).map((key) => { return `${key}='${element.attributes.get(key)}'` }).join(" ");
+		const usedTokenScope = token.scopes.at(-1); // use last scope
+		if (!usedTokenScope) {
+			continue;
 		}
-		lineRendered += `<${element.tag}${elementAttributs}>${((element.value) ? element.value : '')}${((element.closed) ? `</${element.tag}>` : '')}`
+		if (usedTokenScope.includes('meta.tag.')) {
+			if (usedTokenScope.includes('end')) {
+				if (parentElement && parentElement.parent) {
+					parentElement = parentElement.parent;
+				}
+			} else {
+				const tag = new DomElement({
+					tag: usedTokenScope
+						.replace('meta.tag.', '')
+						.replace('.begin', '')
+						.replace('.end', '')
+						.replace('.confluence', ''),
+					closed: true,
+					parent: parentElement
+				});
+				if (parentElement) {
+					parentElement.childs.push(tag);
+				}
+				parentElement = tag;
+			}
+			continue;
+		} else
+			if (usedTokenScope.includes('text') || usedTokenScope.includes('meta.paragraph')) {
+				const tokenValue = line.substring(token.startIndex, token.endIndex);
+				if (usedTokenScope.includes('emoticon')) {
+					parentElement.childs.push(emoticonElement(tokenValue));
+				} else {
+					parentElement.childs.push(new DomElement({ value: tokenValue }));
+				}
+				continue;
+			}
 	}
-	lineRendered = `<${lineParent.tag}>${lineRendered}${((lineParent.closed) ? `</${lineParent.tag}>` : '')}`;
-	// console.log(`lineParent: [${lineParent}]`);
-	console.log(`LineRendered: [${lineRendered}]`);
-	return lineRendered;
+	const renderedDomTree = renderDomTree(lineRootElement);
+	// console.log(`Rendered Line: ${renderedDomTree}`)
+	return renderedDomTree;
+}
+
+function renderDomTree(element: DomElement): string {
+	if (element.childs.length == 0) {
+		const elementAttributs = attributeMapToString(element.attributes);
+		return `<${element.tag}${elementAttributs}>${((element.value) ? element.value : '')}${((element.closed) ? `</${element.tag}>` : '')}`
+	} else {
+		const elementAttributs = attributeMapToString(element.attributes);
+		return `<${element.tag}${elementAttributs}>` + element.childs.map(child => { return renderDomTree(child); }).join('') + ((element.closed) ? `</${element.tag}>` : '');
+	}
+}
+
+function attributeMapToString(attributes: Map<string, string>): string {
+	if (attributes.size > 0) {
+		return ' ' + Array.from(attributes.keys()).map((key) => { return `${key}='${attributes.get(key)}'` }).join(" ");
+	}
+	return '';
 }
 
 function emoticonElement(emoticon: string) {
@@ -196,7 +210,7 @@ function emoticonElement(emoticon: string) {
 		{ emoticon: '(!)', alt: 'warning', filename: 'warning.png' },
 	].find((element) => element.emoticon === emoticon);
 
-	const imageTag = new RenderedElement();
+	const imageTag = new DomElement();
 	if (foundEmoticon) {
 		imageTag.tag = 'img';
 		imageTag.attributes.set('alt', foundEmoticon.alt);
@@ -204,6 +218,63 @@ function emoticonElement(emoticon: string) {
 		imageTag.closed = false;
 	}
 	return imageTag;
+}
+
+
+/**
+ * alternative rendering
+ *
+ * @param line
+ * @param lineTokens
+ * @returns
+ */
+function toDomElementDirect(line: string, lineTokens: vsctm.ITokenizeLineResult): string {
+	// console.log(`Line [${line}]:`);
+	const lineRootTag = 'div';
+	let renderedLine = `<${lineRootTag}>`;
+	let openTags: string[] = [lineRootTag];
+	for (const token of lineTokens.tokens) {
+		const lastTokenScope = token.scopes.at(-1); // use last scope
+
+		// console.log(`\t- token from ${token.startIndex} to ${token.endIndex} ` +
+		// 	`[${line.substring(token.startIndex, token.endIndex)}] ` +
+		// 	`has scopes: ${token.scopes.join(',')}`
+		// );
+		if (!lastTokenScope) {
+			continue;
+		}
+		if (lastTokenScope.includes('meta.tag.')) {
+			const el = lastTokenScope
+				.replace('meta.tag.', '')
+				.replace('.confluence', '').split('.');
+			const tag = el[0];
+			const tagFlag = (el.length === 2 ? el[1] : '');
+
+			if (tagFlag === 'end') {
+				renderedLine += `</${tag}>`;
+			} else {
+				renderedLine += `<${tag}>`;
+				if (tagFlag === '') {
+					openTags.push(tag);
+				}
+			}
+			continue;
+		} else
+			if (lastTokenScope.includes('text') || lastTokenScope.includes('meta.paragraph')) {
+				const tokenValue = line.substring(token.startIndex, token.endIndex);
+				if (lastTokenScope.includes('emoticon')) {
+					renderedLine += renderDomTree(emoticonElement(tokenValue));
+				} else {
+					renderedLine += tokenValue;
+				}
+				continue;
+			}
+
+	}
+	// close open tags
+	renderedLine += openTags.map((tag) => { return `</${tag}>`; }).join('');
+	openTags = [];
+	return renderedLine;
 }
 
 /**
