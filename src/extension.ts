@@ -38,7 +38,7 @@ function getRenderedContent(contentProvider: ConfluenceContentProvider, uri: vsc
 				</body>
 				</html>`;
 		}
-	}, (reason) => {
+	}, () => {
 		// https://code.visualstudio.com/api/references/vscode-api#window.createOutputChannel
 		// ToDo: custom output channel
 		// vscode.window.showErrorMessage(reason); // disable spam
