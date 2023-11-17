@@ -3,7 +3,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-import {parseMarkup} from './markupParser';
+import { parseMarkup } from './markupParser';
 
 export function packConfluenceUri(uri: vscode.Uri) {
 	// Temporarily change the URI scheme
@@ -39,9 +39,8 @@ export class ConfluenceContentProvider implements vscode.TextDocumentContentProv
 	public async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
 		//ToDo: probably bug bu rendering non confluence pages
 		const document = await vscode.workspace.openTextDocument(unpackConfluenceUri(uri));
-		const body = await parseMarkup(unpackConfluenceUri(uri), document.getText());
-
-		return body
+		// ToDo: fix call rendering twice...
+		return await parseMarkup(unpackConfluenceUri(uri), document.getText());
 	}
 
 	get onDidChange(): vscode.Event<vscode.Uri> {
