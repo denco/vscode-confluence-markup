@@ -1,0 +1,84 @@
+fileTypes:
+    - confluence
+    - markup
+    - wiki
+firstLineMatch: confluence
+keyEquivalent: ^~C
+name: Confluence markup
+scopeName: text.html.confluence
+patterns:
+    - include: "#paragraph"
+repository:
+    paragraph:
+        name: meta.paragraph.confluence
+        begin: ^
+        end: ^$
+        patterns:
+            - include: "#hr"
+            - include: "#heading"
+            - include: "#inline"
+    heading:
+        name: markup.heading.confluence
+        match: (?:^|\G)((h[1-6])\.\s+(.*?)(\s+)?\s*)$
+        captures:
+            "2":
+                # name: entity.name.tag.$2.confluence
+                name: meta.tag.$2.confluence
+            "3":
+                name: text.html.heading.confluence
+                # name: text.html.$2.confluence
+                patterns:
+                    - include: "#inline"
+        patterns:
+            - include: "#inline"
+    hr:
+        name: markup.hr.confluence
+        match: (-{4,})
+        captures:
+            "1":
+                # name: entity.name.tag.hr.confluence
+                name: meta.tag.hr.confluence
+    inline:
+        patterns:
+            - include: "#bold"
+            - include: "#italic"
+            - include: "#emoticon"
+    emoticon:
+        name: markup.emoticon.confluence
+        match: (\B)(:P|:D|:\)|:\(|;\)|\(y\)|\(n\)|\(i\)|\(\/\)|\(x\)|\(!\))\1
+        captures:
+            "2" :
+                name: text.html.image.emoticon.confluence
+                # name: meta.tag.emoticon.confluence
+    bold:
+        name: markup.bold.confluence
+        match: (\*)([^\*]*)(\1)
+        captures:
+            "1":
+                # name: punctuation.definition.bold.begin.confluence
+                name: meta.tag.b.begin.confluence
+            "2":
+                name: text.html.bold.element.confluence
+                patterns:
+                    - include: "#inline"
+            "3":
+                # name: punctuation.definition.bold.end.confluence
+                name: meta.tag.b.end.confluence
+        patterns:
+            - include: "#inline"
+    italic:
+        name: markup.italic.confluence
+        match: (\_)([^\_]*)(\1)
+        captures:
+            "1":
+                # name: punctuation.definition.italic.begin.confluence
+                name: meta.tag.i.begin.confluence
+            "2":
+                name: text.html.italic.element.confluence
+                patterns:
+                    - include: "#inline"
+            "3":
+                # name: punctuation.definition.italic.end.confluence
+                name: meta.tag.i.end.confluence
+
+uuid: 2D045A75-E4D7-4904-8766-D6234F10FCA1
