@@ -127,17 +127,19 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 }
 
 function toDomElement(line: string, lineTokens: vsctm.ITokenizeLineResult): string {
+	// let lineRootElement = new DomElement({ tag: 'div', attributes: new Map([["class", "paragraph"]]) });
 	let lineRootElement = new DomElement({ tag: 'div' });
 	let parentElement: DomElement = lineRootElement;
 
-	// console.log(`Line [${line}]:`);
+	// console.debug(`Line [${line}]:`);
 	for (const token of lineTokens.tokens) {
-		// console.log(`\t- token from ${token.startIndex} to ${token.endIndex} ` +
+		// console.debug(`\t- token from ${token.startIndex} to ${token.endIndex} ` +
 		// 	`[${line.substring(token.startIndex, token.endIndex)}] ` +
 		// 	`has scopes: ${token.scopes.join(',')}`
 		// );
 
 		const usedTokenScope = token.scopes.at(-1); // use last scope
+		let tokenValue = line.substring(token.startIndex, token.endIndex); // token value
 		if (!usedTokenScope) {
 			continue;
 		}
@@ -147,12 +149,13 @@ function toDomElement(line: string, lineTokens: vsctm.ITokenizeLineResult): stri
 					parentElement = parentElement.parent;
 				}
 			} else {
+				const tagName = usedTokenScope
+					.replace('meta.tag.', '')
+					.replace('.begin', '')
+					.replace('.end', '')
+					.replace('.confluence', '');
 				const tag = new DomElement({
-					tag: usedTokenScope
-						.replace('meta.tag.', '')
-						.replace('.begin', '')
-						.replace('.end', '')
-						.replace('.confluence', ''),
+					tag: tagName,
 					closed: true,
 					parent: parentElement
 				});
@@ -162,19 +165,37 @@ function toDomElement(line: string, lineTokens: vsctm.ITokenizeLineResult): stri
 				parentElement = tag;
 			}
 			continue;
+		} else if (usedTokenScope.includes('attribute')) {
+			const attributeName = usedTokenScope.replace("meta.attribute.", "").replace(".confluence", "");
+			if (!parentElement.value) {
+				parentElement.value = tokenValue;
+			}
+			parentElement.attributes.set(attributeName, tokenValue);
 		} else
 			if (usedTokenScope.includes('text') || usedTokenScope.includes('meta.paragraph')) {
-				const tokenValue = line.substring(token.startIndex, token.endIndex);
-				if (usedTokenScope.includes('emoticon')) {
-					parentElement.childs.push(emoticonElement(tokenValue));
-				} else {
-					parentElement.childs.push(new DomElement({ value: tokenValue }));
+				const element = usedTokenScope.replace("text.html.", "").replace(".element", "").replace(".confluence", "");
+				tokenValue = tokenValue.replace(/\\([\]])/g, '$1'); //replace escape
+				switch (element) {
+					case "image.emoticon":
+						parentElement.childs.push(emoticonElement(tokenValue));
+						break;
+					case "mdash":
+						parentElement.childs.push(new DomElement({ value: `&${element};` }));
+						break;
+					case "ndash":
+						parentElement.childs.push(new DomElement({ value: `&${element};` }));
+						break;
+					case "link":
+						parentElement.value = tokenValue;
+						break;
+					default:
+						parentElement.childs.push(new DomElement({ value: tokenValue }));
+						break;
 				}
-				continue;
 			}
 	}
 	const renderedDomTree = renderDomTree(lineRootElement);
-	// console.log(`Rendered Line: ${renderedDomTree}`)
+	// console.debug(`Rendered Line: ${renderedDomTree}`)
 	return renderedDomTree;
 }
 
@@ -229,14 +250,14 @@ function emoticonElement(emoticon: string) {
  * @returns
  */
 function toDomElementDirect(line: string, lineTokens: vsctm.ITokenizeLineResult): string {
-	// console.log(`Line [${line}]:`);
+	// console.debug(`Line [${line}]:`);
 	const lineRootTag = 'div';
 	let renderedLine = `<${lineRootTag}>`;
 	let openTags: string[] = [lineRootTag];
 	for (const token of lineTokens.tokens) {
 		const lastTokenScope = token.scopes.at(-1); // use last scope
 
-		// console.log(`\t- token from ${token.startIndex} to ${token.endIndex} ` +
+		// console.debug(`\t- token from ${token.startIndex} to ${token.endIndex} ` +
 		// 	`[${line.substring(token.startIndex, token.endIndex)}] ` +
 		// 	`has scopes: ${token.scopes.join(',')}`
 		// );
