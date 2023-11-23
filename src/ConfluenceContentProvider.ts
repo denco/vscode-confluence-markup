@@ -39,7 +39,6 @@ export class ConfluenceContentProvider implements vscode.TextDocumentContentProv
 	public async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
 		//ToDo: probably bug bu rendering non confluence pages
 		const document = await vscode.workspace.openTextDocument(unpackConfluenceUri(uri));
-		// ToDo: fix call rendering twice...
 		return await parseMarkup(unpackConfluenceUri(uri), document.getText());
 	}
 
