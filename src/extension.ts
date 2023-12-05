@@ -9,18 +9,19 @@ import { cssUri } from './markupParser';
 
 function getRenderedContent(contentProvider: ConfluenceContentProvider, uri: vscode.Uri, panel: vscode.WebviewPanel) {
 	contentProvider.provideTextDocumentContent(packConfluenceUri(uri)).then((renderedContent) => {
-		if (panel && panel.webview) {
-			// Security
-			// https://code.visualstudio.com/api/extension-guides/webview#security
+		try {
+			if (panel && panel.webview) {
+				// Security
+				// https://code.visualstudio.com/api/extension-guides/webview#security
 
-			const cssFile = cssUri('confluence.css')
-			let cssLink = ""
-			if (cssFile) {
-				const cssUrl = panel.webview.asWebviewUri(cssFile)
-				cssLink = `<link rel="stylesheet" href="${cssUrl}">`
-			}
-			const title = 'Preview ' + path.basename(uri.fsPath);
-			panel.webview.html = `<!DOCTYPE html>
+				const cssFile = cssUri('confluence.css')
+				let cssLink = ""
+				if (cssFile) {
+					const cssUrl = panel.webview.asWebviewUri(cssFile)
+					cssLink = `<link rel="stylesheet" href="${cssUrl}">`
+				}
+				const title = 'Preview ' + path.basename(uri.fsPath);
+				panel.webview.html = `<!DOCTYPE html>
 				<html lang="und">
 				<head>
 					<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
@@ -37,6 +38,9 @@ function getRenderedContent(contentProvider: ConfluenceContentProvider, uri: vsc
 					${renderedContent}
 				</body>
 				</html>`;
+			}
+		} catch (error) {
+			console.debug('webview is disposed');
 		}
 	}, () => {
 		// https://code.visualstudio.com/api/references/vscode-api#window.createOutputChannel
