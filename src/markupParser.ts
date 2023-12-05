@@ -7,6 +7,8 @@ import * as fs from 'fs';
 import * as vsctm from 'vscode-textmate';
 import * as oniguruma from 'vscode-oniguruma';
 
+import { DivTag, SpanTag, ImgTag, Tag, DomElement } from './DomElements';
+
 const EXTENTION_ID = 'denco.confluence-markup';
 const EMOTICON_PATH = '/media/emoticons/';
 const CSS_PATH = '/media/css/';
@@ -34,24 +36,19 @@ const TOKEN_REGISTRY = new vsctm.Registry({
 	}
 });
 
-
-class DomElement {
-	tag: string = 'span';
-	value: string | undefined;
-	attributes: Map<string, string> = new Map();
-	closed: boolean = true;
-	parent: DomElement | undefined;
-	childs: Array<DomElement> = new Array();
-
-	public constructor(re: Partial<DomElement> = {}) {
-		Object.assign(this, re);
-	}
-
-	toString(): string {
-		return `{"tag"="${this.tag}","value"="${this.value}","closed"="${this.closed}", "attributes":[${Array.from(this.attributes.keys()).map((key) => { return `"${key}":"${this.attributes.get(key)}"` }).join(",")}
-		]}`;
-	}
-}
+const EMOTICONS: Map<string, { alt: string, filename: string }> = new Map([
+	[':)', { alt: 'smile', filename: 'smile.png' }],
+	[':(', { alt: 'sad', filename: 'sad.png' }],
+	[':P', { alt: 'cheeky', filename: 'cheeky.png' }],
+	[':D', { alt: 'laugh', filename: 'biggrin.png' }],
+	[';)', { alt: 'wink', filename: 'wink.png' }],
+	['(y)', { alt: 'thumbs-up', filename: 'thumbs-up.png' }],
+	['(n)', { alt: 'thumbs-down', filename: 'thumbs-down.png' }],
+	['(i)', { alt: 'information', filename: 'information.png' }],
+	['(/)', { alt: 'tick', filename: 'tick.png' }],
+	['(x)', { alt: 'cross', filename: 'cross.png' }],
+	['(!)', { alt: 'warning', filename: 'warning.png' }],
+]);
 
 function imageUri(searchUri: vscode.Uri, imageLink: string) {
 	let imageUri
@@ -112,7 +109,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 			for (const line of sourceText.split(/\r?\n|\r/gi)) {
 				const lineTokens = grammar.tokenizeLine(line, ruleStack);
 				ruleStack = lineTokens.ruleStack;
-				renderedContent += toDomElement(line, lineTokens);
+				renderedContent += renderDomElement(toDomElement(line, lineTokens));
 				// renderedContent += toDomElementDirect(line, lineTokens);
 			}
 		} else {
@@ -122,16 +119,16 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	});
 
 	return content.finally(() => {
-		console.debug(`rendering of ${sourceUri.path.split('/').at(-1)}, took: ${Date.now() - start}ms.`);
+		console.debug(`Render file: ${sourceUri.path.split('/').at(-1)}; took: ${Date.now() - start}ms.`);
 	});
 }
 
-function toDomElement(line: string, lineTokens: vsctm.ITokenizeLineResult): string {
-	// let lineRootElement = new DomElement({ tag: 'div', attributes: new Map([["class", "paragraph"]]) });
-	let lineRootElement = new DomElement({ tag: 'div' });
-	let parentElement: DomElement = lineRootElement;
+function toDomElement(line: string, lineTokens: vsctm.ITokenizeLineResult): DomElement {
+	// let rootTag = new DomElement({ tag: 'div', attributes: new Map([["class", "paragraph"]]) });
+	const rootTag = new DivTag();
+	let currentTag: DomElement = rootTag;
 
-	// console.debug(`Line [${line}]:`);
+	console.debug(`Line [${line}]:`);
 	for (const token of lineTokens.tokens) {
 		// console.debug(`\t- token from ${token.startIndex} to ${token.endIndex} ` +
 		// 	`[${line.substring(token.startIndex, token.endIndex)}] ` +
@@ -143,69 +140,79 @@ function toDomElement(line: string, lineTokens: vsctm.ITokenizeLineResult): stri
 		if (!usedTokenScope) {
 			continue;
 		}
-		if (usedTokenScope.includes('meta.tag.')) {
-			if (usedTokenScope.includes('end')) {
-				if (parentElement && parentElement.parent) {
-					parentElement = parentElement.parent;
-				}
-			} else {
-				const tagName = usedTokenScope
-					.replace('meta.tag.', '')
-					.replace('.begin', '')
-					.replace('.end', '')
-					.replace('.confluence', '');
-				const tag = new DomElement({
-					tag: tagName,
+		const [elementAction, element] = cleanScope(usedTokenScope).split(".");
+		// console.debug(`ACTION.ELEMENT: [${elementAction}.${element}]`);
+
+		switch (elementAction) {
+			case "tag":
+				const tag = new Tag(element, {
 					closed: true,
-					parent: parentElement
+					parent: currentTag
 				});
-				if (parentElement) {
-					parentElement.childs.push(tag);
+				if (currentTag) {
+					currentTag.childs.push(tag);
 				}
-				parentElement = tag;
-			}
-			continue;
-		} else if (usedTokenScope.includes('attribute')) {
-			const attributeName = usedTokenScope.replace("meta.attribute.", "").replace(".confluence", "");
-			if (!parentElement.value) {
-				parentElement.value = tokenValue;
-			}
-			parentElement.attributes.set(attributeName, tokenValue);
-		} else
-			if (usedTokenScope.includes('text') || usedTokenScope.includes('meta.paragraph')) {
-				const element = usedTokenScope.replace("text.html.", "").replace(".element", "").replace(".confluence", "");
-				tokenValue = tokenValue.replace(/\\([\]])/g, '$1'); //replace escape
+				currentTag = tag;
+				break;
+			case "close":
+				if (currentTag && currentTag.parent) {
+					currentTag = currentTag.parent;
+				}
+				break;
+			case "attribute":
+				if (!currentTag.value) {
+					currentTag.value = tokenValue;
+				}
+				currentTag.attributes.set(element, tokenValue);
+				break;
+			case "html":
 				switch (element) {
-					case "image.emoticon":
-						parentElement.childs.push(emoticonElement(tokenValue));
+					case "emoticon":
+						currentTag.childs.push(emoticonElement(tokenValue));
 						break;
 					case "mdash":
-						parentElement.childs.push(new DomElement({ value: `&${element};` }));
+						currentTag.childs.push(new SpanTag({ value: `&${element};` }));
 						break;
 					case "ndash":
-						parentElement.childs.push(new DomElement({ value: `&${element};` }));
+						currentTag.childs.push(new SpanTag({ value: `&${element};` }));
 						break;
 					case "link":
-						parentElement.value = tokenValue;
+						currentTag.value = tokenValue;
+						break;
+					case "raw":
+						currentTag.value = tokenValue;
+						currentTag.attributes.set("style", `font-family: ${MONOSPACE_FONT_FAMILY};`);
 						break;
 					default:
-						parentElement.childs.push(new DomElement({ value: tokenValue }));
+						currentTag.childs.push(new SpanTag({ value: tokenValue }));
 						break;
 				}
-			}
+				break;
+			case "ignore":
+				break;
+			default:
+				break;
+		}
 	}
-	const renderedDomTree = renderDomTree(lineRootElement);
-	// console.debug(`Rendered Line: ${renderedDomTree}`)
-	return renderedDomTree;
+	return rootTag;
 }
 
-function renderDomTree(element: DomElement): string {
+function cleanScope(scope: string): string {
+	return scope
+		.replace('meta.', '')
+		.replace("text.", "")
+		.replace("image.", "")
+		.replace(".element", "")
+		.replace(".confluence", "");
+}
+
+function renderDomElement(element: DomElement): string {
 	if (element.childs.length == 0) {
 		const elementAttributs = attributeMapToString(element.attributes);
 		return `<${element.tag}${elementAttributs}>${((element.value) ? element.value : '')}${((element.closed) ? `</${element.tag}>` : '')}`
 	} else {
 		const elementAttributs = attributeMapToString(element.attributes);
-		return `<${element.tag}${elementAttributs}>` + element.childs.map(child => { return renderDomTree(child); }).join('') + ((element.closed) ? `</${element.tag}>` : '');
+		return `<${element.tag}${elementAttributs}>` + element.childs.map(child => { return renderDomElement(child); }).join('') + ((element.closed) ? `</${element.tag}>` : '');
 	}
 }
 
@@ -216,29 +223,17 @@ function attributeMapToString(attributes: Map<string, string>): string {
 	return '';
 }
 
-function emoticonElement(emoticon: string) {
-	const foundEmoticon = [
-		{ emoticon: ':)', alt: 'smile', filename: 'smile.png' },
-		{ emoticon: ':(', alt: 'sad', filename: 'sad.png' },
-		{ emoticon: ':P', alt: 'cheeky', filename: 'cheeky.png' },
-		{ emoticon: ':D', alt: 'laugh', filename: 'biggrin.png' },
-		{ emoticon: ';)', alt: 'wink', filename: 'wink.png' },
-		{ emoticon: '(y)', alt: 'thumbs-up', filename: 'thumbs-up.png' },
-		{ emoticon: '(n)', alt: 'thumbs-down', filename: 'thumbs-down.png' },
-		{ emoticon: '(i)', alt: 'information', filename: 'information.png' },
-		{ emoticon: '(/)', alt: 'tick', filename: 'tick.png' },
-		{ emoticon: '(x)', alt: 'cross', filename: 'cross.png' },
-		{ emoticon: '(!)', alt: 'warning', filename: 'warning.png' },
-	].find((element) => element.emoticon === emoticon);
-
-	const imageTag = new DomElement();
+function emoticonElement(emoticon: string): DomElement {
+	const foundEmoticon = EMOTICONS.get(emoticon);
 	if (foundEmoticon) {
-		imageTag.tag = 'img';
-		imageTag.attributes.set('alt', foundEmoticon.alt);
-		imageTag.attributes.set('src', emoticonUri(foundEmoticon.filename).toString());
-		imageTag.closed = false;
+		return new ImgTag({
+			attributes: new Map([
+				['alt', foundEmoticon.alt],
+				['src', emoticonUri(foundEmoticon.filename).toString()]
+			])
+		});
 	}
-	return imageTag;
+	return new SpanTag();
 }
 
 
@@ -280,17 +275,15 @@ function toDomElementDirect(line: string, lineTokens: vsctm.ITokenizeLineResult)
 				}
 			}
 			continue;
-		} else
-			if (lastTokenScope.includes('text') || lastTokenScope.includes('meta.paragraph')) {
-				const tokenValue = line.substring(token.startIndex, token.endIndex);
-				if (lastTokenScope.includes('emoticon')) {
-					renderedLine += renderDomTree(emoticonElement(tokenValue));
-				} else {
-					renderedLine += tokenValue;
-				}
-				continue;
+		} else if (lastTokenScope.includes('text') || lastTokenScope.includes('meta.paragraph')) {
+			const tokenValue = line.substring(token.startIndex, token.endIndex);
+			if (lastTokenScope.includes('emoticon')) {
+				renderedLine += renderDomElement(emoticonElement(tokenValue));
+			} else {
+				renderedLine += tokenValue;
 			}
-
+			continue;
+		}
 	}
 	// close open tags
 	renderedLine += openTags.map((tag) => { return `</${tag}>`; }).join('');
