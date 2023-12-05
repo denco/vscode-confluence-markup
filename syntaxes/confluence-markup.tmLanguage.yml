@@ -10,31 +10,40 @@ patterns:
     - include: "#paragraph"
 repository:
     paragraph:
-        name: meta.paragraph.confluence
+        # name: meta.paragraph.confluence
+        name: text.html.paragraph.confluence
         begin: ^
         end: ^$
         patterns:
+            - include: "#escape-char"
             - include: "#hr"
             - include: "#heading"
             - include: "#table"
             - include: "#inline"
-    heading:
-        name: markup.heading.confluence
-        match: (?:^|\G)((h[1-6])\.\s+(.*?)(\s+)?\s*)$
+    escape-char:
+        name: markup.constant.escape.confluence
+        match: (\\)
         captures:
-            "2":
-                name: meta.tag.$2.confluence
-            "3":
-                name: text.html.heading.confluence
-                patterns:
-                    - include: "#inline"
+            "1":
+                name: meta.ignore.escape.confluence
     hr:
         name: markup.hr.confluence
         match: (-{4,})
         captures:
             "1":
-                # name: entity.name.tag.hr.confluence
                 name: meta.tag.hr.confluence
+    heading:
+        name: markup.heading.confluence
+        match: (?:^|\G)((h[1-6])(\.\s+)(.*?)(\s+)?\s*)$
+        captures:
+            "2":
+                name: meta.tag.$2.confluence
+            "3":
+                name: meta.ignore.$2.confluence
+            "4":
+                name: text.html.heading.confluence
+                patterns:
+                    - include: "#inline"
     table:
         name: markup.other.table.confluence
         begin: ^\s*(?=\|)
@@ -73,18 +82,19 @@ repository:
             - include: "#monospaced"
     link:
         name: markup.link.confluence
-        match: (\[)(?:([^|\s]*?)(\|))?([^\[]*?[^\\|\s])(\])
+        # match: (\[)(?:([^|\s]*?)(\|))?([^\[]*?[^\\|\s])(\])
+        match: (\[)(?:([^|]*?)(\|))?([^\[]*?[^\\|\s])(\])
         captures:
             "1" :
-                name: meta.tag.a.begin.confluence
+                name: meta.tag.a.confluence
             "2" :
                 name: text.html.link.element.confluence
-            # "3" :
-            #     name: punctuation.separatory.link.title.confluence
+                patterns:
+                    - include: "#inline"
             "4" :
                 name: meta.attribute.href.confluence
             "5" :
-                name: meta.tag.a.end.confluence
+                name: meta.close.a.confluence
     line-break:
         name: markup.line-break.confluence
         match: (\\\\)
@@ -114,93 +124,93 @@ repository:
         match: (\*)([^\*]*)(\1)
         captures:
             "1":
-                name: meta.tag.strong.begin.confluence
+                name: meta.tag.strong.confluence
             "2":
                 name: text.html.bold.element.confluence
                 patterns:
                     - include: "#inline"
             "3":
-                name: meta.tag.strong.end.confluence
+                name: meta.close.strong.confluence
     italic:
         name: markup.italic.confluence
         match: (\b_|\{_\})([^_]*)(_)
         captures:
             "1":
-                name: meta.tag.i.begin.confluence
+                name: meta.tag.i.confluence
             "2":
                 name: text.html.italic.element.confluence
                 patterns:
                     - include: "#inline"
             "3":
-                name: meta.tag.i.end.confluence
+                name: meta.close.i.confluence
     citation:
         name: markup.citation.confluence
         match: (\?{2})(.*)(\1)
         captures:
             "1":
-                name: meta.tag.cite.begin.confluence
+                name: meta.tag.cite.confluence
             "2":
                 name: text.html.citation.element.confluence
                 patterns:
                     - include: "#inline"
             "3":
-                name: meta.tag.cite.end.confluence
+                name: meta.tag.cite.close.confluence
     inserted:
         name: markup.inserted.confluence
         match: (\+)(.*)(\1)
         captures:
             "1":
-                name: meta.tag.ins.begin.confluence
+                name: meta.tag.ins.confluence
             "2":
                 name: text.html.inserted.element.confluence
                 patterns:
                     - include: "#inline"
             "3":
-                name: meta.tag.ins.end.confluence
+                name: meta.close.ins.confluence
     superscript:
         name: markup.superscript.confluence
         match: (\^)([^\^]*)(\1)
         captures:
             "1":
-                name: meta.tag.sup.begin.confluence
+                name: meta.tag.sup.confluence
             "2":
                 name: text.html.superscript.element.confluence
                 patterns:
                     - include: "#inline"
             "3":
-                name: meta.tag.sup.end.confluence
+                name: meta.tag.sup.close.confluence
     subscript:
         name: markup.subscript.confluence
         match: (~)([^~]*)(\1)
         captures:
             "1":
-                name: meta.tag.sub.begin.confluence
+                name: meta.tag.sub.confluence
             "2":
                 name: text.html.subscript.element.confluence
                 patterns:
                     - include: "#inline"
             "3":
-                name: meta.tag.sub.end.confluence
+                name: meta.close.sub.confluence
     deleted:
         name: markup.deleted.confluence
         match: \B(-)(.*)(\1)\B
         captures:
             "1":
-                name: meta.tag.del.begin.confluence
+                name: meta.tag.del.confluence
             "2":
                 name: text.html.deleted.element.confluence
                 patterns:
                     - include: "#inline"
             "3":
-                name: meta.tag.del.end.confluence
+                name: meta.close.del.confluence
     monospaced:
         name: markup.raw.confluence
         match: (\{{2})(.*?)(\}{2})
         captures:
             "1":
-                name: meta.tag.code.begin.confluence
+                name: meta.tag.code.confluence
             "2":
-                name: text.html.monospaced.element.confluence
+                name: text.html.raw.element.confluence
             "3":
-                name: meta.tag.code.end.confluence
+                name: meta.close.code.confluence
 uuid: 2D045A75-E4D7-4904-8766-D6234F10FCA1

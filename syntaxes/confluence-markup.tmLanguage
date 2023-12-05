@@ -28,13 +28,17 @@
       <key>paragraph</key>
       <dict>
         <key>name</key>
-        <string>meta.paragraph.confluence</string>
+        <string>text.html.paragraph.confluence</string>
         <key>begin</key>
         <string>^</string>
         <key>end</key>
         <string>^$</string>
         <key>patterns</key>
         <array>
+          <dict>
+            <key>include</key>
+            <string>#escape-char</string>
+          </dict>
           <dict>
             <key>include</key>
             <string>#hr</string>
@@ -53,30 +57,18 @@
           </dict>
         </array>
       </dict>
-      <key>heading</key>
+      <key>escape-char</key>
       <dict>
         <key>name</key>
-        <string>markup.heading.confluence</string>
+        <string>markup.constant.escape.confluence</string>
         <key>match</key>
-        <string>(?:^|\G)((h[1-6])\.\s+(.*?)(\s+)?\s*)$</string>
+        <string>(\\)</string>
         <key>captures</key>
         <dict>
-          <key>2</key>
+          <key>1</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.$2.confluence</string>
-          </dict>
-          <key>3</key>
-          <dict>
-            <key>name</key>
-            <string>text.html.heading.confluence</string>
-            <key>patterns</key>
-            <array>
-              <dict>
-                <key>include</key>
-                <string>#inline</string>
-              </dict>
-            </array>
+            <string>meta.ignore.escape.confluence</string>
           </dict>
         </dict>
       </dict>
@@ -92,6 +84,38 @@
           <dict>
             <key>name</key>
             <string>meta.tag.hr.confluence</string>
+          </dict>
+        </dict>
+      </dict>
+      <key>heading</key>
+      <dict>
+        <key>name</key>
+        <string>markup.heading.confluence</string>
+        <key>match</key>
+        <string>(?:^|\G)((h[1-6])(\.\s+)(.*?)(\s+)?\s*)$</string>
+        <key>captures</key>
+        <dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>meta.tag.$2.confluence</string>
+          </dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>meta.ignore.$2.confluence</string>
+          </dict>
+          <key>4</key>
+          <dict>
+            <key>name</key>
+            <string>text.html.heading.confluence</string>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#inline</string>
+              </dict>
+            </array>
           </dict>
         </dict>
       </dict>
@@ -216,18 +240,25 @@
         <key>name</key>
         <string>markup.link.confluence</string>
         <key>match</key>
-        <string>(\[)(?:([^|\s]*?)(\|))?([^\[]*?[^\\|\s])(\])</string>
+        <string>(\[)(?:([^|]*?)(\|))?([^\[]*?[^\\|\s])(\])</string>
         <key>captures</key>
         <dict>
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.a.begin.confluence</string>
+            <string>meta.tag.a.confluence</string>
           </dict>
           <key>2</key>
           <dict>
             <key>name</key>
             <string>text.html.link.element.confluence</string>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#inline</string>
+              </dict>
+            </array>
           </dict>
           <key>4</key>
           <dict>
@@ -237,7 +268,7 @@
           <key>5</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.a.end.confluence</string>
+            <string>meta.close.a.confluence</string>
           </dict>
         </dict>
       </dict>
@@ -312,7 +343,7 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.strong.begin.confluence</string>
+            <string>meta.tag.strong.confluence</string>
           </dict>
           <key>2</key>
           <dict>
@@ -329,7 +360,7 @@
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.strong.end.confluence</string>
+            <string>meta.close.strong.confluence</string>
           </dict>
         </dict>
       </dict>
@@ -344,7 +375,7 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.i.begin.confluence</string>
+            <string>meta.tag.i.confluence</string>
           </dict>
           <key>2</key>
           <dict>
@@ -361,7 +392,7 @@
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.i.end.confluence</string>
+            <string>meta.close.i.confluence</string>
           </dict>
         </dict>
       </dict>
@@ -376,7 +407,7 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.cite.begin.confluence</string>
+            <string>meta.tag.cite.confluence</string>
           </dict>
           <key>2</key>
           <dict>
@@ -393,7 +424,7 @@
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.cite.end.confluence</string>
+            <string>meta.tag.cite.close.confluence</string>
           </dict>
         </dict>
       </dict>
@@ -408,7 +439,7 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.ins.begin.confluence</string>
+            <string>meta.tag.ins.confluence</string>
           </dict>
           <key>2</key>
           <dict>
@@ -425,7 +456,7 @@
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.ins.end.confluence</string>
+            <string>meta.close.ins.confluence</string>
           </dict>
         </dict>
       </dict>
@@ -440,7 +471,7 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.sup.begin.confluence</string>
+            <string>meta.tag.sup.confluence</string>
           </dict>
           <key>2</key>
           <dict>
@@ -457,7 +488,7 @@
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.sup.end.confluence</string>
+            <string>meta.tag.sup.close.confluence</string>
           </dict>
         </dict>
       </dict>
@@ -472,7 +503,7 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.sub.begin.confluence</string>
+            <string>meta.tag.sub.confluence</string>
           </dict>
           <key>2</key>
           <dict>
@@ -489,7 +520,7 @@
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.sub.end.confluence</string>
+            <string>meta.close.sub.confluence</string>
           </dict>
         </dict>
       </dict>
@@ -504,7 +535,7 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.del.begin.confluence</string>
+            <string>meta.tag.del.confluence</string>
           </dict>
           <key>2</key>
           <dict>
@@ -521,7 +552,7 @@
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.del.end.confluence</string>
+            <string>meta.close.del.confluence</string>
           </dict>
         </dict>
       </dict>
@@ -536,17 +567,17 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.code.begin.confluence</string>
+            <string>meta.tag.code.confluence</string>
           </dict>
           <key>2</key>
           <dict>
             <key>name</key>
-            <string>text.html.monospaced.element.confluence</string>
+            <string>text.html.raw.element.confluence</string>
           </dict>
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>meta.tag.code.end.confluence</string>
+            <string>meta.close.code.confluence</string>
           </dict>
         </dict>
       </dict>
