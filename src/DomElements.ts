@@ -26,8 +26,23 @@ export class Tag extends DomElement {
 }
 
 export class SpanTag extends DomElement {
-	public constructor(re: Partial<DomElement> = {}) {
-		super('span', re);
+	public constructor(value?: string) {
+		super('span', { value: value });
+	}
+}
+
+export class ListTag extends DomElement {
+	level: number;
+
+	public constructor(tag: string, level: number, re: Partial<DomElement> = {}) {
+		super(tag, re);
+		this.level = level;
+	}
+}
+
+export class ListItemTag extends ListTag {
+	public constructor(level: number, re: Partial<DomElement> = {}) {
+		super('li', level, re);
 	}
 }
 
@@ -37,9 +52,26 @@ export class DivTag extends DomElement {
 	}
 }
 
+export class PageDiv extends DivTag {
+	public constructor() {
+		super('div');
+		this.attributes.set("class", "page");
+	}
+}
+
+export class ParagraphDiv extends DivTag {
+	public constructor(parent: PageDiv) {
+		super('div');
+		this.attributes.set("class", "paragraph");
+		this.parent = parent;
+	}
+}
+
 export class ImgTag extends DomElement {
-	public constructor(re: Partial<DomElement> = {}) {
-		super('img', re);
+	public constructor(alt: string, src: string) {
+		super('img');
 		this.closed = false;
+		this.attributes.set("alt", alt);
+		this.attributes.set("src", src);
 	}
 }
