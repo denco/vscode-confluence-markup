@@ -21,7 +21,7 @@ function getRenderedContent(contentProvider: ConfluenceContentProvider, uri: vsc
 					cssLink = `<link rel="stylesheet" href="${cssUrl}">`
 				}
 				const title = 'Preview ' + path.basename(uri.fsPath);
-				panel.webview.html = `<!DOCTYPE html>
+				const fullRenderedHtml = `<!DOCTYPE html>
 				<html lang="und">
 				<head>
 					<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
@@ -38,6 +38,7 @@ function getRenderedContent(contentProvider: ConfluenceContentProvider, uri: vsc
 					${renderedContent}
 				</body>
 				</html>`;
+				panel.webview.html = fullRenderedHtml;
 			}
 		} catch (error) {
 			console.debug('webview is disposed');
