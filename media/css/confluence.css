@@ -6,8 +6,12 @@ body {
 }
 
 div {
-	padding-bottom: 0.5em;
+	/* padding-bottom: 0.5em; */
 	vertical-align: middle;
+}
+
+div.paragraph {
+	padding-bottom: 0.3em;
 }
 
 img {
