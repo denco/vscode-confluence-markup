@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as vsctm from 'vscode-textmate';
 import * as oniguruma from 'vscode-oniguruma';
 
-import { DivTag, SpanTag, ImgTag, Tag, DomElement } from './DomElements';
+import * as domElement from './DomElements';
 
 const EXTENTION_ID = 'denco.confluence-markup';
 const EMOTICON_PATH = '/media/emoticons/';
@@ -102,20 +102,23 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 
 	// Load the JavaScript grammar and any other grammars included by it async.
 	const start = Date.now();
+	const rootElement = new domElement.PageDiv();
 	const content = TOKEN_REGISTRY.loadGrammar(GRAMMER_SCOPE_NAME).then(grammar => {
-		let renderedContent = '';
+		let lastParent = rootElement;
 		if (grammar) {
 			let ruleStack = vsctm.INITIAL;
 			for (const line of sourceText.split(/\r?\n|\r/gi)) {
 				const lineTokens = grammar.tokenizeLine(line, ruleStack);
 				ruleStack = lineTokens.ruleStack;
-				renderedContent += renderDomElement(toDomElement(line, lineTokens));
-				// renderedContent += toDomElementDirect(line, lineTokens);
+				lastParent = toDomElement(lastParent, line, lineTokens);
 			}
 		} else {
 			new Error("Grammer is undefined!");
 		}
-		return renderedContent;
+
+		const fullDocument = renderDomElement(rootElement);
+		console.debug(`===================\n${fullDocument}\n===================\n`);
+		return fullDocument;
 	});
 
 	return content.finally(() => {
@@ -123,12 +126,18 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 	});
 }
 
-function toDomElement(line: string, lineTokens: vsctm.ITokenizeLineResult): DomElement {
-	// let rootTag = new DomElement({ tag: 'div', attributes: new Map([["class", "paragraph"]]) });
-	const rootTag = new DivTag();
-	let currentTag: DomElement = rootTag;
+function toDomElement(initialParent: domElement.DomElement, line: string, lineTokens: vsctm.ITokenizeLineResult): domElement.DomElement {
 
-	console.debug(`Line [${line}]:`);
+	let currentParent = initialParent;
+	if (initialParent instanceof domElement.PageDiv) {
+		const paragraphTag = new domElement.ParagraphDiv(initialParent);
+		initialParent.childs.push(paragraphTag);
+		currentParent = paragraphTag
+	}
+
+	let returnInitialParent = true;
+
+	// console.debug(`Line [${line}]:`);
 	for (const token of lineTokens.tokens) {
 		// console.debug(`\t- token from ${token.startIndex} to ${token.endIndex} ` +
 		// 	`[${line.substring(token.startIndex, token.endIndex)}] ` +
@@ -140,51 +149,103 @@ function toDomElement(line: string, lineTokens: vsctm.ITokenizeLineResult): DomE
 		if (!usedTokenScope) {
 			continue;
 		}
-		const [elementAction, element] = cleanScope(usedTokenScope).split(".");
-		// console.debug(`ACTION.ELEMENT: [${elementAction}.${element}]`);
+		const [elementAction, element, elementClass] = cleanScope(usedTokenScope).split(".");
 
 		switch (elementAction) {
 			case "tag":
-				const tag = new Tag(element, {
-					closed: true,
-					parent: currentTag
-				});
-				if (currentTag) {
-					currentTag.childs.push(tag);
+				if (element === 'ol' || element === 'ul') {
+					const listTag = new domElement.ListTag(element, tokenValue.length, { parent: currentParent });
+					const currentParentLevel = (currentParent as domElement.ListTag).level ? (currentParent as domElement.ListTag).level : 0;
+					if (listTag.tag === 'ol' && listTag.level % 3 === 1) {
+						listTag.attributes.set("class", "initial");
+					}
+
+					if (listTag.level > currentParentLevel) {
+						// add new list tag as child
+						currentParent.childs.push(listTag);
+						currentParent = listTag;
+					} else if (currentParentLevel === listTag.level) {
+						// same level so just go's up cause in list is last (currentParent) is ever ListItem
+						if (currentParent.parent) {
+							currentParent = currentParent.parent
+						}
+					} else {
+						let parent = currentParent.parent
+						while ((parent as domElement.ListTag).level != listTag.level) {
+							parent = parent?.parent
+						}
+						// found element schould be ever one ListItem, so goes one level up
+						if (parent?.parent) {
+							currentParent = parent.parent;
+						}
+					}
+					returnInitialParent = false;
+				} else {
+					const tag = new domElement.Tag(element, {
+						closed: true,
+						parent: currentParent
+					});
+					if (currentParent) {
+						currentParent.childs.push(tag);
+					}
+					currentParent = tag;
 				}
-				currentTag = tag;
+				if (elementClass) {
+					currentParent.attributes.set("class", elementClass);
+				}
 				break;
 			case "close":
-				if (currentTag && currentTag.parent) {
-					currentTag = currentTag.parent;
+				if (currentParent && currentParent.parent) {
+					currentParent = currentParent.parent;
 				}
 				break;
 			case "attribute":
-				if (!currentTag.value) {
-					currentTag.value = tokenValue;
+				if (!currentParent.value) {
+					currentParent.value = tokenValue;
 				}
-				currentTag.attributes.set(element, tokenValue);
+				currentParent.attributes.set(element, tokenValue);
 				break;
 			case "html":
 				switch (element) {
+					case "paragraph":
+						if (currentParent instanceof domElement.ListTag) {
+							let pageParent = currentParent.parent
+							while (!(pageParent instanceof domElement.PageDiv)) {
+								pageParent = pageParent?.parent
+							}
+							currentParent = pageParent
+							returnInitialParent = false;
+						}
+						if (tokenValue) {
+							currentParent.childs.push(new domElement.SpanTag(tokenValue));
+						}
+						break;
 					case "emoticon":
-						currentTag.childs.push(emoticonElement(tokenValue));
+						currentParent.childs.push(emoticonElement(tokenValue));
 						break;
 					case "mdash":
-						currentTag.childs.push(new SpanTag({ value: `&${element};` }));
+						currentParent.childs.push(new domElement.SpanTag(`&${element};`));
 						break;
 					case "ndash":
-						currentTag.childs.push(new SpanTag({ value: `&${element};` }));
+						currentParent.childs.push(new domElement.SpanTag(`&${element};`));
+						break;
+					case "list":
+						const listItemTag = new domElement.ListItemTag((currentParent as domElement.ListTag).level, { parent: currentParent });
+						if (tokenValue.trim()) {
+							listItemTag.childs.push(new domElement.SpanTag(tokenValue));
+						}
+						currentParent.childs.push(listItemTag);
+						currentParent = listItemTag;
 						break;
 					case "link":
-						currentTag.value = tokenValue;
+						currentParent.value = tokenValue;
 						break;
 					case "raw":
-						currentTag.value = tokenValue;
-						currentTag.attributes.set("style", `font-family: ${MONOSPACE_FONT_FAMILY};`);
+						currentParent.value = tokenValue;
+						currentParent.attributes.set("style", `font-family: ${MONOSPACE_FONT_FAMILY};`);
 						break;
 					default:
-						currentTag.childs.push(new SpanTag({ value: tokenValue }));
+						currentParent.childs.push(new domElement.SpanTag(tokenValue));
 						break;
 				}
 				break;
@@ -194,7 +255,8 @@ function toDomElement(line: string, lineTokens: vsctm.ITokenizeLineResult): DomE
 				break;
 		}
 	}
-	return rootTag;
+
+	return returnInitialParent ? initialParent : currentParent;
 }
 
 function cleanScope(scope: string): string {
@@ -206,13 +268,13 @@ function cleanScope(scope: string): string {
 		.replace(".confluence", "");
 }
 
-function renderDomElement(element: DomElement): string {
+function renderDomElement(element: domElement.DomElement): string {
 	if (element.childs.length == 0) {
 		const elementAttributs = attributeMapToString(element.attributes);
 		return `<${element.tag}${elementAttributs}>${((element.value) ? element.value : '')}${((element.closed) ? `</${element.tag}>` : '')}`
 	} else {
 		const elementAttributs = attributeMapToString(element.attributes);
-		return `<${element.tag}${elementAttributs}>` + element.childs.map(child => { return renderDomElement(child); }).join('') + ((element.closed) ? `</${element.tag}>` : '');
+		return `<${element.tag}${elementAttributs}>${((element.value) ? element.value : '')}` + element.childs.map(child => { return renderDomElement(child); }).join('') + ((element.closed) ? `</${element.tag}>` : '');
 	}
 }
 
@@ -223,17 +285,12 @@ function attributeMapToString(attributes: Map<string, string>): string {
 	return '';
 }
 
-function emoticonElement(emoticon: string): DomElement {
+function emoticonElement(emoticon: string): domElement.DomElement {
 	const foundEmoticon = EMOTICONS.get(emoticon);
 	if (foundEmoticon) {
-		return new ImgTag({
-			attributes: new Map([
-				['alt', foundEmoticon.alt],
-				['src', emoticonUri(foundEmoticon.filename).toString()]
-			])
-		});
+		return new domElement.ImgTag(foundEmoticon.alt, emoticonUri(foundEmoticon.filename).toString());
 	}
-	return new SpanTag();
+	return new domElement.SpanTag();
 }
 
 
