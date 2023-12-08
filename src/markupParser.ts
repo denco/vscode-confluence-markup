@@ -117,7 +117,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		}
 
 		const fullDocument = renderDomElement(rootElement);
-		console.debug(`===================\n${fullDocument}\n===================\n`);
+		// console.debug(`===================\n${fullDocument}\n===================\n`);
 		return fullDocument;
 	});
 
@@ -145,7 +145,7 @@ function toDomElement(initialParent: domElement.DomElement, line: string, lineTo
 		// );
 
 		const usedTokenScope = token.scopes.at(-1); // use last scope
-		let tokenValue = line.substring(token.startIndex, token.endIndex); // token value
+		const tokenValue = line.substring(token.startIndex, token.endIndex); // token value
 		if (!usedTokenScope) {
 			continue;
 		}
@@ -229,7 +229,7 @@ function toDomElement(initialParent: domElement.DomElement, line: string, lineTo
 					case "ndash":
 						currentParent.childs.push(new domElement.SpanTag(`&${element};`));
 						break;
-					case "list":
+					case "list": {
 						const listItemTag = new domElement.ListItemTag((currentParent as domElement.ListTag).level, { parent: currentParent });
 						if (tokenValue.trim()) {
 							listItemTag.childs.push(new domElement.SpanTag(tokenValue));
@@ -237,6 +237,7 @@ function toDomElement(initialParent: domElement.DomElement, line: string, lineTo
 						currentParent.childs.push(listItemTag);
 						currentParent = listItemTag;
 						break;
+					}
 					case "link":
 						currentParent.value = tokenValue;
 						break;
