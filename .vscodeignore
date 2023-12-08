@@ -9,6 +9,8 @@
 node_modules/**
 typings/**
 **/test/**
+.github/**
+save/**
 .gitignore
 .gitattributes
 tsconfig.json
