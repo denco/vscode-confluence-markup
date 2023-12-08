@@ -117,7 +117,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 		}
 
 		const fullDocument = renderDomElement(rootElement);
-		// console.debug(`===================\n${fullDocument}\n===================\n`);
+		console.debug(`===================\n${fullDocument}\n===================\n`);
 		return fullDocument;
 	});
 
@@ -154,31 +154,7 @@ function toDomElement(initialParent: domElement.DomElement, line: string, lineTo
 		switch (elementAction) {
 			case "tag":
 				if (element === 'ol' || element === 'ul') {
-					const listTag = new domElement.ListTag(element, tokenValue.length, { parent: currentParent });
-					const currentParentLevel = (currentParent as domElement.ListTag).level ? (currentParent as domElement.ListTag).level : 0;
-					if (listTag.tag === 'ol' && listTag.level % 3 === 1) {
-						listTag.attributes.set("class", "initial");
-					}
-
-					if (listTag.level > currentParentLevel) {
-						// add new list tag as child
-						currentParent.childs.push(listTag);
-						currentParent = listTag;
-					} else if (currentParentLevel === listTag.level) {
-						// same level so just go's up cause in list is last (currentParent) is ever ListItem
-						if (currentParent.parent) {
-							currentParent = currentParent.parent
-						}
-					} else {
-						let parent = currentParent.parent
-						while ((parent as domElement.ListTag).level != listTag.level) {
-							parent = parent?.parent
-						}
-						// found element schould be ever one ListItem, so goes one level up
-						if (parent?.parent) {
-							currentParent = parent.parent;
-						}
-					}
+					currentParent = createListElement(element, tokenValue, currentParent);
 					returnInitialParent = false;
 				} else {
 					const tag = new domElement.Tag(element, {
@@ -689,3 +665,31 @@ function parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
 	}
 	return result;
 }
+function createListElement(element: string, tokenValue: string, listParent: domElement.DomElement): domElement.DomElement {
+	const listTag = new domElement.ListTag(element, tokenValue.length, { parent: listParent });
+	const currentParentLevel = (listParent as domElement.ListTag).level ? (listParent as domElement.ListTag).level : 0;
+	if (listTag.tag === 'ol' && listTag.level % 3 === 1) {
+		listTag.attributes.set("class", "initial");
+	}
+	if (listTag.level > currentParentLevel) {
+		// add new list tag as child
+		listParent.childs.push(listTag);
+		listParent = listTag;
+	} else if (currentParentLevel === listTag.level) {
+		// same level so just go's up cause in list is last (listParent) is ever ListItem
+		if (listParent.parent) {
+			listParent = listParent.parent
+		}
+	} else {
+		let parent = listParent.parent
+		while ((parent as domElement.ListTag).level != listTag.level) {
+			parent = parent?.parent
+		}
+		// found element schould be ever one ListItem, so goes one level up
+		if (parent?.parent) {
+			listParent = parent.parent;
+		}
+	}
+	return listParent;
+}
+
