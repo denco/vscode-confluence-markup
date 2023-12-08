@@ -19,6 +19,7 @@ repository:
             - include: "#hr"
             - include: "#heading"
             - include: "#table"
+            - include: "#lists"
             - include: "#inline"
     escape-char:
         name: markup.constant.escape.confluence
@@ -28,7 +29,7 @@ repository:
                 name: meta.ignore.escape.confluence
     hr:
         name: markup.hr.confluence
-        match: (-{4,})
+        match: ^\s*(-{4,})\s*$
         captures:
             "1":
                 name: meta.tag.hr.confluence
@@ -65,6 +66,28 @@ repository:
                 end: (?=\||\n)
                 patterns:
                     - include: "#inline"
+    lists:
+        name: markup.other.list.confluence
+        begin: ^\s*([-\*#]+)(\s)(.*)
+        end: ^(\s*|$)
+        beginCaptures:
+            "1":
+                patterns:
+                    -   name: meta.tag.ul.confluence
+                        match: (^[-\*#]*\*$)
+                    -   name: meta.tag.ul.alt.confluence
+                        match: (^[-\*#]*-$)
+                    -   name: meta.tag.ol.confluence
+                        match: (^[-\*#]*#$)
+            "2":
+                name : text.html.list.element.confluence
+            "3":
+                name : text.html.content.element.confluence
+                patterns:
+                    - include: "#inline"
+        endCaptures:
+            "0":
+                name: markup.tag.end.list.confluence
     inline:
         patterns:
             - include: "#link"
@@ -154,7 +177,7 @@ repository:
                 patterns:
                     - include: "#inline"
             "3":
-                name: meta.tag.cite.close.confluence
+                name: meta.close.cite.confluence
     inserted:
         name: markup.inserted.confluence
         match: (\+)(.*)(\1)
@@ -178,7 +201,7 @@ repository:
                 patterns:
                     - include: "#inline"
             "3":
-                name: meta.tag.sup.close.confluence
+                name: meta.close.sup.confluence
     subscript:
         name: markup.subscript.confluence
         match: (~)([^~]*)(\1)
