@@ -1,17 +1,17 @@
-**/*.ts
-**/tsconfig.json
-**/*.map
-**/*.bak
-**/*.log
-*.vsix
-.vscode/**
-.vscode-test/**
-node_modules/**
-typings/**
-**/test/**
-.github/**
-save/**
-.gitignore
-.gitattributes
-tsconfig.json
-package-lock.json
+# Ignore everything
+**
+
+# Whitelist
+!out/*.js
+!media/**/*.{css,png}
+!snippets/confluence-markup.json
+!syntaxes/confluence-markup.tmLanguage
+!CHANGELOG.md
+!LICENSE
+!README.md
+!package.json
+!language-configuration.json
+# dependencies
+!node_modules/vscode-oniguruma/**/*.{js,wasm,txt,md,json}
+!node_modules/vscode-textmate/**/*.{js,md}
+!node_modules/vscode-textmate/**/package.json
