@@ -121,6 +121,7 @@
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run clean && npm run compile",
+		"format-check": "prettier --check \"src/**/*.ts\"",
 		"format": "prettier --write \"src/**/*.ts\"",
 		"lint": "eslint --cache=true --ext ts,tsx .",
 		"test": "run-script-os",
