@@ -12,12 +12,12 @@ import * as domElement from './DomElements';
 const EXTENTION_ID = 'denco.confluence-markup';
 const EMOTICON_PATH = '/media/emoticons/';
 const CSS_PATH = '/media/css/';
-const MONOSPACE_FONT_FAMILY = vscode.workspace.getConfiguration("confluenceMarkup").monospaceFont;
+const MONOSPACE_FONT_FAMILY = vscode.workspace.getConfiguration('confluenceMarkup').monospaceFont;
 const LOCAL_FILE_OPTS = { scheme: 'https', authority: 'file+.vscode-resource.vscode-cdn.net' };
 
-const GRAMMAR_FILE = getUri("/syntaxes", "confluence-markup.tmLanguage").fsPath;
+const GRAMMAR_FILE = getUri('/syntaxes', 'confluence-markup.tmLanguage').fsPath;
 const GRAMMER_SCOPE_NAME = 'text.html.confluence';
-const WASP_FILE = getUri("/node_modules/vscode-oniguruma/release", "onig.wasm").fsPath;
+const WASP_FILE = getUri('/node_modules/vscode-oniguruma/release', 'onig.wasm').fsPath;
 
 // s. https://github.com/Microsoft/vscode-textmate
 // Create a registry that can create a grammar from a scope name.
@@ -25,18 +25,17 @@ const TOKEN_REGISTRY = new vsctm.Registry({
 	onigLib: oniguruma.loadWASM(fs.readFileSync(WASP_FILE)).then(() => {
 		return {
 			createOnigScanner: (patterns: string[]) => new oniguruma.OnigScanner(patterns),
-			createOnigString: (s: string) => new oniguruma.OnigString(s)
+			createOnigString: (s: string) => new oniguruma.OnigString(s),
 		};
 	}),
 	loadGrammar: () => {
-		return readFile(GRAMMAR_FILE)
-			.then(data => {
-				return vsctm.parseRawGrammar(data.toString())
-			})
-	}
+		return readFile(GRAMMAR_FILE).then(data => {
+			return vsctm.parseRawGrammar(data.toString());
+		});
+	},
 });
 
-const EMOTICONS: Map<string, { alt: string, filename: string }> = new Map([
+const EMOTICONS: Map<string, { alt: string; filename: string }> = new Map([
 	[':)', { alt: 'smile', filename: 'smile.png' }],
 	[':(', { alt: 'sad', filename: 'sad.png' }],
 	[':P', { alt: 'cheeky', filename: 'cheeky.png' }],
@@ -51,7 +50,7 @@ const EMOTICONS: Map<string, { alt: string, filename: string }> = new Map([
 ]);
 
 function imageUri(searchUri: vscode.Uri, imageLink: string) {
-	let imageUri
+	let imageUri;
 	if (imageLink.match(/^(ht)|(f)tps?:\/\//)) {
 		imageUri = vscode.Uri.parse(imageLink);
 	} else {
@@ -71,14 +70,14 @@ function getUri(filepath: string, filename: string) {
 
 		// set special chema for resource:
 		// https://code.visualstudio.com/api/extension-guides/webview#loading-local-content
-		const uri = vscode.Uri.file(path.join(extPath, filepath, filename))
-		return uri
+		const uri = vscode.Uri.file(path.join(extPath, filepath, filename));
+		return uri;
 	}
 	return vscode.Uri.prototype;
 }
 
 function emoticonUri(emoticonFile: string) {
-	const emoticonUrl = getUri(EMOTICON_PATH, emoticonFile)
+	const emoticonUrl = getUri(EMOTICON_PATH, emoticonFile);
 	if (emoticonUrl) {
 		return emoticonUrl.with(LOCAL_FILE_OPTS);
 	}
@@ -94,12 +93,11 @@ export function cssUri(cssFile: string) {
  */
 function readFile(path: string): Promise<Buffer> {
 	return new Promise((resolve, reject) => {
-		fs.readFile(path, (error, data) => error ? reject(error) : resolve(data));
-	})
+		fs.readFile(path, (error, data) => (error ? reject(error) : resolve(data)));
+	});
 }
 
 export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
-
 	// Load the JavaScript grammar and any other grammars included by it async.
 	const start = Date.now();
 	const rootElement = new domElement.PageDiv();
@@ -113,7 +111,7 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 				lastParent = toDomElement(lastParent, line, lineTokens);
 			}
 		} else {
-			new Error("Grammer is undefined!");
+			new Error('Grammer is undefined!');
 		}
 
 		const fullDocument = renderDomElement(rootElement);
@@ -127,12 +125,11 @@ export function parseMarkup(sourceUri: vscode.Uri, sourceText: string) {
 }
 
 function toDomElement(initialParent: domElement.DomElement, line: string, lineTokens: vsctm.ITokenizeLineResult): domElement.DomElement {
-
 	let currentParent = initialParent;
 	if (initialParent instanceof domElement.PageDiv) {
 		const paragraphTag = new domElement.ParagraphDiv(initialParent);
 		initialParent.childs.push(paragraphTag);
-		currentParent = paragraphTag
+		currentParent = paragraphTag;
 	}
 
 	let returnInitialParent = true;
@@ -149,17 +146,17 @@ function toDomElement(initialParent: domElement.DomElement, line: string, lineTo
 		if (!usedTokenScope) {
 			continue;
 		}
-		const [elementAction, element, elementClass] = cleanScope(usedTokenScope).split(".");
+		const [elementAction, element, elementClass] = cleanScope(usedTokenScope).split('.');
 
 		switch (elementAction) {
-			case "tag":
+			case 'tag':
 				if (element === 'ol' || element === 'ul') {
 					currentParent = createListElement(element, tokenValue, currentParent);
 					returnInitialParent = false;
 				} else {
 					const tag = new domElement.Tag(element, {
 						closed: true,
-						parent: currentParent
+						parent: currentParent,
 					});
 					if (currentParent) {
 						currentParent.childs.push(tag);
@@ -167,45 +164,45 @@ function toDomElement(initialParent: domElement.DomElement, line: string, lineTo
 					currentParent = tag;
 				}
 				if (elementClass) {
-					currentParent.attributes.set("class", elementClass);
+					currentParent.attributes.set('class', elementClass);
 				}
 				break;
-			case "close":
+			case 'close':
 				if (currentParent && currentParent.parent) {
 					currentParent = currentParent.parent;
 				}
 				break;
-			case "attribute":
+			case 'attribute':
 				if (!currentParent.value) {
 					currentParent.value = tokenValue;
 				}
 				currentParent.attributes.set(element, tokenValue);
 				break;
-			case "html":
+			case 'html':
 				switch (element) {
-					case "paragraph":
+					case 'paragraph':
 						if (currentParent instanceof domElement.ListTag) {
-							let pageParent = currentParent.parent
+							let pageParent = currentParent.parent;
 							while (!(pageParent instanceof domElement.PageDiv)) {
-								pageParent = pageParent?.parent
+								pageParent = pageParent?.parent;
 							}
-							currentParent = pageParent
+							currentParent = pageParent;
 							returnInitialParent = false;
 						}
 						if (tokenValue) {
 							currentParent.childs.push(new domElement.SpanTag(tokenValue));
 						}
 						break;
-					case "emoticon":
+					case 'emoticon':
 						currentParent.childs.push(emoticonElement(tokenValue));
 						break;
-					case "mdash":
+					case 'mdash':
 						currentParent.childs.push(new domElement.SpanTag(`&${element};`));
 						break;
-					case "ndash":
+					case 'ndash':
 						currentParent.childs.push(new domElement.SpanTag(`&${element};`));
 						break;
-					case "list": {
+					case 'list': {
 						const listItemTag = new domElement.ListItemTag((currentParent as domElement.ListTag).level, { parent: currentParent });
 						if (tokenValue.trim()) {
 							listItemTag.childs.push(new domElement.SpanTag(tokenValue));
@@ -214,19 +211,19 @@ function toDomElement(initialParent: domElement.DomElement, line: string, lineTo
 						currentParent = listItemTag;
 						break;
 					}
-					case "link":
+					case 'link':
 						currentParent.value = tokenValue;
 						break;
-					case "raw":
+					case 'raw':
 						currentParent.value = tokenValue;
-						currentParent.attributes.set("style", `font-family: ${MONOSPACE_FONT_FAMILY};`);
+						currentParent.attributes.set('style', `font-family: ${MONOSPACE_FONT_FAMILY};`);
 						break;
 					default:
 						currentParent.childs.push(new domElement.SpanTag(tokenValue));
 						break;
 				}
 				break;
-			case "ignore":
+			case 'ignore':
 				break;
 			default:
 				break;
@@ -237,27 +234,37 @@ function toDomElement(initialParent: domElement.DomElement, line: string, lineTo
 }
 
 function cleanScope(scope: string): string {
-	return scope
-		.replace('meta.', '')
-		.replace("text.", "")
-		.replace("image.", "")
-		.replace(".element", "")
-		.replace(".confluence", "");
+	return scope.replace('meta.', '').replace('text.', '').replace('image.', '').replace('.element', '').replace('.confluence', '');
 }
 
 function renderDomElement(element: domElement.DomElement): string {
 	if (element.childs.length == 0) {
 		const elementAttributs = attributeMapToString(element.attributes);
-		return `<${element.tag}${elementAttributs}>${((element.value) ? element.value : '')}${((element.closed) ? `</${element.tag}>` : '')}`
+		return `<${element.tag}${elementAttributs}>${element.value ? element.value : ''}${element.closed ? `</${element.tag}>` : ''}`;
 	} else {
 		const elementAttributs = attributeMapToString(element.attributes);
-		return `<${element.tag}${elementAttributs}>${((element.value) ? element.value : '')}` + element.childs.map(child => { return renderDomElement(child); }).join('') + ((element.closed) ? `</${element.tag}>` : '');
+		return (
+			`<${element.tag}${elementAttributs}>${element.value ? element.value : ''}` +
+			element.childs
+				.map(child => {
+					return renderDomElement(child);
+				})
+				.join('') +
+			(element.closed ? `</${element.tag}>` : '')
+		);
 	}
 }
 
 function attributeMapToString(attributes: Map<string, string>): string {
 	if (attributes.size > 0) {
-		return ' ' + Array.from(attributes.keys()).map((key) => { return `${key}='${attributes.get(key)}'` }).join(" ");
+		return (
+			' ' +
+			Array.from(attributes.keys())
+				.map(key => {
+					return `${key}='${attributes.get(key)}'`;
+				})
+				.join(' ')
+		);
 	}
 	return '';
 }
@@ -269,7 +276,6 @@ function emoticonElement(emoticon: string): domElement.DomElement {
 	}
 	return new domElement.SpanTag();
 }
-
 
 /**
  * alternative rendering
@@ -294,11 +300,9 @@ function toDomElementDirect(line: string, lineTokens: vsctm.ITokenizeLineResult)
 			continue;
 		}
 		if (lastTokenScope.includes('meta.tag.')) {
-			const el = lastTokenScope
-				.replace('meta.tag.', '')
-				.replace('.confluence', '').split('.');
+			const el = lastTokenScope.replace('meta.tag.', '').replace('.confluence', '').split('.');
 			const tag = el[0];
-			const tagFlag = (el.length === 2 ? el[1] : '');
+			const tagFlag = el.length === 2 ? el[1] : '';
 
 			if (tagFlag === 'end') {
 				renderedLine += `</${tag}>`;
@@ -320,7 +324,11 @@ function toDomElementDirect(line: string, lineTokens: vsctm.ITokenizeLineResult)
 		}
 	}
 	// close open tags
-	renderedLine += openTags.map((tag) => { return `</${tag}>`; }).join('');
+	renderedLine += openTags
+		.map(tag => {
+			return `</${tag}>`;
+		})
+		.join('');
 	openTags = [];
 	return renderedLine;
 }
@@ -341,7 +349,7 @@ function parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
 	let listArr: string[] = [];
 
 	for (const entry of sourceText.split(/\r?\n|\r/gi)) {
-		let tag = entry
+		let tag = entry;
 
 		if (!codeTagFlag) {
 			tag = tag.trim(); //remove leading and trailing spaces
@@ -349,28 +357,23 @@ function parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
 
 		let html_tag = false;
 
-		if ((tag.length === 0)
-			&& (!listFlag)
-			&& (!tableFlag)
-			&& (!codeTagFlag)
-		) {
+		if (tag.length === 0 && !listFlag && !tableFlag && !codeTagFlag) {
 			// result += '<div></div>';
 			continue;
 		}
 
 		if (!codeTagFlag) {
-			tag = tag.replace(/h(\d+)\.\s([^\r?\n]+)/g, "<h$1>$2</h$1>");
+			tag = tag.replace(/h(\d+)\.\s([^\r?\n]+)/g, '<h$1>$2</h$1>');
 
-			tag = tag.replace(/\+([^+]*)\+/g, "<u>$1</u>");
-			tag = tag.replace(/\^([^^]*)\^/g, "<sup>$1</sup>");
-			tag = tag.replace(/~([^~]*)~/g, "<sub>$1</sub>");
-			tag = tag.replace(/\\}/g, "&rbrace;").replace(/\{{2}(.*?)\}{2}/g, `<code style='font-family: ${MONOSPACE_FONT_FAMILY}'>$1</code>`);
-			tag = tag.replace(/\?{2}(.*)\?{2}/g, "<cite>$1</cite>");
+			tag = tag.replace(/\+([^+]*)\+/g, '<u>$1</u>');
+			tag = tag.replace(/\^([^^]*)\^/g, '<sup>$1</sup>');
+			tag = tag.replace(/~([^~]*)~/g, '<sub>$1</sub>');
+			tag = tag.replace(/\\}/g, '&rbrace;').replace(/\{{2}(.*?)\}{2}/g, `<code style='font-family: ${MONOSPACE_FONT_FAMILY}'>$1</code>`);
+			tag = tag.replace(/\?{2}(.*)\?{2}/g, '<cite>$1</cite>');
 			tag = tag.replace(/\{color:([^}]+)\}/g, "<span style='color:$1;'>").replace(/\{color\}/g, '</span>');
 
-			tag = tag.replace(/bq. (.*)/g, "<blockquote><p>$1</p></blockquote>");
-			tag = tag.replace(/\{quote\}(.*)\{quote\}/g, "<blockquote><p>$1</p></blockquote>");
-
+			tag = tag.replace(/bq. (.*)/g, '<blockquote><p>$1</p></blockquote>');
+			tag = tag.replace(/\{quote\}(.*)\{quote\}/g, '<blockquote><p>$1</p></blockquote>');
 
 			tag = tag.replace(/:\)/g, '<img alt="(smile)" src="' + emoticonUri('smile.png') + '">');
 			tag = tag.replace(/:\(/g, '<img alt="(sad)" src="' + emoticonUri('sad.png') + '">');
@@ -386,19 +389,19 @@ function parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
 
 			tag = tag.replace(/\\\\/gi, '<br>');
 
-			const re_href = /\[([^||\]]*)\|?([^[||]*)?\]/g
+			const re_href = /\[([^||\]]*)\|?([^[||]*)?\]/g;
 			if (tag.match(re_href)) {
 				tag = tag.replace(re_href, function (m0: string, m1: string, m2: string) {
 					if (m1 !== undefined && (m1.startsWith(' ') || m1.endsWith('\\'))) {
-						return m0.replace(/\\/g, '').replace(/\|/g, '&vert;')
+						return m0.replace(/\\/g, '').replace(/\|/g, '&vert;');
 					}
 					if (m2 !== undefined && m2.endsWith('\\')) {
-						return m0.replace(/\\/g, '').replace(/\|/g, '&vert;')
+						return m0.replace(/\\/g, '').replace(/\|/g, '&vert;');
 					}
 					if (m2 != undefined) {
-						return "<a href='" + m2 + "'>" + m1 + "</a>";
+						return "<a href='" + m2 + "'>" + m1 + '</a>';
 					}
-					return "<a href='" + m1 + "'>" + m1 + "</a>";
+					return "<a href='" + m1 + "'>" + m1 + '</a>';
 				});
 				html_tag = true;
 			}
@@ -407,11 +410,11 @@ function parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
 			const img_re = /!([^|]*)\|?(.*)!/;
 			const img_match = tag.match(img_re);
 			if (img_match) {
-				let imgAttr = ""
+				let imgAttr = '';
 				if (img_match[2].length != 0) {
-					imgAttr = img_match[2].replace(/=/gi, '="').replace(/,/gi, '" ') + '"'
+					imgAttr = img_match[2].replace(/=/gi, '="').replace(/,/gi, '" ') + '"';
 				}
-				const imageLink = imageUri(sourceUri, img_match[1])
+				const imageLink = imageUri(sourceUri, img_match[1]);
 				const imgAlt = imageLink.path.substring(imageLink.path.lastIndexOf('/') + 1);
 				tag = `<img alt="${imgAlt}" src="${imageLink}" ${imgAttr}>`;
 			}
@@ -419,7 +422,7 @@ function parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
 			//Table
 			const tab_th_re = /\s*[^{]*\|{2}[^}]*$/gi;
 			const tab_td_re = /\s*[^{]*\|[^}]*$/gi;
-			if ((tag.match(tab_th_re) || tag.match(tab_td_re))) {
+			if (tag.match(tab_th_re) || tag.match(tab_td_re)) {
 				let closeTableCell = '';
 				if (tag.match(tab_th_re)) {
 					tag = tag.replace(/^\|{2,}/, '||');
@@ -452,13 +455,12 @@ function parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
 			return `<div class="code-block"><pre><code style='font-family: ${MONOSPACE_FONT_FAMILY}'>${m2.replace(/</gi, '&lt;')}</code></pre></div>`;
 		});
 
-
 		// code and noformat tag
 		const code_re = /\{(noformat|code)([^}]*)\}/;
 		const code_match = tag.match(code_re);
 		if (code_match) {
 			if (!codeTagFlag) {
-				let codeBlockStyle = "";
+				let codeBlockStyle = '';
 				// Title style is unecessary for now. It can't be easily customized in Confluence.
 				// let titleStyle = "";
 				tag = tag.replace(code_re, function (m0, m1, m2) {
@@ -466,31 +468,31 @@ function parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
 					const splits = m2.split(/[|:]/);
 					splits.forEach((el: string) => {
 						const elems = el.split('=');
-						if (elems[0] === "title") {
+						if (elems[0] === 'title') {
 							res = `<span class="code-title">${elems[1]}</span>${res}`;
 							// res = `<span class="code-title" $titleStyle>${elems[1]}</span>${res}`;
 						}
 						// Basic theme matching.
-						if (elems[0] === "theme") {
+						if (elems[0] === 'theme') {
 							// Predefined confluence themes.
 							switch (elems[1].toLowerCase()) {
-								case "django":
+								case 'django':
 									codeBlockStyle = `;color:#f8f8f8;background-color:#0a2b1d;`;
 									break;
-								case "emacs":
+								case 'emacs':
 									codeBlockStyle = `;color:#d3d3d3;background-color:black;`;
 									break;
-								case "fadetogrey":
+								case 'fadetogrey':
 									codeBlockStyle = `;color:white;background-color:#121212;`;
 									break;
-								case "midnight":
+								case 'midnight':
 									codeBlockStyle = `;color:#d1edff;background-color:#0f192a;`;
 									break;
-								case "rdark":
+								case 'rdark':
 									codeBlockStyle = `;color:#b9bdb6;background-color:#1b2426;`;
 									break;
-								case "eclipse":
-								case "confluence":
+								case 'eclipse':
+								case 'confluence':
 									codeBlockStyle = `;color:white;background-color:black;`;
 							}
 						}
@@ -518,40 +520,40 @@ function parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
 		const panel_re = /\{(panel|tip|info|note|warning)(.*)}/;
 		if (!codeTagFlag && tag.match(panel_re)) {
 			if (!panelTagFlag) {
-				let panelStyle = "";
-				let titleStyle = "";
-				let iconlessFlag = "";
+				let panelStyle = '';
+				let titleStyle = '';
+				let iconlessFlag = '';
 				tag = tag.replace(panel_re, function (m0, m1, m2) {
 					const panelClass = m1;
 
-					let res = `<div class="${panelClass} ${panelClass}-body" $panelStyle>`
+					let res = `<div class="${panelClass} ${panelClass}-body" $panelStyle>`;
 					const splits = m2.split(/[|:]/);
 					splits.forEach((el: string) => {
 						const elems = el.split('=');
 						switch (elems[0]) {
-							case "title":
+							case 'title':
 								res = `<div><div class="${panelClass} ${panelClass}-title$iconlessFlag" $titleStyle>${elems[1]}</div>${res}`;
 								break;
-							case "titleBGColor":
+							case 'titleBGColor':
 								titleStyle += `background-color: ${elems[1]}; `;
 								break;
-							case "bgColor":
+							case 'bgColor':
 								panelStyle += `background-color: ${elems[1]}; `;
 								break;
-							case "borderStyle":
+							case 'borderStyle':
 								panelStyle += `border-style: ${elems[1]}; `;
 								titleStyle += `border-style: ${elems[1]}; border-bottom:none; `;
 								break;
-							case "borderColor":
+							case 'borderColor':
 								panelStyle += `border-color: ${elems[1]}; `;
 								titleStyle += `border-color: ${elems[1]}; `;
 								break;
-							case "borderWidth":
+							case 'borderWidth':
 								panelStyle += `border-width: ${elems[1]}; `;
 								titleStyle += `border-width: ${elems[1]}; `;
 								break;
-							case "icon":
-								iconlessFlag = (elems[1] === "false") ? "-iconless" : "";
+							case 'icon':
+								iconlessFlag = elems[1] === 'false' ? '-iconless' : '';
 								break;
 						}
 					});
@@ -562,8 +564,8 @@ function parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
 						panelStyle = `style='${panelStyle.trim()}'`;
 					}
 					if (panelClass != 'panel') {
-						panelStyle = "";
-						titleStyle = "";
+						panelStyle = '';
+						titleStyle = '';
 						if (!res.match(`${panelClass}-title`)) {
 							res = `<div><div class="${panelClass} ${panelClass}-title$iconlessFlag"></div>${res}`;
 						}
@@ -619,13 +621,12 @@ function parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
 			}
 			// This prevents the closing </li> tag from being added too prematurely.
 			// ToDo: lists are 'open', means not all tags are closed
-			tag += "<li>" + li_match[2];
+			tag += '<li>' + li_match[2];
 		}
 
-
-		if ((tag.length === 0) && (listArr.length > 0)) {
+		if (tag.length === 0 && listArr.length > 0) {
 			tag = '';
-			tag = '</' + listArr.reverse().join('></li></') + '>'
+			tag = '</' + listArr.reverse().join('></li></') + '>';
 			listArr = [];
 			listFlag = false;
 		}
@@ -638,16 +639,16 @@ function parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
 		}
 
 		// strong
-		tag = tag.replace(/\*([^*]*)\*/g, "<strong>$1</strong>");
+		tag = tag.replace(/\*([^*]*)\*/g, '<strong>$1</strong>');
 
 		// line-through and italic
-		if ((!html_tag) && (!tag.match('<img')) && (!listFlag)) {
+		if (!html_tag && !tag.match('<img') && !listFlag) {
 			// tag = tag.replace(/\B-([^-]*)-\B/g, " <span style='text-decoration: line-through;'>$1</span> ");
 			// special case: in word italic
 			// s. https://confluence.atlassian.com/doc/confluence-wiki-markup-251003035.html#ConfluenceWikiMarkup-TextEffects
-			tag = tag.replace(/{_}([^_]*)_/g, "<i>$1</i>");
+			tag = tag.replace(/{_}([^_]*)_/g, '<i>$1</i>');
 			tag = tag.replace(/\B-((\([^)]*\)|{[^}]*}|\[[^]]+\]){0,3})(\S.*?\S|\S)-\B/g, " <span style='text-decoration: line-through;'>$3</span> ");
-			tag = tag.replace(/(?:\b)_((\([^)]*\)|{[^}]*}|\[[^]]+\]){0,3})(\S.*?\S|\S)_(?:\b)/g, "<i>$3</i>");
+			tag = tag.replace(/(?:\b)_((\([^)]*\)|{[^}]*}|\[[^]]+\]){0,3})(\S.*?\S|\S)_(?:\b)/g, '<i>$3</i>');
 		}
 
 		//close table
@@ -669,7 +670,7 @@ function createListElement(element: string, tokenValue: string, listParent: domE
 	const listTag = new domElement.ListTag(element, tokenValue.length, { parent: listParent });
 	const currentParentLevel = (listParent as domElement.ListTag).level ? (listParent as domElement.ListTag).level : 0;
 	if (listTag.tag === 'ol' && listTag.level % 3 === 1) {
-		listTag.attributes.set("class", "initial");
+		listTag.attributes.set('class', 'initial');
 	}
 	if (listTag.level > currentParentLevel) {
 		// add new list tag as child
@@ -678,12 +679,12 @@ function createListElement(element: string, tokenValue: string, listParent: domE
 	} else if (currentParentLevel === listTag.level) {
 		// same level so just go's up cause in list is last (listParent) is ever ListItem
 		if (listParent.parent) {
-			listParent = listParent.parent
+			listParent = listParent.parent;
 		}
 	} else {
-		let parent = listParent.parent
+		let parent = listParent.parent;
 		while ((parent as domElement.ListTag).level != listTag.level) {
-			parent = parent?.parent
+			parent = parent?.parent;
 		}
 		// found element schould be ever one ListItem, so goes one level up
 		if (parent?.parent) {
@@ -692,4 +693,3 @@ function createListElement(element: string, tokenValue: string, listParent: domE
 	}
 	return listParent;
 }
-

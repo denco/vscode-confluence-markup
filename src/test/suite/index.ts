@@ -3,18 +3,16 @@ import * as Mocha from 'mocha';
 import { globSync } from 'glob';
 
 export function run(): Promise<void> {
-
 	// Create the mocha test
 	const mocha = new Mocha({
 		ui: 'tdd',
-		color: true
+		color: true,
 	});
 
 	const testsRoot = path.resolve(__dirname, '..');
 
 	return new Promise((c, e) => {
-
-		const files = globSync('**/**.test.js', { cwd: testsRoot })
+		const files = globSync('**/**.test.js', { cwd: testsRoot });
 
 		console.log(files); // eslint-disable-line no-console
 

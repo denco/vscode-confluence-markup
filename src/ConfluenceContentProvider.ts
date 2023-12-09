@@ -18,7 +18,7 @@ export function packConfluenceUri(uri: vscode.Uri) {
 
 export function unpackConfluenceUri(uri: vscode.Uri) {
 	// Restore original URI scheme from the 'query' field
-	if ((uri.scheme !== ConfluenceContentProvider.confluenceURI.scheme) || (!uri.query)) {
+	if (uri.scheme !== ConfluenceContentProvider.confluenceURI.scheme || !uri.query) {
 		// Not a modified textile URI, nothing to do
 		return uri;
 	}

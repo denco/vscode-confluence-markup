@@ -14,7 +14,11 @@ export abstract class DomElement {
 	}
 
 	toString(): string {
-		return `{"tag"="${this.tag}","value"="${this.value}","closed"="${this.closed}", "attributes":[${Array.from(this.attributes.keys()).map((key) => { return `"${key}":"${this.attributes.get(key)}"` }).join(",")}
+		return `{"tag"="${this.tag}","value"="${this.value}","closed"="${this.closed}", "attributes":[${Array.from(this.attributes.keys())
+			.map(key => {
+				return `"${key}":"${this.attributes.get(key)}"`;
+			})
+			.join(',')}
 		]}`;
 	}
 }
@@ -55,14 +59,14 @@ export class DivTag extends DomElement {
 export class PageDiv extends DivTag {
 	public constructor() {
 		super('div');
-		this.attributes.set("class", "page");
+		this.attributes.set('class', 'page');
 	}
 }
 
 export class ParagraphDiv extends DivTag {
 	public constructor(parent: PageDiv) {
 		super('div');
-		this.attributes.set("class", "paragraph");
+		this.attributes.set('class', 'paragraph');
 		this.parent = parent;
 	}
 }
@@ -71,7 +75,7 @@ export class ImgTag extends DomElement {
 	public constructor(alt: string, src: string) {
 		super('img');
 		this.closed = false;
-		this.attributes.set("alt", alt);
-		this.attributes.set("src", src);
+		this.attributes.set('alt', alt);
+		this.attributes.set('src', src);
 	}
 }

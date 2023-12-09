@@ -6,22 +6,22 @@ import * as path from 'path';
 import { packConfluenceUri, ConfluenceContentProvider } from './ConfluenceContentProvider';
 import { cssUri } from './markupParser';
 
-
 function getRenderedContent(contentProvider: ConfluenceContentProvider, uri: vscode.Uri, panel: vscode.WebviewPanel) {
-	contentProvider.provideTextDocumentContent(packConfluenceUri(uri)).then((renderedContent) => {
-		try {
-			if (panel && panel.webview) {
-				// Security
-				// https://code.visualstudio.com/api/extension-guides/webview#security
+	contentProvider.provideTextDocumentContent(packConfluenceUri(uri)).then(
+		renderedContent => {
+			try {
+				if (panel && panel.webview) {
+					// Security
+					// https://code.visualstudio.com/api/extension-guides/webview#security
 
-				const cssFile = cssUri('confluence.css')
-				let cssLink = ""
-				if (cssFile) {
-					const cssUrl = panel.webview.asWebviewUri(cssFile)
-					cssLink = `<link rel="stylesheet" href="${cssUrl}">`
-				}
-				const title = 'Preview ' + path.basename(uri.fsPath);
-				const fullRenderedHtml = `<!DOCTYPE html>
+					const cssFile = cssUri('confluence.css');
+					let cssLink = '';
+					if (cssFile) {
+						const cssUrl = panel.webview.asWebviewUri(cssFile);
+						cssLink = `<link rel="stylesheet" href="${cssUrl}">`;
+					}
+					const title = 'Preview ' + path.basename(uri.fsPath);
+					const fullRenderedHtml = `<!DOCTYPE html>
 				<html lang="und">
 				<head>
 					<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
@@ -38,49 +38,40 @@ function getRenderedContent(contentProvider: ConfluenceContentProvider, uri: vsc
 					${renderedContent}
 				</body>
 				</html>`;
-				panel.webview.html = fullRenderedHtml;
+					panel.webview.html = fullRenderedHtml;
+				}
+			} catch (error) {
+				console.debug('webview is disposed');
 			}
-		} catch (error) {
-			console.debug('webview is disposed');
-		}
-	}, () => {
-		// https://code.visualstudio.com/api/references/vscode-api#window.createOutputChannel
-		// ToDo: custom output channel
-		// vscode.window.showErrorMessage(reason); // disable spam
-	});
+		},
+		() => {
+			// https://code.visualstudio.com/api/references/vscode-api#window.createOutputChannel
+			// ToDo: custom output channel
+			// vscode.window.showErrorMessage(reason); // disable spam
+		},
+	);
 }
 
 function createPanel(contentProvider: ConfluenceContentProvider, editor: vscode.TextEditor, viewColumn: vscode.ViewColumn) {
-
 	const title = 'Preview ' + path.basename(editor.document.uri.fsPath);
 
 	// Create and show panel
-	const panel = vscode.window.createWebviewPanel(
-		'confluencePreview',
-		title,
-		viewColumn,
-		{
-			retainContextWhenHidden: true
-		}
-	);
-	getRenderedContent(contentProvider, editor.document.uri, panel)
+	const panel = vscode.window.createWebviewPanel('confluencePreview', title, viewColumn, {
+		retainContextWhenHidden: true,
+	});
+	getRenderedContent(contentProvider, editor.document.uri, panel);
 
 	return panel;
 }
 
-function setDispose(panel: vscode.WebviewPanel, subscriptions: { dispose(): vscode.Disposable; }[] | undefined) {
+function setDispose(panel: vscode.WebviewPanel, subscriptions: { dispose(): vscode.Disposable }[] | undefined) {
 	// Reset when the current panel is closed
-	panel.onDidDispose(
-		() => { },
-		null,
-		subscriptions
-	);
+	panel.onDidDispose(() => {}, null, subscriptions);
 }
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-
 	const contentProvider = new ConfluenceContentProvider();
 	const contentProviderRegistration = vscode.workspace.registerTextDocumentContentProvider(ConfluenceContentProvider.confluenceURI.scheme, contentProvider);
 	let currentPanel: vscode.WebviewPanel;
@@ -111,23 +102,18 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
-
-
 	vscode.workspace.onDidChangeTextDocument(e => {
 		const editor = vscode.window.activeTextEditor;
 		if (editor) {
 			if (e.document === editor.document) {
 				contentProvider.update(packConfluenceUri(e.document.uri));
-				getRenderedContent(contentProvider, e.document.uri, currentPanel)
+				getRenderedContent(contentProvider, e.document.uri, currentPanel);
 			}
 		}
 	});
 
-	context.subscriptions.push(contentProviderRegistration,
-		previewDisposable,
-		sidePreviewDisposable);
+	context.subscriptions.push(contentProviderRegistration, previewDisposable, sidePreviewDisposable);
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {
-}
+export function deactivate() {}
