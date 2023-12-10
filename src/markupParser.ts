@@ -284,7 +284,7 @@ function emoticonElement(emoticon: string): domElement.DomElement {
  * @param lineTokens
  * @returns
  */
-function toDomElementDirect(line: string, lineTokens: vsctm.ITokenizeLineResult): string {
+function _toDomElementDirect(line: string, lineTokens: vsctm.ITokenizeLineResult): string {
 	// console.debug(`Line [${line}]:`);
 	const lineRootTag = 'div';
 	let renderedLine = `<${lineRootTag}>`;
@@ -336,7 +336,7 @@ function toDomElementDirect(line: string, lineTokens: vsctm.ITokenizeLineResult)
 /**
  * @deprecated old method based on regex
  */
-function parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
+function _parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
 	//TODO: use Tokenizer instead of line loop
 
 	let result = '';
