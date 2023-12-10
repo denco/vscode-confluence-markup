@@ -278,62 +278,6 @@ function emoticonElement(emoticon: string): domElement.DomElement {
 }
 
 /**
- * alternative rendering
- *
- * @param line
- * @param lineTokens
- * @returns
- */
-function _toDomElementDirect(line: string, lineTokens: vsctm.ITokenizeLineResult): string {
-	// console.debug(`Line [${line}]:`);
-	const lineRootTag = 'div';
-	let renderedLine = `<${lineRootTag}>`;
-	let openTags: string[] = [lineRootTag];
-	for (const token of lineTokens.tokens) {
-		const lastTokenScope = token.scopes.at(-1); // use last scope
-
-		// console.debug(`\t- token from ${token.startIndex} to ${token.endIndex} ` +
-		// 	`[${line.substring(token.startIndex, token.endIndex)}] ` +
-		// 	`has scopes: ${token.scopes.join(',')}`
-		// );
-		if (!lastTokenScope) {
-			continue;
-		}
-		if (lastTokenScope.includes('meta.tag.')) {
-			const el = lastTokenScope.replace('meta.tag.', '').replace('.confluence', '').split('.');
-			const tag = el[0];
-			const tagFlag = el.length === 2 ? el[1] : '';
-
-			if (tagFlag === 'end') {
-				renderedLine += `</${tag}>`;
-			} else {
-				renderedLine += `<${tag}>`;
-				if (tagFlag === '') {
-					openTags.push(tag);
-				}
-			}
-			continue;
-		} else if (lastTokenScope.includes('text') || lastTokenScope.includes('meta.paragraph')) {
-			const tokenValue = line.substring(token.startIndex, token.endIndex);
-			if (lastTokenScope.includes('emoticon')) {
-				renderedLine += renderDomElement(emoticonElement(tokenValue));
-			} else {
-				renderedLine += tokenValue;
-			}
-			continue;
-		}
-	}
-	// close open tags
-	renderedLine += openTags
-		.map(tag => {
-			return `</${tag}>`;
-		})
-		.join('');
-	openTags = [];
-	return renderedLine;
-}
-
-/**
  * @deprecated old method based on regex
  */
 function _parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
