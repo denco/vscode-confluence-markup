@@ -10,6 +10,7 @@
     "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
-    "no-console": 1 // 2 - error, 1 - warn
+    "no-console": 1, // 2 - error, 1 - warn, 0 - off
+    "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "^_" }]
   }
 }
