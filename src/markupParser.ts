@@ -238,7 +238,7 @@ function cleanScope(scope: string): string {
 }
 
 function renderDomElement(element: domElement.DomElement): string {
-	if (element.childs.length == 0) {
+	if (element.childs.length === 0) {
 		const elementAttributs = attributeMapToString(element.attributes);
 		return `<${element.tag}${elementAttributs}>${element.value ? element.value : ''}${element.closed ? `</${element.tag}>` : ''}`;
 	} else {
