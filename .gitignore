@@ -68,6 +68,10 @@ out
 .vscode-test
 *.vsix
 
+# ignore converted syntax file
+syntaxes/confluence-markup.tmLanguage
+
+
 # Local Backups
 *.bak
 *.save
