@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as plist from 'plist';
 import * as yaml from 'yaml';
+import * as console from 'console';
 
 const rootDir = path.join(__dirname, '../..');
 
@@ -46,7 +47,7 @@ if (process.argv[2] && process.argv[2].endsWith('.yml') && fs.existsSync(path.jo
 				// each poll the file
 				interval: 4000,
 			},
-			(curr, prev) => {
+			() => {
 				return convertSyntax(yamlFile, xmlFile);
 			},
 		);
