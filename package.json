@@ -30,7 +30,7 @@
 	"license": "MIT",
 	"homepage": "https://github.com/denco/vscode-confluence-markup/blob/master/README.md",
 	"engines": {
-		"vscode": "^1.84.0"
+		"vscode": "^1.85.0"
 	},
 	"activationEvents": [],
 	"main": "./out/extension",
@@ -129,7 +129,7 @@
 		"test": "run-script-os",
 		"test:linux": "which xvfb-run >/dev/null 2>&1 && xvfb-run --auto-servernum node ./out/test/runTest.js || npm run test:default",
 		"test:default": "node ./out/test/runTest.js",
-		"prepackage": "npm run clean && npm run syntax-convert && npm run compile",
+		"prepackage": "npm run clean && npm run compile && npm run syntax-convert",
 		"package": "vsce package --dependencies",
 		"clean": "rimraf -rf ./out",
 		"clean:all": "rimraf -f ./confluence-markup*.vsix; rimraf -rf ./.vscode-test; rimraf -rf ./out; rimraf -rf ./node_modules",
