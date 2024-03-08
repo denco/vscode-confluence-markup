@@ -138,7 +138,7 @@ repository:
                 name: text.html.ndash.element.confluence
     emoticon:
         name: markup.emoticon.confluence
-        match: (\B)(:P|:D|:\)|:\(|;\)|\(y\)|\(n\)|\(i\)|\(\/\)|\(x\)|\(!\))\1
+        match: (\B)(:P|:D|:\)|:\(|;\)|\(y\)|\(n\)|\(i\)|\(\/\)|\(x\)|\(!\)|\(\?\)|\(-\)|\(\+\)|\(on\)|\(off\)|\(\*\)|\(\*r\)|\(\*g\)|\(\*b\)|\(\*y\)|\(flagoff\)|\(flagon\))\1
         captures:
             "2" :
                 name: text.html.image.emoticon.confluence
