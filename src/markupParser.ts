@@ -48,7 +48,7 @@ const EMOTICONS: Map<string, { alt: string; filename: string }> = new Map([
 	['(/)', { alt: 'tick', filename: 'tick.png' }],
 	['(x)', { alt: 'cross', filename: 'cross.png' }],
 	['(!)', { alt: 'warning', filename: 'warning.png' }],
-	['(?)', { alt: 'help', filename:'help.png'}],
+	['(?)', { alt: 'help', filename: 'help.png' }],
 	['(-)', { alt: 'forbidden', filename: 'forbidden.png' }],
 	['(+)', { alt: 'add', filename: 'add.png' }],
 	['(on)', { alt: 'lightbulb_on', filename: 'lightbulb_on.png' }],
@@ -59,7 +59,7 @@ const EMOTICONS: Map<string, { alt: string; filename: string }> = new Map([
 	['(*b)', { alt: 'star_blue', filename: 'star_blue.png' }],
 	['(*y)', { alt: 'star_yellow', filename: 'star_yellow.png' }],
 	['(flagoff)', { alt: 'flag_grey', filename: 'flag_grey.png' }],
-	['(flagon)', { alt: 'flag', filename: 'flag.png' }]
+	['(flagon)', { alt: 'flag', filename: 'flag.png' }],
 ]);
 
 function imageUri(searchUri: vscode.Uri, imageLink: string) {

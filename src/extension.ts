@@ -66,7 +66,7 @@ function createPanel(contentProvider: ConfluenceContentProvider, editor: vscode.
 
 function setDispose(panel: vscode.WebviewPanel, subscriptions: { dispose(): vscode.Disposable }[] | undefined) {
 	// Reset when the current panel is closed
-	panel.onDidDispose(() => { }, null, subscriptions);
+	panel.onDidDispose(() => {}, null, subscriptions);
 }
 
 // this method is called when your extension is activated
@@ -116,4 +116,4 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() { }
+export function deactivate() {}
