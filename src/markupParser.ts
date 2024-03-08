@@ -332,6 +332,19 @@ function _parseMarkupRegEx(sourceUri: vscode.Uri, sourceText: string) {
 			tag = tag.replace(/\(x\)/g, '<img alt="(cross)" src="' + emoticonUri('cross.png') + '">');
 			tag = tag.replace(/\(!\)/g, '<img alt="(warning)" src="' + emoticonUri('warning.png') + '">');
 
+			tag = tag.replace(/\(\?\)/g, '<img alt="(help)" src="' + emoticonUri('help.png') + '">');
+			tag = tag.replace(/\(-\)/g, '<img alt="(forbidden)" src="' + emoticonUri('forbidden.png') + '">');
+			tag = tag.replace(/\(\+\)/g, '<img alt="(add)" src="' + emoticonUri('add.png') + '">');
+			tag = tag.replace(/\(on\)/g, '<img alt="(lightbulb_on)" src="' + emoticonUri('lightbulb_on.png') + '">');
+			tag = tag.replace(/\(off\)/g, '<img alt="(lightbulb)" src="' + emoticonUri('lightbulb.png') + '">');
+			tag = tag.replace(/\(\*\)/g, '<img alt="(star_yellow)" src="' + emoticonUri('star_yellow.png') + '">');
+			tag = tag.replace(/\(\*r\)/g, '<img alt="(star_red)" src="' + emoticonUri('star_red.png') + '">');
+			tag = tag.replace(/\(\*g\)/g, '<img alt="(star_green)" src="' + emoticonUri('star_green.png') + '">');
+			tag = tag.replace(/\(\*b\)/g, '<img alt="(star_blue)" src="' + emoticonUri('star_blue.png') + '">');
+			tag = tag.replace(/\(\*y\)/g, '<img alt="(star_yellow)" src="' + emoticonUri('star_yellow.png') + '">');
+			tag = tag.replace(/\(flagoff\)/g, '<img alt="(flag_grey)" src="' + emoticonUri('flag_grey.png') + '">');
+			tag = tag.replace(/\(flagon\)/g, '<img alt="(flag)" src="' + emoticonUri('flag.png') + '">');
+
 			tag = tag.replace(/\\\\/gi, '<br>');
 
 			const re_href = /\[([^||\]]*)\|?([^[||]*)?\]/g;
