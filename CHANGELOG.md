@@ -1,5 +1,9 @@
 # Confluence Wiki Markup
 
+## [1.0.4](https://github.com/denco/vscode-confluence-markup/releases/tag/1.0.4)
+
+- extend supported emoticons [Not all emojis are supported](https://github.com/denco/vscode-confluence-markup/issues/54)
+
 ## [1.0.3](https://github.com/denco/vscode-confluence-markup/releases/tag/1.0.3)
 
 - fix render emoticons and local image files
