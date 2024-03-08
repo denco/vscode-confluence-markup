@@ -125,3 +125,20 @@ move out of preview, and bump to version: 1.0.0
 [#39|https://github.com/denco/vscode-confluence-markup/issues/39] Local image preview
 
 !../media/testing_cat.gif|width=500!
+
+
+[#54|https://github.com/denco/vscode-confluence-markup/issues/54] unsupported emoticons
+
+[smileys|https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=miscellaneous]
+(+)
+(-)
+(?)
+(on)
+(off)
+(*)
+(*r)
+(*g)
+(*b)
+(*y)
+(flagoff)
+(flagon)

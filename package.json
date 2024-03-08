@@ -1,7 +1,7 @@
 {
 	"name": "confluence-markup",
 	"displayName": "Confluence markup",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"publisher": "denco",
 	"description": "Confluence markup language support for Visual Studio Code",
 	"keywords": [
@@ -133,25 +133,25 @@
 		"changelog": "if [ $((grep \"$(grep -m1 'version' package.json | cut -d '\"' -f 4)\" -n CHANGELOG.md || echo 0) | cut -d ':' -f 1) -eq 3 ]; then awk '/##/{++c;next} c==1' CHANGELOG.md | awk '!/^$/'; else >&2 echo 'Unchecked version'; exit 1; fi"
 	},
 	"devDependencies": {
-		"@prettier/sync": "^0.3.0",
+		"@prettier/sync": "^0.5.1",
 		"@types/glob": "8.1.0",
-		"@types/mocha": "10.0.4",
-		"@types/node": "20.9.0",
+		"@types/mocha": "10.0.6",
+		"@types/node": "20.11.25",
 		"@types/vscode": "1.84.1",
-		"@typescript-eslint/eslint-plugin": "6.10.0",
-		"@typescript-eslint/parser": "6.10.0",
-		"@vscode/test-electron": "2.3.6",
-		"@vscode/vsce": "2.22.0",
-		"eslint": "8.53.0",
+		"@typescript-eslint/eslint-plugin": "7.1.1",
+		"@typescript-eslint/parser": "7.1.1",
+		"@vscode/test-electron": "2.3.9",
+		"@vscode/vsce": "2.24.0",
+		"eslint": "8.57.0",
 		"glob": "10.3.10",
 		"html-formatter": "0.1.9",
-		"mocha": "10.2.0",
+		"mocha": "10.3.0",
 		"ovsx": "0.8.3",
-		"prettier": "^3.0.3",
+		"prettier": "^3.2.5",
 		"rimraf": "5.0.5",
 		"run-script-os": "1.1.6",
 		"source-map-support": "0.5.21",
-		"typescript": "5.2.2"
+		"typescript": "5.4.2"
 	},
 	"eslintConfig": {
 		"env": {
